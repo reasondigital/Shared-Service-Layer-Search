@@ -40,3 +40,4 @@ Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 * [Installing and using PHP Composer](https://getcomposer.org/doc/00-intro.md)
 * [Installing and using Docker](https://www.docker.com/get-started)
+* [Open API 3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md)
