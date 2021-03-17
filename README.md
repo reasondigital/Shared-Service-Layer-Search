@@ -6,6 +6,8 @@ This is an open source project to create a service layer to enable charities to 
 
 [Full description here](https://www.thecatalyst.org.uk/blog/some-of-the-most-common-digital-problems-faced-by-charities-and-what-were-doing-about-them)
 
+[The repository specification is here](specification.MD)
+
 ## Requirements
 
 PHP Version X.X.X
