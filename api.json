@@ -67,6 +67,32 @@
               "maxLength" : 10
             },
             "required" : true
+          },
+          {
+            "in" : "query",
+            "name" : "results",
+            "description" : "Number of results per page",
+            "schema" : {
+              "type" : "number",
+              "format": "integer",
+              "minimum" : 0,
+              "maxLength" : 1000,
+              "default" : 10
+            },
+            "required" : false
+          },
+          {
+            "in" : "query",
+            "name" : "page",
+            "description" : "The page of results to return",
+            "schema" : {
+              "type" : "number",
+              "format": "integer",
+              "minimum" : 0,
+              "maxLength" : 1000,
+              "default" : 0
+            },
+            "required" : false
           }
         ],
         "responses": { 
@@ -209,6 +235,32 @@
               "type" : "string"
             },
             "required" : true
+          },
+          {
+            "in" : "query",
+            "name" : "results",
+            "description" : "Number of results per page",
+            "schema" : {
+              "type" : "number",
+              "format": "integer",
+              "minimum" : 0,
+              "maxLength" : 1000,
+              "default" : 10
+            },
+            "required" : false
+          },
+          {
+            "in" : "query",
+            "name" : "page",
+            "description" : "The page of results to return",
+            "schema" : {
+              "type" : "number",
+              "format": "integer",
+              "minimum" : 0,
+              "maxLength" : 1000,
+              "default" : 0
+            },
+            "required" : false
           }
         ],
         "responses": { 
