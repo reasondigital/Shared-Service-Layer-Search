@@ -1,0 +1,11 @@
+# IDE
+.history
+.idea
+
+# Configuration
+/docker-compose.override.yml
+/docker/webserver/apache/env/
+/docker/webserver/php/conf.d/zz-php-local.ini
+
+# Generated
+/storage
