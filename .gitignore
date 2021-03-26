@@ -7,5 +7,6 @@
 /docker/webserver/apache/env/
 /docker/webserver/php/conf.d/zz-php-local.ini
 
-# Generated
+# Generated and local data
+/docker/elasticsearch/data
 /storage
