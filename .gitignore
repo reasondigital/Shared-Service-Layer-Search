@@ -3,10 +3,26 @@
 .idea
 
 # Configuration
+/.env
+/.env.backup
 /docker-compose.override.yml
 /docker/webserver/apache/env/
 /docker/webserver/php/conf.d/zz-php-local.ini
+/Homestead.json
+/Homestead.yaml
 
 # Generated and local data
+node_modules
 /docker/elasticsearch/data
-/storage
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+
+# Logs
+.phpunit.result.cache
+npm-debug.log
+yarn-error.log
+
+# Misc
+.DS_Store
