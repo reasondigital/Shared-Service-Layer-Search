@@ -6,6 +6,25 @@
 version: "3.1"
 services:
 
+  db:
+    image: mariadb:10.5.9
+    restart: always
+    container_name: ssls-db
+    working_dir: /application
+    volumes:
+      - ./docker/mariadb/init/01-databases.sql:/docker-entrypoint-initdb.d/01-databases.sql
+      - .:/application
+      - ./docker/mariadb/conf.d:/etc/mysql/conf.d/
+      - ./docker/mariadb/data:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+        MYSQL_DATABASE: '${DB_DATABASE}'
+        MYSQL_USER: '${DB_USERNAME}'
+        MYSQL_PASSWORD: '${DB_PASSWORD}'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3306:3306"
+
   webserver:
     build: docker/webserver
     container_name: ssls-webserver

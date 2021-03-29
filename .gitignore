@@ -14,6 +14,7 @@
 # Generated and local data
 node_modules
 /docker/elasticsearch/data
+/docker/mariadb/data
 /public/hot
 /public/storage
 /storage/*.key
