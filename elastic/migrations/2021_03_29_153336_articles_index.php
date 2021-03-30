@@ -1,46 +1,99 @@
 <?php
 declare(strict_types=1);
 
+use App\Elasticsearch\Analyzers;
 use ElasticAdapter\Indices\Mapping;
 use ElasticAdapter\Indices\Settings;
 use ElasticMigrations\Facades\Index;
 use ElasticMigrations\MigrationInterface;
 
+/**
+ * Create the Articles index in Elasticsearch.
+ *
+ * @since 1.0.0
+ */
 final class ArticlesIndex implements MigrationInterface
 {
     /**
      * Run the migration.
+     *
+     * @since 1.0.0
      */
     public function up(): void
     {
-        Index::create('articles', function(Mapping $mapping, Settings $settings) {
-            // Analysis
+        Index::create('articles', function (Mapping $mapping, Settings $settings) {
+            /*
+             * Analysis
+             */
             $settings->analysis([
                 'analyzer' => [
-                    'html_strip' => [
-                        'type' => 'custom',
-                        'tokenizer' => 'standard',
-                        'filter' => [
-                            'lowercase',
-                            'stop',
-                            'asciifolding',
-                        ],
+                    'default' => Analyzers::DEFAULT,
+                ],
+            ]);
+
+            /*
+             * Fields
+             */
+            $mapping->constantKeyword('@context', ['value' => 'https://schema.org']);
+            $mapping->constantKeyword('@type', ['value' => 'Article']);
+
+            $mapping->keyword('id');
+            $mapping->text('author', ['analyzer' => 'default']);
+            $mapping->text('articleBody', ['analyzer' => 'default']);
+            $mapping->text('abstract', ['analyzer' => 'default']);
+            $mapping->text('publisher', ['analyzer' => 'default']);
+
+            $mapping->nested('aggregateRating', [
+                'properties' => [
+                    '@type' => [
+                        'type' => 'constant_keyword',
+                        'value' => 'AggregateRating',
+                    ],
+                    'ratingValue' => [
+                        'type' => 'double',
+                    ],
+                    'reviewCount' => [
+                        'type' => 'integer',
                     ],
                 ],
             ]);
 
-            // Fields
-            $mapping->constantKeyword('@context', ['value' => 'https://schema.org']);
-            $mapping->constantKeyword('@type', ['value' => 'Article']);
+            $mapping->date('datePublished');
+            $mapping->text('thumbnailUrl');
+            //$mapping->keyword('keywords');
 
-            $mapping->text('articleBody', [
-                'analyzer' => 'html_strip',
-            ]);
+            /*$mapping->nested('hasPart', [
+                'properties' => [S
+                    '@type' => [
+                        'type' => 'constant_keyword',
+                        'value' => 'CreativeWork',
+                    ],
+                    'encoding' => [
+                        'properties' => [
+                            '@type' => [
+                                'type' => 'constant_keyword',
+                                'value' => 'MediaObject',
+                            ],
+                            'encodingFormat' => [
+                                'type' => 'keyword',
+                            ],
+                            'contentUrl' => [
+                                'type' => 'text',
+                            ],
+                            'thumbnail' => [
+                                'type' => 'text',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);*/
         });
     }
 
     /**
      * Reverse the migration.
+     *
+     * @since 1.0.0
      */
     public function down(): void
     {
