@@ -59,7 +59,7 @@ final class ArticlesIndex implements MigrationInterface
             ]);
 
             $mapping->date('datePublished');
-            $mapping->text('thumbnailUrl');
+            //$mapping->text('thumbnailUrl');
             //$mapping->keyword('keywords');
 
             /*$mapping->nested('hasPart', [
