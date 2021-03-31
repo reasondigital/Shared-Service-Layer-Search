@@ -1,11 +1,46 @@
+#
+# Development compose file. Do not use this when deploying
+# to a production environment.
+#
+
 version: "3.1"
 services:
+
+  db:
+    image: mariadb:10.5.9
+    restart: always
+    container_name: ssls-db
+    working_dir: /application
+    volumes:
+      - .:/application
+      - ./docker/mariadb/init/01-databases.sql:/docker-entrypoint-initdb.d/01-databases.sql
+      - ./docker/mariadb/conf.d:/etc/mysql/conf.d/
+      - ./docker/mariadb/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u${DB_USERNAME}", "-p${DB_PASSWORD}", "-h", "127.0.0.1"]
+      timeout: 20s
+      retries: 3
+    ports:
+      - "3306:3306"
+    networks:
+      - ssls-api
 
   webserver:
     build: docker/webserver
     container_name: ssls-webserver
+    depends_on:
+      - db
+      - elasticsearch
     ports:
       - "80:80"
+    networks:
+      - ssls-api
     volumes:
       - .:/var/www/html
 
@@ -16,3 +51,40 @@ services:
 
       # PHP
       - ./docker/webserver/php/php.ini:/usr/local/etc/php/php.ini
+
+  elasticsearch:
+    image: elasticsearch:7.11.1
+    container_name: ssls-elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://127.0.0.1:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - db
+    ports:
+      - 9200:9200
+    networks:
+      - ssls-api
+    volumes:
+      - ./docker/elasticsearch/data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: kibana:7.11.1
+    container_name: ssls-kibana
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - ssls-api
+
+networks:
+  ssls-api:
+    driver: bridge
