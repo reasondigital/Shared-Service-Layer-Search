@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Elastic\ArticleController;
+use App\Http\Controllers\Elastic\LocationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,42 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+/*
+ * Articles
+ */
+Route::group(
+    [
+        'prefix' => '/search/' . config('app.api_version'),
+    ],
+    function () {
+        switch (config('search.provider.articles')) {
+            default:
+            case 'elastic':
+                Route::get('/articles', [ArticleController::class, 'get']);
+                Route::post('/articles', [ArticleController::class, 'store']);
+                Route::put('/articles/{id}', [ArticleController::class, 'update']);
+                Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+                break;
+        }
+    }
+);
+
+/*
+ * Locations
+ */
+Route::group(
+    [
+        'prefix' => '/search/' . config('app.api_version'),
+    ],
+    function () {
+        switch (config('search.provider.locations')) {
+            default:
+            case 'elastic':
+                Route::get('/locations', [LocationController::class, 'get']);
+                Route::post('/locations', [LocationController::class, 'store']);
+                Route::put('/locations/{id}', [LocationController::class, 'update']);
+                Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+                break;
+        }
+    }
+);
