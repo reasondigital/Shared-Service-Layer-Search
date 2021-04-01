@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Elastic;
 
 use App\Http\Controllers\Controller;
+use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -32,13 +34,31 @@ class ArticleController extends Controller
      * Retrieve the specified resource.
      *
      * @param  Request  $request
+     * @param  ApiResponseBuilder  $builder
      *
      * @return JsonResponse
      * @since 1.0.0
      */
-    public function get(Request $request): JsonResponse
+    public function get(Request $request, ApiResponseBuilder $builder): JsonResponse
     {
-        return response()->json([]);
+        // Validate; send error response on failure
+        try {
+            $this->validate($request, [
+                'query' => 'required',
+            ]);
+        } catch (Exception $e) {
+            $builder->setError(400, 'validation_error', $e->getMessage());
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
+
+        // Conduct search
+        $query = $request->get('query');
+        $found = Article::search($query)->get()->toArray();
+
+        // Build successful response and send
+        $builder->setStatusCode(200);
+        $builder->setData($found);
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
