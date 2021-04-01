@@ -1,3 +1,9 @@
+#
+# By default, this file and other .htaccess files are ignored by the server.
+# Server configuration should be implemented in the apache2.conf file, or in a
+# supplementary conf file in the docker/webserver/apache/env directory.
+#
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
