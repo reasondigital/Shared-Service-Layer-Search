@@ -6,6 +6,8 @@ You can get an overview of the project's intent by reading the [repository speci
 ## Contents
 * [Requirements](#requirements)
 * [Quick start](#quick-start)
+* Developers
+  * [Configuration](docs/developers/configuration/index.md)
 * [API documentation](#api-documentation)
 * [Contributing](#contributing)
 * [License](#license)
@@ -93,6 +95,21 @@ Visit [http://localhost](http://localhost) in your browser. You should see the d
 
 Visit [http://localhost:5601](http://localhost:5601) in your browser to see if the Elasticsearch service is ready. If you see the "Kibana server is not ready yet" message, you may need to wait a few more minutes before checking again.
 
+### Set up the Search Index
+While logged in to the webserver container, run the following to set up the search index:
+```
+$ php artisan migrate && php artisan elastic:migrate
+```
+
+Visit [http://localhost:5601/app/management/data/index_management/indices](http://localhost:5601/app/management/data/index_management/indices), the index management page in Kibana, in your browser to see if the Articles index has been created.
+
+You can then seed the database with a small set of faker-generated test data from the command line:
+```
+$ php artisan db:seed
+```
+
+The value of the "Docs count" column on the index management should increase.
+
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:
 ```
@@ -103,7 +120,7 @@ $ docker-compose down
 [Click here to view the API documentation](docs/API.MD)
 
 ## Contributing
-Please read through our [contributing guidelines](CONTRIBUTING.MD).
+Please read through our [contributing guidelines](docs/CONTRIBUTING.MD).
 
 ## License
 This project is licensed under the MIT License. View the [LICENSE](LICENSE) file for details.
