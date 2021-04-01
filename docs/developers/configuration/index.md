@@ -3,4 +3,4 @@ This project aims to make sure that you can adjust the server's configuration to
 
 * [Docker](docker.md)
 * [Apache/PHP](apache-php.md)
-
+* [Search](search.md)
