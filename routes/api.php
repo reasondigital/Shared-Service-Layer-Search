@@ -26,10 +26,10 @@ Route::group(
         switch (config('search.provider.articles')) {
             default:
             case 'elastic':
-                Route::get('/articles', [ArticleController::class, 'get']);
-                Route::post('/articles', [ArticleController::class, 'store']);
-                Route::put('/articles/{id}', [ArticleController::class, 'update']);
-                Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+                Route::get('/article', [ArticleController::class, 'get']);
+                Route::post('/article', [ArticleController::class, 'store']);
+                Route::put('/article/{id}', [ArticleController::class, 'update']);
+                Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
                 break;
         }
     }
@@ -46,10 +46,10 @@ Route::group(
         switch (config('search.provider.locations')) {
             default:
             case 'elastic':
-                Route::get('/locations', [LocationController::class, 'get']);
-                Route::post('/locations', [LocationController::class, 'store']);
-                Route::put('/locations/{id}', [LocationController::class, 'update']);
-                Route::delete('/locations/{id}', [LocationController::class, 'destroy']);
+                Route::get('/location', [LocationController::class, 'get']);
+                Route::post('/location', [LocationController::class, 'store']);
+                Route::put('/location/{id}', [LocationController::class, 'update']);
+                Route::delete('/location/{id}', [LocationController::class, 'destroy']);
                 break;
         }
     }
