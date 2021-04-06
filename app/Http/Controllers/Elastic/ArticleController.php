@@ -52,6 +52,7 @@ class ArticleController extends Controller
             // Do the search via scout.
             $query = $request->get('query');
             // @todo - Page and results need to be passed too?
+            // @todo - Paginate with this: https://laravel.com/docs/8.x/scout#pagination
             $found = Article::search($query)->get()->toArray();
 
             // Build successful response.
