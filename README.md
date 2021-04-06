@@ -110,6 +110,14 @@ $ php artisan db:seed
 
 The value of the "Docs count" column on the index management should increase.
 
+### Connect to the database
+You can connect to the database from your local machine with the following details:
+
+Host: 127.0.0.1
+Username: root
+Password: password
+Database: ssl_search
+
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:
 ```
