@@ -65,7 +65,7 @@ You can now start up the Docker environment to get the application running.
 
 Make sure that the Docker service is running on your system and execute this command from the root of the project:
 ```
-$ docker-compose up
+$ docker-compose up -d
 ```
 
 Docker will begin downloading and building the various services that the application needs to run. This may take a while depending on your internet connection and system. (Future `docker-compose up` calls will take only a fraction of the time after this first build has been completed.)
