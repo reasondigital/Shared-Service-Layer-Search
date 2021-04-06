@@ -116,6 +116,8 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     ) {
         $this->setStatusCode($statusCode);
 
+        // @todo - This will only allow one error at a time. If we want multiple
+        // we'll need to key by the property with the error?
         $this->meta['error'] = [
             'error_type' => $errorCode,
             'error_message' => $errorMsg,
