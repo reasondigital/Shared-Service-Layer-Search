@@ -43,7 +43,8 @@ class ArticleController extends Controller
         // Validate the request first.
         $builder = $this->validateRequest($request, [
             'query' => 'required',
-            'results' => 'sometimes|integer'
+            'results' => 'sometimes|integer',
+            'page' => 'sometimes|integer'
         ]);
 
         // If we don't have an error then do the search.
