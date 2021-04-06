@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Elastic;
 use App\Http\Controllers\Controller;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -41,23 +40,23 @@ class ArticleController extends Controller
      */
     public function get(Request $request, ApiResponseBuilder $builder): JsonResponse
     {
-        // Validate; send error response on failure
-        try {
-            $this->validate($request, [
-                'query' => 'required',
-            ]);
-        } catch (Exception $e) {
-            $builder->setError(400, 'validation_error', $e->getMessage());
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        // Validate the request first.
+        $builder = $this->validateRequest($request, [
+            'query' => 'required',
+        ]);
+
+        // If we don't have an error then do the search.
+        if (!$builder->hasError()) {
+            // Do the search via scout.
+            $query = $request->get('query');
+            // @todo - Page and results need to be passed too?
+            $found = Article::search($query)->get()->toArray();
+
+            // Build successful response.
+            $builder->setStatusCode(200);
+            $builder->setData($found);
         }
 
-        // Conduct search
-        $query = $request->get('query');
-        $found = Article::search($query)->get()->toArray();
-
-        // Build successful response and send
-        $builder->setStatusCode(200);
-        $builder->setData($found);
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
