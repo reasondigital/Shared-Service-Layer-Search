@@ -78,7 +78,7 @@ services:
     image: kibana:7.11.1
     container_name: ssls-kibana
     environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://127.0.0.1:9200
     depends_on:
       - elasticsearch
     ports:
