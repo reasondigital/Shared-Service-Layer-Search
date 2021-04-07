@@ -15,10 +15,11 @@ class ArticleGetTest extends TestCase
      * - The results parameter is numeric - Done
      * - The page parameter is numeric - Done
      * - @todo - What if multiple issues?
-     * - Article can be searched by author - Done
-     * - Article can be searched by body - @todo
-     * - Article can be searched by abstract - @todo
-     * - Article can be searched by publisher - @todo
+     * - Articles can be searched by author - Done
+     * - Articles can be searched by body - Done
+     * - Articles can be searched by abstract - Done
+     * - Articles can be searched by publisher - Done
+     * - @todo - How much do we need to test partial searching, etc?
      * - Empty result returns - @todo
      * - Results limits the results returned - @todo
      * - The page parameter returns the page of results - @todo
@@ -115,6 +116,72 @@ class ArticleGetTest extends TestCase
             $this->getArticleGetUrl(),
             [
                 'query' => 'John',
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertSame($article->id, $response->getData()->data[0]->id);
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_searched_by_body()
+    {
+        $article = Article::factory()->create();
+
+        Search::fakeRecord($article, [
+            'articleBody' => 'This is a bit of text with a sharky keyword.',
+        ]);
+
+        $response = $this->call(
+            'GET',
+            $this->getArticleGetUrl(),
+            [
+                'query' => 'shark',
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertSame($article->id, $response->getData()->data[0]->id);
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_searched_by_abstract()
+    {
+        $article = Article::factory()->create();
+
+        Search::fakeRecord($article, [
+            'abstract' => 'This is a bit of text with a sharky keyword.',
+        ]);
+
+        $response = $this->call(
+            'GET',
+            $this->getArticleGetUrl(),
+            [
+                'query' => 'shark',
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertSame($article->id, $response->getData()->data[0]->id);
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_searched_by_publisher()
+    {
+        $article = Article::factory()->create();
+
+        Search::fakeRecord($article, [
+            'publisher' => 'Penguin',
+        ]);
+
+        $response = $this->call(
+            'GET',
+            $this->getArticleGetUrl(),
+            [
+                'query' => 'peng',
             ]
         );
         $response->assertStatus(200);
