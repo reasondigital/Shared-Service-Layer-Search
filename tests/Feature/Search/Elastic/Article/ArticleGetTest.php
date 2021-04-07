@@ -3,6 +3,8 @@
 namespace Tests\Feature\Search\Elastic\Article;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
+use Sti3bas\ScoutArray\Facades\Search;
 use Tests\TestCase;
 
 class ArticleGetTest extends TestCase
@@ -13,8 +15,11 @@ class ArticleGetTest extends TestCase
      * - The results parameter is numeric - Done
      * - The page parameter is numeric - Done
      * - @todo - What if multiple issues?
-     * - An article can be retrieved - @todo
-     * - @todo - Do we need to test search?
+     * - Article can be searched by author - Done
+     * - Article can be searched by body - @todo
+     * - Article can be searched by abstract - @todo
+     * - Article can be searched by publisher - @todo
+     * - Empty result returns - @todo
      * - Results limits the results returned - @todo
      * - The page parameter returns the page of results - @todo
      */
@@ -92,6 +97,28 @@ class ArticleGetTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_searched_by_author()
+    {
+        $article = Article::factory()->create();
+
+        Search::fakeRecord($article, [
+            'author' => 'John Steinbeck',
+        ]);
+
+        $response = $this->call(
+            'GET',
+            $this->getArticleGetUrl(),
+            [
+                'query' => 'John',
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertSame($article->id, $response->getData()->data[0]->id);
     }
 
     private function getArticleGetUrl(): string
