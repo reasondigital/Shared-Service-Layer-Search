@@ -118,6 +118,8 @@ Username: root
 Password: password
 Database: ssl_search
 
+*Note:* There is a `ssl_search_test` database created for automated testing.
+
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:
 ```
