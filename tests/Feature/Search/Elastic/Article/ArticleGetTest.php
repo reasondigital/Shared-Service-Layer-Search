@@ -5,7 +5,7 @@ namespace Tests\Feature\Search\Elastic\Article;
 use App\Http\Controllers\Controller;
 use Tests\TestCase;
 
-class ArticleGetValidationTest extends TestCase
+class ArticleGetTest extends TestCase
 {
     /**
      * Tests:
@@ -13,6 +13,10 @@ class ArticleGetValidationTest extends TestCase
      * - The results parameter is numeric - Done
      * - The page parameter is numeric - Done
      * - @todo - What if multiple issues?
+     * - An article can be retrieved - @todo
+     * - @todo - Do we need to test search?
+     * - Results limits the results returned - @todo
+     * - The page parameter returns the page of results - @todo
      */
 
     /**
