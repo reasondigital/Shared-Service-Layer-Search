@@ -28,7 +28,11 @@ class ArticleController extends Controller
     {
         // Validate the request first.
         $builder = $this->validateRequest($request, [
+            'articleBody' => 'required|string',
+            'abstract' => 'required|string',
             'author' => 'required|string',
+            'publisher' => 'required|string',
+            'datePublished' => 'required|date_format:Y-m-d',
         ]);
 
         // If we don't have an error then add the article.

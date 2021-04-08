@@ -12,11 +12,10 @@ class ArticleStoreTest extends TestCase
     /**
      * Tests:
      * - Author validation - Done
-     * - Body validation - @todo
-     * - Abstract validation - @todo
-     * - Publisher validation - @todo
-     * - Publisher validation - @todo
-     * - Published date validation - @todo
+     * - Body validation - Done
+     * - Abstract validation - Done
+     * - Publisher validation - Done
+     * - Published date validation - Done
      * - Article is added to the index - @todo
      * - AggregateRating validation - @todo?
      */
@@ -45,6 +44,173 @@ class ArticleStoreTest extends TestCase
 
         // Type
         $article['author'] = 123;
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+    }
+
+    /**
+     * @test
+     */
+    public function body_validation()
+    {
+        $article = Article::factory()->create()->toArray();
+
+        // Required
+        unset($article['articleBody']);
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Type
+        $article['articleBody'] = 123;
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+    }
+
+    /**
+     * @test
+     */
+    public function abstract_validation()
+    {
+        $article = Article::factory()->create()->toArray();
+
+        // Required
+        unset($article['abstract']);
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Type
+        $article['abstract'] = 123;
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+    }
+
+    /**
+     * @test
+     */
+    public function publisher_validation()
+    {
+        $article = Article::factory()->create()->toArray();
+
+        // Required
+        unset($article['publisher']);
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Type
+        $article['publisher'] = 123;
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+    }
+
+    /**
+     * @test
+     */
+    public function published_date_validation()
+    {
+        $article = Article::factory()->create()->toArray();
+
+        // Required
+        unset($article['datePublished']);
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Type
+        $article['datePublished'] = 'string';
+        $response = $this->post($this->getEndpoint(), $article);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Wrong date format should by Y-m-d
+        $article['datePublished'] = '21-01-01';
         $response = $this->post($this->getEndpoint(), $article);
         $response->assertStatus(400);
         $this->assertSame(
