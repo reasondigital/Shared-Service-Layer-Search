@@ -3,6 +3,7 @@
 namespace Tests\Feature\Search\Elastic\Article;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Elastic\ArticleController;
 use App\Models\Article;
 use Sti3bas\ScoutArray\Facades\Search;
 use Tests\TestCase;
@@ -16,7 +17,7 @@ class ArticleStoreTest extends TestCase
      * - Abstract validation - Done
      * - Publisher validation - Done
      * - Published date validation - Done
-     * - Article is added to the index - @todo
+     * - Article is added to the index - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -25,11 +26,11 @@ class ArticleStoreTest extends TestCase
      */
     public function author_validation()
     {
-        $article = Article::factory()->create()->toArray();
+        $input = $this->getValidInput();
 
         // Required
-        unset($article['author']);
-        $response = $this->post($this->getEndpoint(), $article);
+        unset($input['author']);
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -43,8 +44,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Type
-        $article['author'] = 123;
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['author'] = 123;
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -56,6 +57,8 @@ class ArticleStoreTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
     }
 
     /**
@@ -63,11 +66,11 @@ class ArticleStoreTest extends TestCase
      */
     public function body_validation()
     {
-        $article = Article::factory()->create()->toArray();
+        $input = $this->getValidInput();
 
         // Required
-        unset($article['articleBody']);
-        $response = $this->post($this->getEndpoint(), $article);
+        unset($input['articleBody']);
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -81,8 +84,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Type
-        $article['articleBody'] = 123;
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['articleBody'] = 123;
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -94,6 +97,8 @@ class ArticleStoreTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
     }
 
     /**
@@ -101,11 +106,11 @@ class ArticleStoreTest extends TestCase
      */
     public function abstract_validation()
     {
-        $article = Article::factory()->create()->toArray();
+        $input = $this->getValidInput();
 
         // Required
-        unset($article['abstract']);
-        $response = $this->post($this->getEndpoint(), $article);
+        unset($input['abstract']);
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -119,8 +124,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Type
-        $article['abstract'] = 123;
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['abstract'] = 123;
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -132,6 +137,8 @@ class ArticleStoreTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
     }
 
     /**
@@ -139,11 +146,11 @@ class ArticleStoreTest extends TestCase
      */
     public function publisher_validation()
     {
-        $article = Article::factory()->create()->toArray();
+        $input = $this->getValidInput();
 
         // Required
-        unset($article['publisher']);
-        $response = $this->post($this->getEndpoint(), $article);
+        unset($input['publisher']);
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -157,8 +164,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Type
-        $article['publisher'] = 123;
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['publisher'] = 123;
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -170,6 +177,8 @@ class ArticleStoreTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
     }
 
     /**
@@ -177,11 +186,11 @@ class ArticleStoreTest extends TestCase
      */
     public function published_date_validation()
     {
-        $article = Article::factory()->create()->toArray();
+        $input = $this->getValidInput();
 
         // Required
-        unset($article['datePublished']);
-        $response = $this->post($this->getEndpoint(), $article);
+        unset($input['datePublished']);
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -195,8 +204,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Type
-        $article['datePublished'] = 'string';
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['datePublished'] = 'string';
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -210,8 +219,8 @@ class ArticleStoreTest extends TestCase
         $this->assertEmpty($response->getData()->links);
 
         // Wrong date format should by Y-m-d
-        $article['datePublished'] = '21-01-01';
-        $response = $this->post($this->getEndpoint(), $article);
+        $input['datePublished'] = '21-01-01';
+        $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -223,6 +232,44 @@ class ArticleStoreTest extends TestCase
         );
         $this->assertEmpty($response->getData()->data);
         $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_added()
+    {
+        Search::assertEmptyIn('ssls-articles');
+
+        $article = Article::factory()->make();
+        $input = $article->toArray();
+        $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
+        unset($input['updated_at']);
+
+        $response = $this->post($this->getEndpoint(), $input);
+        $response->assertStatus(200);
+        $this->assertSame($input['author'], $response->getData()->data[0]->author);
+        $this->assertSame(200, $response->getData()->meta->status_code);
+        $this->assertEmpty($response->getData()->links);
+
+        // we assert we have *something* as the package we're using wants to
+        // check persisted models are in the index.
+        Search::assertNotEmptyIn('ssls-articles');
+    }
+
+    private function getValidInput(): array {
+        $article = Article::factory()->make();
+        $input = $article->toArray();
+
+        // Convert the date into 'Y-m-d' to match the API spec
+        $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
+
+        // We can also bin off all the stuff users wouldn't submit
+        unset($input['updated_at'], $input['id']);
+
+        return $input;
     }
 
     private function getEndpoint(): string

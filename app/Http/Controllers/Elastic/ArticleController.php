@@ -7,6 +7,7 @@ use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Articles API controller for Elasticsearch.
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
  */
 class ArticleController extends Controller
 {
+    const PUBLISHED_DATE_FORMAT = 'Y-m-d';
+
     /**
      * Store a newly created resource in storage.
      *
@@ -38,9 +41,11 @@ class ArticleController extends Controller
         // If we don't have an error then add the article.
         if (!$builder->hasError()) {
             // @todo - Scout says this needs to be added to the db. Shouldn't
-            // this go straight to the index?
+            // @todo - this go straight to the index?
+            $article = new Article($request->all());
+            $article->save();
             $builder->setStatusCode(200);
-            $builder->setData([]);
+            $builder->setData([$article->toArray()]);
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());

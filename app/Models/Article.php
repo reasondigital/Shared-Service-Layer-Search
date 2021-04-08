@@ -24,9 +24,16 @@ class Article extends Model
      * @var string[]
      * @since 1.0.0
      */
+    // @todo - See if we can cast the date published
     protected $casts = [
         'aggregateRating' => 'array',
     ];
+
+    /**
+     * Allow anything to be mass assigned.
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * @return array
