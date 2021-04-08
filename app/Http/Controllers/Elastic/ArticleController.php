@@ -26,7 +26,20 @@ class ArticleController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        return response()->json([]);
+        // Validate the request first.
+        $builder = $this->validateRequest($request, [
+            'author' => 'required|string',
+        ]);
+
+        // If we don't have an error then add the article.
+        if (!$builder->hasError()) {
+            // @todo - Scout says this needs to be added to the db. Shouldn't
+            // this go straight to the index?
+            $builder->setStatusCode(200);
+            $builder->setData([]);
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**

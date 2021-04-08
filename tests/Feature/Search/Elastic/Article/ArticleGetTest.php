@@ -23,6 +23,7 @@ class ArticleGetTest extends TestCase
      * - Empty result returns - @todo
      * - Results limits the results returned - @todo
      * - The page parameter returns the page of results - @todo
+     * - @todo - What do we expect for multiple results?
      */
 
     /**
@@ -30,7 +31,7 @@ class ArticleGetTest extends TestCase
      */
     public function query_parameter_is_required()
     {
-        $response = $this->get($this->getArticleGetUrl());
+        $response = $this->get($this->getEndpoint());
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -52,7 +53,7 @@ class ArticleGetTest extends TestCase
         // Results should be an integer.
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'test',
                 'results' => 'string',
@@ -80,7 +81,7 @@ class ArticleGetTest extends TestCase
         // Results should be an integer.
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'test',
                 'page' => 'string',
@@ -113,7 +114,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'John',
             ]
@@ -135,7 +136,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'shark',
             ]
@@ -157,7 +158,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'shark',
             ]
@@ -179,7 +180,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getArticleGetUrl(),
+            $this->getEndpoint(),
             [
                 'query' => 'peng',
             ]
@@ -188,7 +189,7 @@ class ArticleGetTest extends TestCase
         $this->assertSame($article->id, $response->getData()->data[0]->id);
     }
 
-    private function getArticleGetUrl(): string
+    private function getEndpoint(): string
     {
         return '/api/search/' . config('app.api_version') . '/article';
     }
