@@ -7,7 +7,6 @@ use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * Articles API controller for Elasticsearch.
@@ -91,12 +90,34 @@ class ArticleController extends Controller
      * @param  Request  $request
      * @param  Article  $article
      *
+     * @todo - Will we allow a partial update or does the whole thing need to be
+     * submitted?
+     *
      * @return JsonResponse
      * @since 1.0.0
      */
     public function update(Request $request, Article $article): JsonResponse
     {
-        return response()->json([]);
+        // Validate the request first.
+        // @todo - Keeping the rules separate for now in case we need to split
+        // @todo - between add and update
+        $builder = $this->validateRequest($request, [
+            'articleBody' => 'required|string',
+            'abstract' => 'required|string',
+            'author' => 'required|string',
+            'publisher' => 'required|string',
+            'datePublished' => 'required|date_format:Y-m-d',
+        ]);
+
+        // If we don't have an error then add the article.
+        if (!$builder->hasError()) {
+            $article->update($request->all());
+            $article->save();
+            $builder->setStatusCode(200);
+            $builder->setData([$article->toArray()]);
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**

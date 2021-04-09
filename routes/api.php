@@ -28,8 +28,8 @@ Route::group(
             case 'elastic':
                 Route::get('/article', [ArticleController::class, 'get']);
                 Route::post('/article', [ArticleController::class, 'store']);
-                Route::put('/article/{id}', [ArticleController::class, 'update']);
-                Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
+                Route::put('/article/{article}', [ArticleController::class, 'update']);
+                Route::delete('/article/{article}', [ArticleController::class, 'destroy']);
                 break;
         }
     }
