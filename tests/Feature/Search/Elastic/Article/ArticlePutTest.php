@@ -18,7 +18,7 @@ class ArticlePutTest extends TestCase
      * - Publisher validation - Done
      * - Published date validation - Done
      * - Article is updated in the index - Done
-     * - Non-existent article returns 404 - @todo
+     * - Non-existent article returns 404 - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -281,6 +281,18 @@ class ArticlePutTest extends TestCase
         ->assertSynced($article, function ($record) {
             return $record['publisher'] === 'New publisher';
         });
+    }
+
+    /**
+     * @test
+     */
+    public function cannot_update_non_existent_article()
+    {
+        $article = Article::factory()->make();
+        $input = $this->getValidInput($article);
+
+        $response = $this->put($this->getEndpoint($article), $input);
+        $response->assertStatus(404);
     }
 
     private function getValidInput(Article $article): array {
