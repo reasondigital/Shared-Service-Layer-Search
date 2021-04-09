@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Elastic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Response\ApiResponseBuilder;
+use App\Http\Response\JsonApiResponseBuilder;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -130,6 +131,10 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article): JsonResponse
     {
-        return response()->json([]);
+        $article->delete();
+        $builder = new JsonApiResponseBuilder();
+        $builder->setStatusCode(200);
+        $builder->setData([]);
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 }
