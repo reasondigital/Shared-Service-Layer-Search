@@ -11,6 +11,7 @@ class ArticleTest extends TestCase
     /**
      * Tests:
      * - toSearchableArray converts the datePublished - Done
+     * - toArray will add schema data - Done
      */
 
     /**
@@ -32,5 +33,17 @@ class ArticleTest extends TestCase
             $now->format(Article::PUBLISHED_DATE_FORMAT),
             $article->toSearchableArray()['datePublished']
         );
+    }
+
+    /**
+     * @test
+     */
+    public function to_array_add_schema_data()
+    {
+        $article = Article::factory()->make();
+
+        $data = $article->toArray();
+        $this->assertSame('https://schema.org', $data['@context']);
+        $this->assertSame('Article', $data['@type']);
     }
 }

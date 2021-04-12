@@ -35,7 +35,10 @@ class Article extends Model
      * Allow anything to be mass assigned.
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = [
+        '@context',
+        '@type',
+    ];
 
     /**
      * @return array
@@ -53,6 +56,16 @@ class Article extends Model
         } else {
             $data['datePublished'] = null;
         }
+
+        return $data;
+    }
+
+    public function toArray() {
+        $data = parent::toArray();
+
+        // Add schema data
+        $data['@context'] = 'https://schema.org';
+        $data['@type'] = 'Article';
 
         return $data;
     }
