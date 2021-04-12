@@ -19,6 +19,9 @@ class ArticleGetTest extends TestCase
      * - Articles can be searched by body - Done
      * - Articles can be searched by abstract - Done
      * - Articles can be searched by publisher - Done
+     * - Articles can be searched by keyword - Done
+     * - Article information is returned - @todo
+     * - @todo see article_is_updated_in_the_index
      * - @todo - How much do we need to test partial searching, etc?
      * - Empty result returns - @todo
      * - Results limits the results returned - @todo
@@ -183,6 +186,28 @@ class ArticleGetTest extends TestCase
             $this->getEndpoint(),
             [
                 'query' => 'peng',
+            ]
+        );
+        $response->assertStatus(200);
+        $this->assertSame($article->id, $response->getData()->data[0]->id);
+    }
+
+    /**
+     * @test
+     */
+    public function article_can_be_searched_by_keyword()
+    {
+        $article = Article::factory()->create();
+
+        Search::fakeRecord($article, [
+            'keywords' => ['keyword'],
+        ]);
+
+        $response = $this->call(
+            'GET',
+            $this->getEndpoint(),
+            [
+                'query' => 'keyword',
             ]
         );
         $response->assertStatus(200);

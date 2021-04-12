@@ -19,6 +19,7 @@ class ArticleStoreTest extends TestCase
      * - Published date validation - Done
      * - Article is added to the index - Done
      * - Thumbnail url validation - Done
+     * - Keywords validation - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -284,6 +285,49 @@ class ArticleStoreTest extends TestCase
 
         // Not url
         $input['thumbnailUrl'] = 'this-is-not-a-url';
+        $response = $this->post($this->getEndpoint(), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
+    }
+
+    /**
+     * @test
+     */
+    public function keywords_validation()
+    {
+        $input = $this->getValidInput();
+
+        // Type
+        $input['keywords'] = 'string';
+        $response = $this->post($this->getEndpoint(), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Not url
+        $input['keywords'] = [
+            'valid',
+            123, // invalid
+        ];
         $response = $this->post($this->getEndpoint(), $input);
         $response->assertStatus(400);
         $this->assertSame(

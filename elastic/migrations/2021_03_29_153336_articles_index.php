@@ -60,6 +60,9 @@ final class ArticlesIndex implements MigrationInterface
 
             $mapping->date('datePublished');
             $mapping->text('thumbnailUrl');
+
+            // @todo - This should probably have a boost.
+            $mapping->keyword('keywords');
         });
     }
 

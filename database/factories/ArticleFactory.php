@@ -53,6 +53,10 @@ class ArticleFactory extends Factory
             ],
             'datePublished' => $this->faker->dateTimeBetween('-5 years', '-5 days'),
             'thumbnailUrl' => $this->faker->url,
+            'keywords' => [
+                $this->faker->word,
+                $this->faker->word,
+            ],
         ];
     }
 }

@@ -29,6 +29,7 @@ class Article extends Model
     // @todo - See if we can cast the date published
     protected $casts = [
         'aggregateRating' => 'array',
+        'keywords' => 'array',
     ];
 
     /**

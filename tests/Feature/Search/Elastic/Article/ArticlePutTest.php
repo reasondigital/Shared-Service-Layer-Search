@@ -20,6 +20,7 @@ class ArticlePutTest extends TestCase
      * - Article is updated in the index - Done
      * - Non-existent article returns 404 - Done
      * - Thumbnail url validation - Done
+     * - Keywords validation - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -262,6 +263,7 @@ class ArticlePutTest extends TestCase
         $input['abstract'] = 'New abstract';
         $input['publisher'] = 'New publisher';
         $input['thumbnailUrl'] = 'http://new-thumbnail.com/thumb';
+        $input['keywords'] = ['key', 'word'];
         $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
         unset($input['updated_at']);
 
@@ -285,6 +287,9 @@ class ArticlePutTest extends TestCase
         })
         ->assertSynced($article, function ($record) {
             return $record['thumbnailUrl'] === 'http://new-thumbnail.com/thumb';
+        })
+        ->assertSynced($article, function ($record) {
+            return $record['keywords'] === ['key', 'word'];
         });
     }
 
@@ -325,6 +330,51 @@ class ArticlePutTest extends TestCase
 
         // Not url
         $input['thumbnailUrl'] = 'this-is-not-a-url';
+        $response = $this->put($this->getEndpoint($article), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Should only be synced once. The time we created it at the top.
+        Search::assertSyncedTimes($article, 1);
+    }
+
+    /**
+     * @test
+     */
+    public function keywords_validation()
+    {
+        $article = Article::factory()->create();
+        $input = $this->getValidInput($article);
+
+        // Type
+        $input['keywords'] = 'string';
+        $response = $this->put($this->getEndpoint($article), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Not url
+        $input['keywords'] = [
+            'valid',
+            123, // invalid
+        ];
         $response = $this->put($this->getEndpoint($article), $input);
         $response->assertStatus(400);
         $this->assertSame(

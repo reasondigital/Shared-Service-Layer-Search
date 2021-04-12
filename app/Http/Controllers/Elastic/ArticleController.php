@@ -37,6 +37,8 @@ class ArticleController extends Controller
             'publisher' => 'required|string',
             'datePublished' => 'required|date_format:Y-m-d',
             'thumbnailUrl' => 'sometimes|url',
+            'keywords' => 'sometimes|array',
+            'keywords.*' => 'string',
         ]);
 
         // If we don't have an error then add the article.
@@ -108,6 +110,8 @@ class ArticleController extends Controller
             'publisher' => 'required|string',
             'datePublished' => 'required|date_format:Y-m-d',
             'thumbnailUrl' => 'sometimes|url',
+            'keywords' => 'sometimes|array',
+            'keywords.*' => 'string',
         ]);
 
         // If we don't have an error then add the article.
