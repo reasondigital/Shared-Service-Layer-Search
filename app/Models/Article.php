@@ -60,7 +60,12 @@ class Article extends Model
         return $data;
     }
 
-    public function toArray() {
+    /**
+     * @return array
+     *
+     * @since 1.0.0
+     */
+    public function toArray(): array {
         $data = parent::toArray();
 
         // Add schema data
