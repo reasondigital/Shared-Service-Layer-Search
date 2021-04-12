@@ -18,4 +18,19 @@ class Location extends Model
     use HasFactory;
     use Searchable;
     use QueryDsl;
+
+    /**
+     * @return array
+     *
+     * @since 1.0.0
+     */
+    public function toArray(): array {
+        $data = parent::toArray();
+
+        // Add schema data
+        $data['@context'] = 'https://schema.org';
+        $data['@type'] = 'Place';
+
+        return $data;
+    }
 }
