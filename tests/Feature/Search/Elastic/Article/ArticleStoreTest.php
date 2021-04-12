@@ -18,6 +18,7 @@ class ArticleStoreTest extends TestCase
      * - Publisher validation - Done
      * - Published date validation - Done
      * - Article is added to the index - Done
+     * - Thumbnail url validation - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -257,6 +258,46 @@ class ArticleStoreTest extends TestCase
         // we assert we have *something* as the package we're using wants to
         // check persisted models are in the index.
         Search::assertNotEmptyIn('ssls-articles');
+    }
+
+    /**
+     * @test
+     */
+    public function thumbnail_url_validation()
+    {
+        $input = $this->getValidInput();
+
+        // Type
+        $input['thumbnailUrl'] = 123;
+        $response = $this->post($this->getEndpoint(), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Not url
+        $input['thumbnailUrl'] = 'this-is-not-a-url';
+        $response = $this->post($this->getEndpoint(), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        Search::assertNothingSynced();
     }
 
     private function getValidInput(): array {

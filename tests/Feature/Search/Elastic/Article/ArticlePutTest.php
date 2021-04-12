@@ -19,6 +19,7 @@ class ArticlePutTest extends TestCase
      * - Published date validation - Done
      * - Article is updated in the index - Done
      * - Non-existent article returns 404 - Done
+     * - Thumbnail url validation - Done
      * - AggregateRating validation - @todo?
      */
 
@@ -260,6 +261,7 @@ class ArticlePutTest extends TestCase
         $input['articleBody'] = 'New body';
         $input['abstract'] = 'New abstract';
         $input['publisher'] = 'New publisher';
+        $input['thumbnailUrl'] = 'http://new-thumbnail.com/thumb';
         $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
         unset($input['updated_at']);
 
@@ -280,6 +282,9 @@ class ArticlePutTest extends TestCase
         })
         ->assertSynced($article, function ($record) {
             return $record['publisher'] === 'New publisher';
+        })
+        ->assertSynced($article, function ($record) {
+            return $record['thumbnailUrl'] === 'http://new-thumbnail.com/thumb';
         });
     }
 
@@ -293,6 +298,48 @@ class ArticlePutTest extends TestCase
 
         $response = $this->put($this->getEndpoint($article), $input);
         $response->assertStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function thumbnail_url_validation()
+    {
+        $article = Article::factory()->create();
+        $input = $this->getValidInput($article);
+
+        // Type
+        $input['thumbnailUrl'] = 123;
+        $response = $this->put($this->getEndpoint($article), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Not url
+        $input['thumbnailUrl'] = 'this-is-not-a-url';
+        $response = $this->put($this->getEndpoint($article), $input);
+        $response->assertStatus(400);
+        $this->assertSame(
+            Controller::VALIDATION_ERROR_CODE,
+            $response->getData()->meta->error->error_type
+        );
+        $this->assertSame(
+            'The given data was invalid.',
+            $response->getData()->meta->error->error_message
+        );
+        $this->assertEmpty($response->getData()->data);
+        $this->assertEmpty($response->getData()->links);
+
+        // Should only be synced once. The time we created it at the top.
+        Search::assertSyncedTimes($article, 1);
     }
 
     private function getValidInput(Article $article): array {

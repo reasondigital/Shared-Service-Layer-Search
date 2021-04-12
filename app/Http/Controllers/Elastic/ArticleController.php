@@ -36,12 +36,11 @@ class ArticleController extends Controller
             'author' => 'required|string',
             'publisher' => 'required|string',
             'datePublished' => 'required|date_format:Y-m-d',
+            'thumbnailUrl' => 'sometimes|url',
         ]);
 
         // If we don't have an error then add the article.
         if (!$builder->hasError()) {
-            // @todo - Scout says this needs to be added to the db. Shouldn't
-            // @todo - this go straight to the index?
             $article = new Article($request->all());
             $article->save();
             $builder->setStatusCode(200);
@@ -108,6 +107,7 @@ class ArticleController extends Controller
             'author' => 'required|string',
             'publisher' => 'required|string',
             'datePublished' => 'required|date_format:Y-m-d',
+            'thumbnailUrl' => 'sometimes|url',
         ]);
 
         // If we don't have an error then add the article.

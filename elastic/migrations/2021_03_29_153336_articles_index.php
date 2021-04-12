@@ -59,34 +59,7 @@ final class ArticlesIndex implements MigrationInterface
             ]);
 
             $mapping->date('datePublished');
-            //$mapping->text('thumbnailUrl');
-            //$mapping->keyword('keywords');
-
-            /*$mapping->nested('hasPart', [
-                'properties' => [S
-                    '@type' => [
-                        'type' => 'constant_keyword',
-                        'value' => 'CreativeWork',
-                    ],
-                    'encoding' => [
-                        'properties' => [
-                            '@type' => [
-                                'type' => 'constant_keyword',
-                                'value' => 'MediaObject',
-                            ],
-                            'encodingFormat' => [
-                                'type' => 'keyword',
-                            ],
-                            'contentUrl' => [
-                                'type' => 'text',
-                            ],
-                            'thumbnail' => [
-                                'type' => 'text',
-                            ],
-                        ],
-                    ],
-                ],
-            ]);*/
+            $mapping->text('thumbnailUrl');
         });
     }
 

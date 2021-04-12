@@ -110,6 +110,17 @@ $ php artisan db:seed
 
 The value of the "Docs count" column on the index management should increase.
 
+NOTE: If you need to re-create the index via migration you can run the following
+```
+$ php artisan tinker
+>>> use ElasticMigrations\Facades\Index;
+>>> Index::drop('articles');
+```
+Then exit out and run
+```
+$ php artisan elastic:migrate
+```
+
 ### Connect to the database
 You can connect to the database from your local machine with the following details:
 
@@ -119,6 +130,11 @@ Password: password
 Database: ssl_search
 
 *Note:* There is a `ssl_search_test` database created for automated testing.
+
+To get the database structure setup for tests run:
+```
+$ php artisan migrate --database=test 
+```
 
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:

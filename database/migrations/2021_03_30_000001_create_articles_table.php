@@ -28,6 +28,7 @@ class CreateArticlesTable extends Migration
             $table->char('publisher')->nullable();
             $table->json('aggregateRating')->nullable();
             $table->dateTime('datePublished')->nullable();
+            $table->char('thumbnailUrl')->nullable();
             $table->timestamps();
         });
     }
