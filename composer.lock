@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7421f36ce41aafd48dcdb725043efc67",
+    "content-hash": "52ba496113094552fd8c438ce84a5526",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -8078,6 +8078,66 @@
                 }
             ],
             "time": "2020-07-12T23:59:07+00:00"
+        },
+        {
+            "name": "tutorigo/laravel-ide-macros",
+            "version": "1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KristofMorva/laravel-ide-macros.git",
+                "reference": "6720043cb7e8d541440b86637e7f75c87c0bd188"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KristofMorva/laravel-ide-macros/zipball/6720043cb7e8d541440b86637e7f75c87c0bd188",
+                "reference": "6720043cb7e8d541440b86637e7f75c87c0bd188",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.0|^6.0|^7.0|^8.0",
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Tutorigo\\LaravelMacroHelper\\IdeMacrosServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tutorigo\\LaravelMacroHelper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kristóf Morva",
+                    "email": "kristof92@gmail.com"
+                }
+            ],
+            "description": "Generating a helper file for IDEs to support Laravel's macros.",
+            "keywords": [
+                "autocomplete",
+                "codeintel",
+                "helper",
+                "ide",
+                "laravel",
+                "macros",
+                "netbeans",
+                "phpdoc",
+                "phpstorm",
+                "sublime"
+            ],
+            "support": {
+                "issues": "https://github.com/KristofMorva/laravel-ide-macros/issues",
+                "source": "https://github.com/KristofMorva/laravel-ide-macros/tree/1.5.2"
+            },
+            "time": "2020-10-01T08:41:41+00:00"
         }
     ],
     "aliases": [],

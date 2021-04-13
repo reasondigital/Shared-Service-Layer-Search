@@ -24,7 +24,8 @@
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
-        "sti3bas/laravel-scout-array-driver": "^2.2"
+        "sti3bas/laravel-scout-array-driver": "^2.2",
+        "tutorigo/laravel-ide-macros": "^1.5"
     },
     "autoload": {
         "psr-4": {

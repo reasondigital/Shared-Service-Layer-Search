@@ -90,6 +90,11 @@ Laravel, the framework that the application is based on, will require you to the
 $ php artisan key:generate
 ```
 
+Generate the IDE helper file for Laravel macros:
+```
+$ php artisan ide-helper:macros
+```
+
 ### Confirm your set-up
 Visit [http://localhost](http://localhost) in your browser. You should see the default Laravel welcome page.
 

@@ -1,6 +1,7 @@
 # IDE
 .history
 .idea
+/_ide_macros.php
 
 # Configuration
 /.env
