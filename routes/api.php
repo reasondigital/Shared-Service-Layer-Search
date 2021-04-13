@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Elastic\ArticleController;
-use App\Http\Controllers\Elastic\LocationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,12 +24,14 @@ Route::group(
         switch (config('search.provider.articles')) {
             default:
             case 'elastic':
-                Route::get('/article', [ArticleController::class, 'get']);
-                Route::post('/article', [ArticleController::class, 'store']);
-                Route::put('/article/{article}', [ArticleController::class, 'update']);
-                Route::delete('/article/{article}', [ArticleController::class, 'destroy']);
+                $providerControllerClass = App\Http\Controllers\Elastic\ArticleController::class;
                 break;
         }
+
+        Route::get('/articles', [$providerControllerClass, 'get'])->name('articles.get');
+        Route::post('/articles', [$providerControllerClass, 'store'])->name('articles.post');
+        Route::put('/articles/{article}', [$providerControllerClass, 'update'])->name('articles.put');
+        Route::delete('/articles/{article}', [$providerControllerClass, 'destroy'])->name('articles.delete');
     }
 );
 
@@ -46,11 +46,13 @@ Route::group(
         switch (config('search.provider.locations')) {
             default:
             case 'elastic':
-                Route::get('/location', [LocationController::class, 'get']);
-                Route::post('/location', [LocationController::class, 'store']);
-                Route::put('/location/{id}', [LocationController::class, 'update']);
-                Route::delete('/location/{id}', [LocationController::class, 'destroy']);
+                $providerControllerClass = App\Http\Controllers\Elastic\LocationController::class;
                 break;
         }
+
+        Route::get('/locations', [$providerControllerClass, 'get'])->name('articles.get');
+        Route::post('/locations', [$providerControllerClass, 'store'])->name('articles.post');
+        Route::put('/locations/{id}', [$providerControllerClass, 'update'])->name('articles.put');
+        Route::delete('/locations/{id}', [$providerControllerClass, 'destroy'])->name('articles.delete');
     }
 );
