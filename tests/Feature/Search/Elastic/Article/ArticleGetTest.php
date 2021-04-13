@@ -34,7 +34,7 @@ class ArticleGetTest extends TestCase
      */
     public function query_parameter_is_required()
     {
-        $response = $this->get($this->getEndpoint());
+        $response = $this->get($this->route());
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -56,7 +56,7 @@ class ArticleGetTest extends TestCase
         // Results should be an integer.
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'test',
                 'results' => 'string',
@@ -84,7 +84,7 @@ class ArticleGetTest extends TestCase
         // Results should be an integer.
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'test',
                 'page' => 'string',
@@ -117,7 +117,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'John',
             ]
@@ -139,7 +139,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'shark',
             ]
@@ -161,7 +161,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'shark',
             ]
@@ -183,7 +183,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'peng',
             ]
@@ -205,7 +205,7 @@ class ArticleGetTest extends TestCase
 
         $response = $this->call(
             'GET',
-            $this->getEndpoint(),
+            $this->route(),
             [
                 'query' => 'keyword',
             ]
@@ -214,8 +214,12 @@ class ArticleGetTest extends TestCase
         $this->assertSame($article->id, $response->getData()->data[0]->id);
     }
 
-    private function getEndpoint(): string
+    /**
+     * @return string
+     * @since 1.0.0
+     */
+    private function route(): string
     {
-        return '/api/search/' . config('app.api_version') . '/article';
+        return $this->resourceRoute('articles');
     }
 }

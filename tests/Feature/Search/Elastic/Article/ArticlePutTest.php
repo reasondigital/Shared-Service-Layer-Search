@@ -34,7 +34,7 @@ class ArticlePutTest extends TestCase
 
         // Required
         unset($input['author']);
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -49,7 +49,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['author'] = 123;
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -76,7 +76,7 @@ class ArticlePutTest extends TestCase
 
         // Required
         unset($input['articleBody']);
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -91,7 +91,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['articleBody'] = 123;
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -118,7 +118,7 @@ class ArticlePutTest extends TestCase
 
         // Required
         unset($input['abstract']);
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -133,7 +133,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['abstract'] = 123;
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -160,7 +160,7 @@ class ArticlePutTest extends TestCase
 
         // Required
         unset($input['publisher']);
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -175,7 +175,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['publisher'] = 123;
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -202,7 +202,7 @@ class ArticlePutTest extends TestCase
 
         // Required
         unset($input['datePublished']);
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -217,7 +217,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['datePublished'] = 'string';
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -232,7 +232,7 @@ class ArticlePutTest extends TestCase
 
         // Wrong date format should by Y-m-d
         $input['datePublished'] = '21-01-01';
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -267,7 +267,7 @@ class ArticlePutTest extends TestCase
         $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
         unset($input['updated_at']);
 
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(200);
         $this->assertSame($input['author'], $response->getData()->data[0]->author);
         $this->assertSame(200, $response->getData()->meta->status_code);
@@ -301,7 +301,7 @@ class ArticlePutTest extends TestCase
         $article = Article::factory()->make();
         $input = $this->getValidInput($article);
 
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route(99999), $input);
         $response->assertStatus(404);
     }
 
@@ -315,7 +315,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['thumbnailUrl'] = 123;
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -330,7 +330,7 @@ class ArticlePutTest extends TestCase
 
         // Not url
         $input['thumbnailUrl'] = 'this-is-not-a-url';
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -357,7 +357,7 @@ class ArticlePutTest extends TestCase
 
         // Type
         $input['keywords'] = 'string';
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -375,7 +375,7 @@ class ArticlePutTest extends TestCase
             'valid',
             123, // invalid
         ];
-        $response = $this->put($this->getEndpoint($article), $input);
+        $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
             Controller::VALIDATION_ERROR_CODE,
@@ -404,12 +404,14 @@ class ArticlePutTest extends TestCase
         return $input;
     }
 
-    private function getEndpoint(Article $article): string
+    /**
+     * @param  int  $articleId
+     *
+     * @return string
+     * @since 1.0.0
+     */
+    private function route(int $articleId): string
     {
-        return sprintf(
-            '/api/search/%s/article/%d',
-            config('app.api_version'),
-            $article->id,
-        );
+        return $this->resourceRoute('articles', "/$articleId");
     }
 }
