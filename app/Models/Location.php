@@ -5,6 +5,7 @@ namespace App\Models;
 use ElasticScoutDriverPlus\QueryDsl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Laravel\Scout\Searchable;
 
 /**
@@ -21,7 +22,6 @@ class Location extends Model
 
     /**
      * @return array
-     *
      * @since 1.0.0
      */
     public function toArray(): array {
@@ -32,5 +32,30 @@ class Location extends Model
         $data['@type'] = 'Place';
 
         return $data;
+    }
+
+    /**
+     * @return array
+     * @since 1.0.0
+     */
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+
+        // Wrap the address fields in an 'address' item
+        $array = Arr::wrapKeysWithin($array, 'address', [
+            'streetAddress',
+            'addressRegion',
+            'addressLocality',
+            'addressCountry',
+            'postalCode',
+        ]);
+
+        // Filter out schema items, which will already be in the search index
+        $array = array_filter($array, function ($key) {
+            return strpos($key, '@') !== 0;
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $array;
     }
 }
