@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Response\ApiResponseBuilder;
 use App\Http\Response\JsonApiResponseBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,41 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->addArrMacros();
+    }
+
+    /**
+     * @since 1.0.0
+     */
+    private function addArrMacros()
+    {
+        /**
+         * Looks for the keys given in `$keysToWrap`, wraps them in an array
+         * keyed with `$wrapperKey` and returns the resulting array.
+         *
+         * If the key already exists, it will be overwritten.
+         *
+         * @param array  $array
+         * @param string $wrapperKey
+         * @param array  $keysToWrap
+         *
+         * @return array
+         * @since 1.0.0
+         */
+        Arr::macro('wrapKeysWithin', function (array $array, string $wrapperKey, array $keysToWrap) {
+            $wrapper = [];
+
+            foreach ($keysToWrap as $key) {
+                if (!isset($array[$key])) {
+                    continue;
+                }
+
+                $wrapper[$key] = $array[$key];
+                unset($array[$key]);
+            }
+
+            $array[$wrapperKey] = $wrapper;
+            return $array;
+        });
     }
 }
