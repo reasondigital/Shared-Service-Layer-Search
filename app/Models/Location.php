@@ -49,6 +49,14 @@ class Location extends Model
             'addressLocality',
             'addressCountry',
             'postalCode',
+            'latitude',
+            'longitude',
+        ]);
+
+        // Wrap photo fields up in 'photo' item
+        $array = Arr::wrapKeysWithin($array, 'photo', [
+            'photoUrl',
+            'photoDescription',
         ]);
 
         // Filter out schema items, which will already be in the search index

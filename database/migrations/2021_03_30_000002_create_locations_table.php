@@ -20,6 +20,11 @@ class CreateLocationsTable extends Migration
             $table->char('addressLocality')->nullable();
             $table->char('addressCountry')->nullable();
             $table->char('postalCode')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->text('description')->nullable();
+            $table->text('photoUrl')->nullable();
+            $table->text('photoDescription')->nullable();
             $table->timestamps();
         });
     }
