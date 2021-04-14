@@ -65,7 +65,7 @@ You can now start up the Docker environment to get the application running.
 
 Make sure that the Docker service is running on your system and execute this command from the root of the project:
 ```
-$ docker-compose up -d
+$ docker-compose up
 ```
 
 Docker will begin downloading and building the various services that the application needs to run. This may take a while depending on your internet connection and system. (Future `docker-compose up` calls will take only a fraction of the time after this first build has been completed.)
@@ -101,12 +101,12 @@ Visit [http://localhost](http://localhost) in your browser. You should see the d
 Visit [http://localhost:5601](http://localhost:5601) in your browser to see if the Elasticsearch service is ready. If you see the "Kibana server is not ready yet" message, you may need to wait a few more minutes before checking again.
 
 ### Set up the Search Index
-While logged in to the webserver container, run the following to set up the search index:
+While logged in to the webserver container, run the following to set up the search indices:
 ```
 $ php artisan migrate && php artisan elastic:migrate
 ```
 
-Visit [http://localhost:5601/app/management/data/index_management/indices](http://localhost:5601/app/management/data/index_management/indices), the index management page in Kibana, in your browser to see if the Articles index has been created.
+Visit [http://localhost:5601/app/management/data/index_management/indices](http://localhost:5601/app/management/data/index_management/indices), the index management page in Kibana, in your browser to see if the indices have been created.
 
 You can then seed the database with a small set of faker-generated test data from the command line:
 ```
@@ -121,6 +121,7 @@ $ php artisan tinker
 >>> use ElasticMigrations\Facades\Index;
 >>> Index::drop('articles');
 ```
+
 Then exit out and run
 ```
 $ php artisan elastic:migrate
