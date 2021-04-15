@@ -41,7 +41,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -56,7 +56,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -83,7 +83,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -98,7 +98,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -125,7 +125,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -140,7 +140,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -167,7 +167,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -182,7 +182,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -209,7 +209,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -224,7 +224,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -239,7 +239,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -322,7 +322,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -337,7 +337,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -364,7 +364,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
@@ -382,7 +382,7 @@ class ArticlePutTest extends TestCase
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
-            'The given data was invalid.',
+            'The data provided was invalid. The request has not been fulfilled.',
             $response->getData()->meta->error->error_message
         );
         $this->assertEmpty($response->getData()->data);
