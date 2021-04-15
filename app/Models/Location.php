@@ -64,11 +64,12 @@ class Location extends Model
             'postalCode',
         ]);
 
-        // Wrap lat/lng in the 'coordinates' item
-        $array = Arr::wrapKeysWithin($array, 'coordinates', [
-            'lat',
-            'lon',
-        ]);
+        /*
+         * Wrap lng/lat in the 'coordinates' item. Must be in the order 'lon, lat'.
+         * @link https://www.elastic.co/guide/en/elasticsearch/reference/7.11/geo-point.html
+         */
+        $array['coordinates'] = [$array['longitude'], $array['latitude']];
+        unset($array['longitude'], $array['latitude']);
 
         // Wrap photo fields up in 'photo' item
         $array = Arr::wrapKeysWithin($array, 'photo', [
