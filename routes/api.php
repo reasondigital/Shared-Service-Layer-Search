@@ -50,9 +50,9 @@ Route::group(
                 break;
         }
 
-        Route::get('/locations', [$providerControllerClass, 'get'])->name('articles.get');
-        Route::post('/locations', [$providerControllerClass, 'store'])->name('articles.post');
-        Route::put('/locations/{id}', [$providerControllerClass, 'update'])->name('articles.put');
-        Route::delete('/locations/{id}', [$providerControllerClass, 'destroy'])->name('articles.delete');
+        Route::get('/locations', [$providerControllerClass, 'get'])->name('locations.get');
+        Route::post('/locations', [$providerControllerClass, 'store'])->name('locations.post');
+        Route::put('/locations/{id}', [$providerControllerClass, 'update'])->name('locations.put');
+        Route::delete('/locations/{id}', [$providerControllerClass, 'destroy'])->name('locations.delete');
     }
 );
