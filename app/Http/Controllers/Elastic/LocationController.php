@@ -43,12 +43,24 @@ class LocationController extends Controller
             'photoDescription' => ['sometimes', 'string'],
         ]);
 
-        // If we don't have an error then add the article
+        // If we don't have an error then add the location
         if (!$builder->hasError()) {
-            $article = new Location($request->all());
-            $article->save();
+            $location = new Location($request->all());
+            $location->save();
             $builder->setStatusCode(200);
-            $builder->setData($article->toArray());
+
+            $builder->addLink('get_location', [
+                'type' => 'GET',
+                'href' => route('locations.get'),
+            ]);
+            $builder->addLink('update_location', [
+                'type' => 'PUT',
+                'href' => route('locations.put', ['id' => $location->id]),
+            ]);
+            $builder->addLink('delete_location', [
+                'type' => 'DELETE',
+                'href' => route('locations.delete', ['id' => $location->id]),
+            ]);
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
