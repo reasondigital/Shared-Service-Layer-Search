@@ -20,6 +20,19 @@ class Location extends Model
     use Searchable;
     use QueryDsl;
 
+    protected $fillable = [
+        'streetAddress',
+        'addressRegion',
+        'addressLocality',
+        'addressCountry',
+        'postalCode',
+        'latitude',
+        'longitude',
+        'description',
+        'photoUrl',
+        'photoDescription',
+    ];
+
     /**
      * @return array
      * @since 1.0.0
@@ -49,8 +62,12 @@ class Location extends Model
             'addressLocality',
             'addressCountry',
             'postalCode',
-            'latitude',
-            'longitude',
+        ]);
+
+        // Wrap lat/lng in the 'coordinates' item
+        $array = Arr::wrapKeysWithin($array, 'coordinates', [
+            'lat',
+            'lon',
         ]);
 
         // Wrap photo fields up in 'photo' item

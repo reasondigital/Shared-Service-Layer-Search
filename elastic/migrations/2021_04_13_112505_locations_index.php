@@ -71,14 +71,11 @@ final class LocationsIndex implements MigrationInterface
                     'postalCode' => [
                         'type' => 'text',
                     ],
-                    'latitude' => [
-                        'type' => 'double',
-                    ],
-                    'longitude' => [
-                        'type' => 'double',
-                    ],
                 ],
             ]);
+
+            // Lat/Lng
+            $mapping->geoPoint('coordinates');
 
             $mapping->text('description');
 

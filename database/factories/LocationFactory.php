@@ -28,9 +28,9 @@ class LocationFactory extends Factory
     public function definition(): array
     {
         return [
-            'streetAddress' => $this->faker->streetName(),
+            'streetAddress' => "{$this->faker->numberBetween(1, 199)} {$this->faker->streetName()}",
             'addressRegion' => $this->faker->county(),
-            'addressLocality' => null,
+            //'addressLocality' => '',
             'addressCountry' => 'United Kingdom',
             'postalCode' => $this->faker->postcode(),
             'latitude' => $this->faker->latitude(),
