@@ -36,6 +36,7 @@ class LocationFactory extends Factory
             'latitude' => $this->faker->latitude(),
             'longitude' => $this->faker->longitude(),
             'photoUrl' => $this->faker->imageUrl(),
+            'description' => $this->faker->sentence(15),
             'photoDescription' => $this->faker->sentence(15),
         ];
     }
