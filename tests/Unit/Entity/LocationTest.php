@@ -9,17 +9,17 @@ class LocationTest extends TestCase
 {
     /**
      * Tests:
-     * - toArray will add schema data - Done
+     * - toSearchableArray will add schema data - Done
      */
 
     /**
      * @test
      */
-    public function to_array_add_schema_data()
+    public function to_searchable_array_add_schema_data()
     {
         $article = Location::factory()->make();
 
-        $data = $article->toArray();
+        $data = $article->toSearchableArray();
         $this->assertSame('https://schema.org', $data['@context']);
         $this->assertSame('Place', $data['@type']);
     }
