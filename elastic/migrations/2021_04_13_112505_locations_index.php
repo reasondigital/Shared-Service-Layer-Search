@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Constants\Data;
 use App\Elasticsearch\Analyzers;
 use ElasticAdapter\Indices\Mapping;
 use ElasticAdapter\Indices\Settings;
@@ -36,7 +37,7 @@ final class LocationsIndex implements MigrationInterface
              */
 
             // Schema
-            $mapping->constantKeyword('@context', ['value' => 'https://schema.org']);
+            $mapping->constantKeyword('@context', ['value' => Data::SCHEMA_CONTEXT]);
             $mapping->constantKeyword('@type', ['value' => 'Place']);
             $mapping->nested('@meta', [
                 'properties' => [
@@ -52,6 +53,10 @@ final class LocationsIndex implements MigrationInterface
             // Address
             $mapping->nested('address', [
                 'properties' => [
+                    '@context' => [
+                        'type' => 'constant_keyword',
+                        'value' => Data::SCHEMA_CONTEXT,
+                    ],
                     '@type' => [
                         'type' => 'constant_keyword',
                         'value' => 'PostalAddress',
@@ -75,13 +80,31 @@ final class LocationsIndex implements MigrationInterface
             ]);
 
             // Lat/Lng
-            $mapping->geoPoint('coordinates');
+            $mapping->nested('geo', [
+                'properties' => [
+                    '@context' => [
+                        'type' => 'constant_keyword',
+                        'value' => Data::SCHEMA_CONTEXT,
+                    ],
+                    '@type' => [
+                        'type' => 'constant_keyword',
+                        'value' => 'GeoCoordinates',
+                    ],
+                    'coordinates' => [
+                        'type' => 'geo_point',
+                    ],
+                ],
+            ]);
 
             $mapping->text('description');
 
             // Address photo
             $mapping->nested('photo', [
                 'properties' => [
+                    '@context' => [
+                        'type' => 'constant_keyword',
+                        'value' => Data::SCHEMA_CONTEXT,
+                    ],
                     '@type' => [
                         'type' => 'constant_keyword',
                         'value' => 'ImageObject',
@@ -104,6 +127,10 @@ final class LocationsIndex implements MigrationInterface
 
             $mapping->nested('aggregateRating', [
                 'properties' => [
+                    '@context' => [
+                        'type' => 'constant_keyword',
+                        'value' => Data::SCHEMA_CONTEXT,
+                    ],
                     '@type' => [
                         'type' => 'constant_keyword',
                         'value' => 'AggregateRating',
@@ -119,6 +146,10 @@ final class LocationsIndex implements MigrationInterface
 
             $mapping->nested('openingHoursSpecification', [
                 'properties' => [
+                    '@context' => [
+                        'type' => 'constant_keyword',
+                        'value' => Data::SCHEMA_CONTEXT,
+                    ],
                     '@type' => [
                         'type' => 'constant_keyword',
                         'value' => 'OpeningHoursSpecification',

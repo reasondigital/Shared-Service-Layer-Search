@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\Data;
 use ElasticScoutDriverPlus\QueryDsl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,20 +38,6 @@ class Location extends Model
      * @return array
      * @since 1.0.0
      */
-    public function toArray(): array {
-        $data = parent::toArray();
-
-        // Add schema data
-        $data['@context'] = 'https://schema.org';
-        $data['@type'] = 'Place';
-
-        return $data;
-    }
-
-    /**
-     * @return array
-     * @since 1.0.0
-     */
     public function toSearchableArray(): array
     {
         $array = $this->toArray();
@@ -63,24 +50,36 @@ class Location extends Model
             'addressCountry',
             'postalCode',
         ]);
+        $array['address'] = Arr::prepend($array['address'], 'PostalAddress', '@type');
+        $array['address'] = Arr::prepend($array['address'], Data::SCHEMA_CONTEXT, '@context');
 
         /*
-         * Wrap lng/lat in the 'coordinates' item. Must be in the order 'lon, lat'.
+         * Wrap lng/lat in the 'geo' item
          * @link https://www.elastic.co/guide/en/elasticsearch/reference/7.11/geo-point.html
          */
-        $array['coordinates'] = [$array['longitude'], $array['latitude']];
+        $array['geo'] = [
+            '@context' => Data::SCHEMA_CONTEXT,
+            '@type' => 'GeoCoordinates',
+            'coordinates' => [
+                'lat' => $array['latitude'],
+                'lon' => $array['longitude'],
+            ],
+        ];
         unset($array['longitude'], $array['latitude']);
 
         // Wrap photo fields up in 'photo' item
-        $array = Arr::wrapKeysWithin($array, 'photo', [
-            'photoUrl',
-            'photoDescription',
-        ]);
+        $array['photo'] = [
+            '@context' => Data::SCHEMA_CONTEXT,
+            '@type' => 'ImageObject',
+            'contentUrl' => $array['photoUrl'],
+            'description' => $array['photoDescription'],
+        ];
+        unset($array['photoUrl']);
+        unset($array['photoDescription']);
 
-        // Filter out schema items, which will already be in the search index
-        $array = array_filter($array, function ($key) {
-            return strpos($key, '@') !== 0;
-        }, ARRAY_FILTER_USE_KEY);
+        // Add top level schema data
+        $array = Arr::prepend($array, 'Place', '@type');
+        $array = Arr::prepend($array, Data::SCHEMA_CONTEXT, '@context');
 
         return $array;
     }
