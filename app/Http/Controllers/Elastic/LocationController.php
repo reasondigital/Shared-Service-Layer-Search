@@ -50,10 +50,10 @@ class LocationController extends BaseLocationController
             $location->save();
             $builder->setStatusCode(200);
 
-            $builder->addLink('get_location', [
+            /*$builder->addLink('get_location', [
                 'type' => 'GET',
-                'href' => route('locations.get'),
-            ]);
+                'href' => route('locations.get', ['id' => $location->id]),
+            ]);*/
             $builder->addLink('update_location', [
                 'type' => 'PUT',
                 'href' => route('locations.put', ['id' => $location->id]),
@@ -68,7 +68,7 @@ class LocationController extends BaseLocationController
     }
 
     /**
-     * Retrieve the specified resource.
+     * Perform a search against the resource.
      *
      * todo Implement feature tests for this endpoint.
      *
@@ -78,7 +78,7 @@ class LocationController extends BaseLocationController
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function get(Request $request): JsonResponse
+    public function search(Request $request): JsonResponse
     {
         // Will throw an exception where validation fails
         $builder = $this->validateRequest($request, [
@@ -146,10 +146,10 @@ class LocationController extends BaseLocationController
             $location->save();
             $builder->setStatusCode(200);
 
-            $builder->addLink('get_location', [
+            /*$builder->addLink('get_location', [
                 'type' => 'GET',
-                'href' => route('locations.get'),
-            ]);
+                'href' => route('locations.get', ['id' => $location->id]),
+            ]);*/
             $builder->addLink('delete_location', [
                 'type' => 'DELETE',
                 'href' => route('locations.delete', ['id' => $location->id]),

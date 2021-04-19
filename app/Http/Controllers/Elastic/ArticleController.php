@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Elastic;
 
 use App\Http\Controllers\Controller;
-use App\Http\Response\ApiResponseBuilder;
 use App\Http\Response\JsonApiResponseBuilder;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
@@ -53,15 +52,14 @@ class ArticleController extends Controller
     }
 
     /**
-     * Retrieve the specified resource.
+     * Perform a search against the resource.
      *
      * @param  Request  $request
-     * @param  ApiResponseBuilder  $builder
      *
      * @return JsonResponse
      * @since 1.0.0
      */
-    public function get(Request $request, ApiResponseBuilder $builder): JsonResponse
+    public function search(Request $request): JsonResponse
     {
         // Validate the request first.
         $builder = $this->validateRequest($request, [
