@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Elastic;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseLocationController;
+use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
+use App\Pagination\LengthAwarePaginator;
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,10 +17,8 @@ use Illuminate\Http\Request;
  * @package App\Http\Controllers\Elastic
  * @since 1.0.0
  */
-class LocationController extends Controller
+class LocationController extends BaseLocationController
 {
-    const POSTCODE_REGEX = '/^(([A-Z][0-9]{1,2})|(([A-Z][A-HJ-Y][0-9]{1,2})|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) [0-9][A-Z]{2}$/';
-
     /**
      * Store a newly created resource in storage.
      *
@@ -35,7 +36,7 @@ class LocationController extends Controller
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
             'addressCountry' => ['required', 'string'],
-            'postalCode' => ['required', 'string', 'regex:' . self::POSTCODE_REGEX],
+            'postalCode' => ['required', 'string', 'regex:'.self::POSTCODE_REGEX],
             'latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
             'longitude' => ['required', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
@@ -69,40 +70,120 @@ class LocationController extends Controller
     /**
      * Retrieve the specified resource.
      *
+     * todo Implement feature tests for this endpoint.
+     *
      * @param  Request  $request
      *
      * @return JsonResponse
+     * @throws BindingResolutionException
      * @since 1.0.0
      */
     public function get(Request $request): JsonResponse
     {
-        return response()->json([]);
+        // Will throw an exception where validation fails
+        $builder = $this->validateRequest($request, [
+            'query' => 'required',
+            'results' => 'sometimes|integer',
+        ]);
+
+        if (!$builder->hasError()) {
+            $query = $request->get('query');
+            $perPage = $request->get('results');
+
+            /** @var LengthAwarePaginator $paginator */
+            $paginator = Location::search($query)->paginate($perPage);
+
+            if (!is_null($perPage)) {
+                $paginator->appends('results', $perPage);
+            }
+
+            $found = [];
+            foreach ($paginator as $result) {
+                $found[] = $result->toSearchableArray();
+            }
+
+            // Build successful response.
+            $builder->setStatusCode(200);
+            $builder->setData($found);
+            $builder->addMeta('pagination', $paginator->toArray());
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * todo Implement feature tests for this endpoint.
+     *
      * @param  Request  $request
      * @param  Location  $location
      *
      * @return JsonResponse
+     * @throws BindingResolutionException
      * @since 1.0.0
      */
     public function update(Request $request, Location $location): JsonResponse
     {
-        return response()->json([]);
+        // Validate the request first
+        $builder = $this->validateRequest($request, [
+            'id' => ['required', 'integer'],
+            'streetAddress' => ['sometimes', 'string'],
+            'addressRegion' => ['sometimes', 'string'],
+            'addressLocality' => ['sometimes', 'string'],
+            'addressCountry' => ['sometimes', 'string'],
+            'postalCode' => ['sometimes', 'string', 'regex:'.self::POSTCODE_REGEX],
+            'latitude' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
+            'longitude' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
+            'description' => ['sometimes', 'string'],
+            'photoUrl' => ['sometimes', 'url'],
+            'photoDescription' => ['sometimes', 'string'],
+        ]);
+
+        // If we don't have an error then add the location
+        if (!$builder->hasError()) {
+            $location->fill($request->all());
+            $location->save();
+            $builder->setStatusCode(200);
+
+            $builder->addLink('get_location', [
+                'type' => 'GET',
+                'href' => route('locations.get'),
+            ]);
+            $builder->addLink('delete_location', [
+                'type' => 'DELETE',
+                'href' => route('locations.delete', ['id' => $location->id]),
+            ]);
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Location  $location
+     * todo Implement feature tests for this endpoint.
+     *
+     * @param  int  $id
+     * @param  ApiResponseBuilder  $builder
      *
      * @return JsonResponse
+     * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(Location $location): JsonResponse
+    public function destroy(int $id, ApiResponseBuilder $builder): JsonResponse
     {
-        return response()->json([]);
+        /** @var Location|null $location */
+        $location = Location::find($id);
+
+        if (is_null($location)) {
+            $builder->setError(404, self::NOT_FOUND_ERROR_CODE, 'No location was found with the given ID');
+        } else {
+            $location->delete();
+            // todo Should this be 204 No Content instead?
+            $builder->setStatusCode(200);
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 }

@@ -22,7 +22,15 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    /**
+     * @since 1.0.0
+     */
     const VALIDATION_ERROR_CODE = 'validation_error';
+
+    /**
+     * @since 1.0.0
+     */
+    const NOT_FOUND_ERROR_CODE = 'not_found';
 
     /**
      * @param  Request  $request
