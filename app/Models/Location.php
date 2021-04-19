@@ -48,6 +48,20 @@ class Location extends Model
     ];
 
     /**
+     * Class constructor.
+     *
+     * @param  array  $attributes
+     *
+     * @since 1.0.0
+     */
+    public function __construct(array $attributes = [])
+    {
+        $this->setPerPage(config('search.results_per_page.locations'));
+
+        parent::__construct($attributes);
+    }
+
+    /**
      * @return array
      * @since 1.0.0
      */
