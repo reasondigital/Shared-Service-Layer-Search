@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Response\ApiResponseBuilder;
 use App\Http\Response\JsonApiResponseBuilder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(ApiResponseBuilder::class, JsonApiResponseBuilder::class);
+        $this->app->bind(LengthAwarePaginator::class, \App\Pagination\LengthAwarePaginator::class);
     }
 
     /**
