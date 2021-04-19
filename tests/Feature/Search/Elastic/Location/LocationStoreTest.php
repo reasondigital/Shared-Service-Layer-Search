@@ -257,12 +257,15 @@ class LocationStoreTest extends TestCase
 
         /*
          * Invalid: Not numerical
+         *
+         * Setting the values in `->make()` doesn't work as required because
+         * the model casts those values to float, meaning our erroneous values
+         * get converted to valid ones by the time we run the tests.
          */
-        $nonNumericalLocation = Location::factory()->make([
-            'latitude' => 'invalid',
-            'longitude' => 'invalid',
-        ]);
+        $nonNumericalLocation = Location::factory()->make();
         $nonNumericalData = $nonNumericalLocation->toArray();
+        $nonNumericalData['latitude'] = 'invalid';
+        $nonNumericalData['longitude'] = 'invalid';
 
         $response = $this->post($this->route(), $nonNumericalData);
         $response->assertStatus(400);

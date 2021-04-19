@@ -21,6 +21,10 @@ class Location extends Model
     use Searchable;
     use QueryDsl;
 
+    /**
+     * @var string[]
+     * @since 1.0.0
+     */
     protected $fillable = [
         'streetAddress',
         'addressRegion',
@@ -32,6 +36,15 @@ class Location extends Model
         'description',
         'photoUrl',
         'photoDescription',
+    ];
+
+    /**
+     * @var string[]
+     * @since 1.0.0
+     */
+    protected $casts = [
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     /**
