@@ -37,7 +37,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -52,7 +52,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -79,7 +79,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -94,7 +94,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -121,7 +121,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -136,7 +136,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -163,7 +163,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -178,7 +178,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -205,7 +205,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -220,7 +220,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -235,7 +235,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -318,7 +318,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -333,7 +333,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -360,7 +360,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -378,7 +378,7 @@ class ArticlePutTest extends TestCase
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(

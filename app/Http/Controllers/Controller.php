@@ -25,12 +25,12 @@ class Controller extends BaseController
     /**
      * @since 1.0.0
      */
-    const VALIDATION_ERROR_CODE = 'validation_error';
+    const ERROR_CODE_VALIDATION = 'validation_error';
 
     /**
      * @since 1.0.0
      */
-    const NOT_FOUND_ERROR_CODE = 'not_found';
+    const ERROR_CODE_NOT_FOUND = 'not_found';
 
     /**
      * @param  Request  $request
@@ -54,7 +54,7 @@ class Controller extends BaseController
         if ($validator->fails()) {
             $builder->setError(
                 400,
-                self::VALIDATION_ERROR_CODE,
+                self::ERROR_CODE_VALIDATION,
                 'The data provided was invalid. The request has not been fulfilled.'
             );
 

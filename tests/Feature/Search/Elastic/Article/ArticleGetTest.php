@@ -37,7 +37,7 @@ class ArticleGetTest extends TestCase
         $response = $this->get($this->route());
         $response->assertStatus(400);
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -65,7 +65,7 @@ class ArticleGetTest extends TestCase
         $response->assertStatus(400);
 
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(
@@ -93,7 +93,7 @@ class ArticleGetTest extends TestCase
         $response->assertStatus(400);
 
         $this->assertSame(
-            Controller::VALIDATION_ERROR_CODE,
+            Controller::ERROR_CODE_VALIDATION,
             $response->getData()->meta->error->error_type
         );
         $this->assertSame(

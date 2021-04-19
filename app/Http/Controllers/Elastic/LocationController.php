@@ -177,7 +177,7 @@ class LocationController extends BaseLocationController
         $location = Location::find($id);
 
         if (is_null($location)) {
-            $builder->setError(404, self::NOT_FOUND_ERROR_CODE, 'No location was found with the given ID');
+            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, 'No location was found with the given ID');
         } else {
             $location->delete();
             // todo Should this be 204 No Content instead?
