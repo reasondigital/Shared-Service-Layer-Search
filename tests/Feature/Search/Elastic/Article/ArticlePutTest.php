@@ -269,9 +269,14 @@ class ArticlePutTest extends TestCase
 
         $response = $this->put($this->route($article->id), $input);
         $response->assertStatus(200);
-        $this->assertSame($input['author'], $response->getData()->data[0]->author);
+        $this->assertSame($input['author'], $response->getData()->data->author);
         $this->assertSame(200, $response->getData()->meta->status_code);
-        $this->assertEmpty($response->getData()->links);
+
+        $this->assertSame('DELETE', $response->getData()->links->delete_article->type);
+        $this->assertSame(
+            url($this->route($response->getData()->data->id)),
+            $response->getData()->links->delete_article->href
+        );
 
         Search::assertSynced($article, function ($record) use ($article) {
             return $record['author'] === 'New Author';

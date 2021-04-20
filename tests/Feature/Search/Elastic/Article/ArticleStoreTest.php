@@ -251,10 +251,21 @@ class ArticleStoreTest extends TestCase
         unset($input['updated_at']);
 
         $response = $this->post($this->route(), $input);
-        $response->assertStatus(200);
-        $this->assertSame($input['author'], $response->getData()->data[0]->author);
-        $this->assertSame(200, $response->getData()->meta->status_code);
-        $this->assertEmpty($response->getData()->links);
+        $response->assertStatus(201);
+        $this->assertSame($input['author'], $response->getData()->data->author);
+        $this->assertSame(201, $response->getData()->meta->status_code);
+
+        $this->assertSame('PUT', $response->getData()->links->update_article->type);
+        $this->assertSame(
+            url($this->route("/{$response->getData()->data->id}")),
+            $response->getData()->links->update_article->href
+        );
+
+        $this->assertSame('DELETE', $response->getData()->links->delete_article->type);
+        $this->assertSame(
+            url($this->route("/{$response->getData()->data->id}")),
+            $response->getData()->links->delete_article->href
+        );
 
         // we assert we have *something* as the package we're using wants to
         // check persisted models are in the index.
@@ -359,11 +370,13 @@ class ArticleStoreTest extends TestCase
     }
 
     /**
+     * @param  string  $path
+     *
      * @return string
      * @since 1.0.0
      */
-    private function route(): string
+    private function route(string $path = ''): string
     {
-        return $this->resourceRoute('articles');
+        return $this->resourceRoute('articles', $path);
     }
 }

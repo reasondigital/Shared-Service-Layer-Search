@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Locations API controller for Elasticsearch.
@@ -48,7 +49,8 @@ class LocationController extends BaseLocationController
         if (!$builder->hasError()) {
             $location = new Location($request->all());
             $location->save();
-            $builder->setStatusCode(200);
+            $builder->setStatusCode(201);
+            $builder->setData($location->toSearchableArray());
 
             /*$builder->addLink('get_location', [
                 'type' => 'GET',
@@ -82,8 +84,9 @@ class LocationController extends BaseLocationController
     {
         // Will throw an exception where validation fails
         $builder = $this->validateRequest($request, [
-            'query' => 'required',
-            'results' => 'sometimes|integer',
+            'query' => ['required'],
+            'results' => ['sometimes', 'integer'],
+            'page' => ['sometimes', 'integer'],
         ]);
 
         if (!$builder->hasError()) {
@@ -117,14 +120,26 @@ class LocationController extends BaseLocationController
      * todo Implement feature tests for this endpoint.
      *
      * @param  Request  $request
-     * @param  Location  $location
+     * @param  int  $id
      *
      * @return JsonResponse
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function update(Request $request, Location $location): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
+        /** @var Location|null $location */
+        $location = Location::find($id);
+
+        if (is_null($location)) {
+            // Get response builder
+            $builder = app()->make(ApiResponseBuilder::class);
+
+            // Set and send error
+            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
+
         // Validate the request first
         $builder = $this->validateRequest($request, [
             'id' => ['required', 'integer'],
@@ -142,9 +157,10 @@ class LocationController extends BaseLocationController
 
         // If we don't have an error then add the location
         if (!$builder->hasError()) {
-            $location->fill($request->all());
+            $location->update($request->all());
             $location->save();
             $builder->setStatusCode(200);
+            $builder->setData($location->toSearchableArray());
 
             /*$builder->addLink('get_location', [
                 'type' => 'GET',
@@ -167,23 +183,21 @@ class LocationController extends BaseLocationController
      * @param  int  $id
      * @param  ApiResponseBuilder  $builder
      *
-     * @return JsonResponse
+     * @return JsonResponse|Response
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(int $id, ApiResponseBuilder $builder): JsonResponse
+    public function destroy(int $id, ApiResponseBuilder $builder)
     {
         /** @var Location|null $location */
         $location = Location::find($id);
 
         if (is_null($location)) {
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, 'No location was found with the given ID');
+            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
         } else {
             $location->delete();
-            // todo Should this be 204 No Content instead?
-            $builder->setStatusCode(200);
+            return response()->noContent();
         }
-
-        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 }

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Elastic;
 
-use App\Http\Controllers\Controller;
-use App\Http\Response\JsonApiResponseBuilder;
+use App\Http\Controllers\BaseArticleController;
+use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
+use App\Pagination\LengthAwarePaginator;
+use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * Articles API controller for Elasticsearch.
@@ -14,8 +18,11 @@ use Illuminate\Http\Request;
  * @package App\Http\Controllers\Elastic
  * @since 1.0.0
  */
-class ArticleController extends Controller
+class ArticleController extends BaseArticleController
 {
+    /**
+     * @since 1.0.0
+     */
     const PUBLISHED_DATE_FORMAT = 'Y-m-d';
 
     /**
@@ -24,28 +31,42 @@ class ArticleController extends Controller
      * @param  Request  $request
      *
      * @return JsonResponse
+     * @throws BindingResolutionException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
     {
         // Validate the request first.
         $builder = $this->validateRequest($request, [
-            'articleBody' => 'required|string',
-            'abstract' => 'required|string',
-            'author' => 'required|string',
-            'publisher' => 'required|string',
-            'datePublished' => 'required|date_format:Y-m-d',
-            'thumbnailUrl' => 'sometimes|url',
-            'keywords' => 'sometimes|array',
-            'keywords.*' => 'string',
+            'articleBody' => ['required', 'string'],
+            'abstract' => ['required', 'string'],
+            'author' => ['required', 'string'],
+            'publisher' => ['required', 'string'],
+            'datePublished' => ['required', 'date_format:Y-m-d'],
+            'thumbnailUrl' => ['sometimes', 'url'],
+            'keywords' => ['sometimes', 'array'],
+            'keywords.*' => ['string'],
         ]);
 
         // If we don't have an error then add the article.
         if (!$builder->hasError()) {
             $article = new Article($request->all());
             $article->save();
-            $builder->setStatusCode(200);
-            $builder->setData([$article->toArray()]);
+            $builder->setStatusCode(201);
+            $builder->setData($article->toSearchableArray());
+
+            /*$builder->addLink('get_article', [
+                'type' => 'GET',
+                'href' => route('articles.get', ['id' => $article->id]),
+            ]);*/
+            $builder->addLink('update_article', [
+                'type' => 'PUT',
+                'href' => route('articles.put', ['id' => $article->id]),
+            ]);
+            $builder->addLink('delete_article', [
+                'type' => 'DELETE',
+                'href' => route('articles.delete', ['id' => $article->id]),
+            ]);
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
@@ -63,22 +84,33 @@ class ArticleController extends Controller
     {
         // Validate the request first.
         $builder = $this->validateRequest($request, [
-            'query' => 'required',
-            'results' => 'sometimes|integer',
-            'page' => 'sometimes|integer'
+            'query' => ['required'],
+            'results' => ['sometimes', 'integer'],
+            'page' => ['sometimes', 'integer'],
         ]);
 
         // If we don't have an error then do the search.
         if (!$builder->hasError()) {
             // Do the search via scout.
             $query = $request->get('query');
-            // @todo - Page and results need to be passed too?
-            // @todo - Paginate with this: https://laravel.com/docs/8.x/scout#pagination
-            $found = Article::search($query)->get()->toArray();
+            $perPage = $request->get('results');
+
+            /** @var LengthAwarePaginator $paginator */
+            $paginator = Article::search($query)->paginate($perPage);
+
+            if (!is_null($perPage)) {
+                $paginator->appends('results', $perPage);
+            }
+
+            $found = [];
+            foreach ($paginator as $result) {
+                $found[] = $result->toSearchableArray();
+            }
 
             // Build successful response.
             $builder->setStatusCode(200);
             $builder->setData($found);
+            $builder->addMeta('pagination', $paginator->toArray());
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
@@ -88,28 +120,41 @@ class ArticleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  Article  $article
+     * @param  int  $id
      *
      * @todo - Will we allow a partial update or does the whole thing need to be
      * submitted?
      *
      * @return JsonResponse
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @since 1.0.0
      */
-    public function update(Request $request, Article $article): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
+        /** @var Article $article */
+        $article = Article::find($id);
+
+        if (is_null($article)) {
+            // Get response builder
+            $builder = app()->make(ApiResponseBuilder::class);
+
+            // Set and send error
+            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
+
         // Validate the request first.
         // @todo - Keeping the rules separate for now in case we need to split
         // @todo - between add and update
         $builder = $this->validateRequest($request, [
-            'articleBody' => 'required|string',
-            'abstract' => 'required|string',
-            'author' => 'required|string',
-            'publisher' => 'required|string',
-            'datePublished' => 'required|date_format:Y-m-d',
-            'thumbnailUrl' => 'sometimes|url',
-            'keywords' => 'sometimes|array',
-            'keywords.*' => 'string',
+            'articleBody' => ['required', 'string'],
+            'abstract' => ['required', 'string'],
+            'author' => ['required', 'string'],
+            'publisher' => ['required', 'string'],
+            'datePublished' => ['required', 'date_format:Y-m-d'],
+            'thumbnailUrl' => ['sometimes', 'url'],
+            'keywords' => ['sometimes', 'array'],
+            'keywords.*' => ['string'],
         ]);
 
         // If we don't have an error then add the article.
@@ -117,7 +162,16 @@ class ArticleController extends Controller
             $article->update($request->all());
             $article->save();
             $builder->setStatusCode(200);
-            $builder->setData([$article->toArray()]);
+            $builder->setData($article->toSearchableArray());
+
+            /*$builder->addLink('get_article', [
+                'type' => 'GET',
+                'href' => route('articles.get', ['id' => $article->id]),
+            ]);*/
+            $builder->addLink('delete_article', [
+                'type' => 'DELETE',
+                'href' => route('articles.delete', ['id' => $article->id]),
+            ]);
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
@@ -126,17 +180,24 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Article  $article
+     * @param  int  $id
+     * @param  ApiResponseBuilder  $builder
      *
-     * @return JsonResponse
+     * @return JsonResponse|Response
+     * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(Article $article): JsonResponse
+    public function destroy(int $id, ApiResponseBuilder $builder)
     {
-        $article->delete();
-        $builder = new JsonApiResponseBuilder();
-        $builder->setStatusCode(200);
-        $builder->setData([]);
-        return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        /** @var Article $article */
+        $article = Article::find($id);
+
+        if (is_null($article)) {
+            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        } else {
+            $article->delete();
+            return response()->noContent();
+        }
     }
 }

@@ -35,7 +35,7 @@ class LocationStoreTest extends TestCase
         ]);
         $validStreetData = $validStreetLocation->toArray();
         $response = $this->post($this->route(), $validStreetData);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         /*
          * Invalid: missing
@@ -73,7 +73,7 @@ class LocationStoreTest extends TestCase
             'addressRegion' => 'Greater Manchester',
         ]);
         $validRegionData = $validRegionLocation->toArray();
-        $this->post($this->route(), $validRegionData)->assertStatus(200);
+        $this->post($this->route(), $validRegionData)->assertStatus(201);
 
         /**
          * Invalid: not a string
@@ -100,7 +100,7 @@ class LocationStoreTest extends TestCase
             'addressLocality' => 'Salford',
         ]);
         $validRegionData = $validRegionLocation->toArray();
-        $this->post($this->route(), $validRegionData)->assertStatus(200);
+        $this->post($this->route(), $validRegionData)->assertStatus(201);
 
         /**
          * Invalid: not a string
@@ -127,7 +127,7 @@ class LocationStoreTest extends TestCase
             'addressCountry' => 'United Kingdom',
         ]);
         $validCountryData = $validCountryLocation->toArray();
-        $this->post($this->route(), $validCountryData)->assertStatus(200);
+        $this->post($this->route(), $validCountryData)->assertStatus(201);
 
         /*
          * Invalid: missing
@@ -165,7 +165,7 @@ class LocationStoreTest extends TestCase
             'postalCode' => 'A9 9AA',
         ]);
         $validPostalCodeData = $validPostalCodeLocation->toArray();
-        $this->post($this->route(), $validPostalCodeData)->assertStatus(200);
+        $this->post($this->route(), $validPostalCodeData)->assertStatus(201);
 
         /*
          * Invalid: missing
@@ -240,7 +240,7 @@ class LocationStoreTest extends TestCase
             'longitude' => '-2.235981',
         ]);
         $validLatLonData = $validLatLonLocation->toArray();
-        $this->post($this->route(), $validLatLonData)->assertStatus(200);
+        $this->post($this->route(), $validLatLonData)->assertStatus(201);
 
         /*
          * Invalid: missing

@@ -28,11 +28,11 @@ Route::group(
                 break;
         }
 
-        //Route::get('/articles/{article}', [$providerControllerClass, 'get'])->name('articles.get');
         Route::post('/articles', [$providerControllerClass, 'store'])->name('articles.post');
+        Route::get('/articles/{id}', [$providerControllerClass, 'get'])->name('articles.get');
         Route::get('/articles', [$providerControllerClass, 'search'])->name('articles.search');
-        Route::put('/articles/{article}', [$providerControllerClass, 'update'])->name('articles.put');
-        Route::delete('/articles/{article}', [$providerControllerClass, 'destroy'])->name('articles.delete');
+        Route::put('/articles/{id}', [$providerControllerClass, 'update'])->name('articles.put');
+        Route::delete('/articles/{id}', [$providerControllerClass, 'destroy'])->name('articles.delete');
     }
 );
 
@@ -51,8 +51,8 @@ Route::group(
                 break;
         }
 
-        //Route::get('/locations/{id}', [$providerControllerClass, 'get'])->name('locations.get');
         Route::post('/locations', [$providerControllerClass, 'store'])->name('locations.post');
+        Route::get('/locations/{id}', [$providerControllerClass, 'get'])->name('locations.get');
         Route::get('/locations', [$providerControllerClass, 'search'])->name('locations.search');
         Route::put('/locations/{id}', [$providerControllerClass, 'update'])->name('locations.put');
         Route::delete('/locations/{id}', [$providerControllerClass, 'destroy'])->name('locations.delete');
