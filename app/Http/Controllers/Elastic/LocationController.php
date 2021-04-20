@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Elastic;
 
+use App\Constants\Data;
 use App\Http\Controllers\BaseLocationController;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
@@ -37,7 +38,7 @@ class LocationController extends BaseLocationController
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
             'addressCountry' => ['required', 'string'],
-            'postalCode' => ['required', 'string', 'regex:'.self::POSTCODE_REGEX],
+            'postalCode' => ['required', 'string', 'regex:'.Data::POSTCODE_REGEX],
             'latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
             'longitude' => ['required', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
@@ -147,7 +148,7 @@ class LocationController extends BaseLocationController
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
             'addressCountry' => ['sometimes', 'string'],
-            'postalCode' => ['sometimes', 'string', 'regex:'.self::POSTCODE_REGEX],
+            'postalCode' => ['sometimes', 'string', 'regex:'.Data::POSTCODE_REGEX],
             'latitude' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
             'longitude' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
