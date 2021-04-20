@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Location;
-use Illuminate\Http\Request;
-
 /**
  *
  *
  * @package App\Http\Controllers
  * @since 1.0.0
  */
-abstract class BaseLocationController extends Controller
+abstract class BaseLocationController extends SearchController
 {
     /**
      * @since 1.0.0

@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
-use Illuminate\Http\Request;
-
 /**
  *
  *
  * @package App\Http\Controllers
  * @since 1.0.0
  */
-abstract class BaseArticleController extends Controller
+abstract class BaseArticleController extends SearchController
 {
     /**
      * @since 1.0.0

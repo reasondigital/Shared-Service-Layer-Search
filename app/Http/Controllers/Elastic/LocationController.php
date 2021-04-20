@@ -181,18 +181,18 @@ class LocationController extends BaseLocationController
      * todo Implement feature tests for this endpoint.
      *
      * @param  int  $id
-     * @param  ApiResponseBuilder  $builder
      *
      * @return JsonResponse|Response
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(int $id, ApiResponseBuilder $builder)
+    public function destroy(int $id)
     {
         /** @var Location|null $location */
         $location = Location::find($id);
 
         if (is_null($location)) {
+            $builder = app()->make(ApiResponseBuilder::class);
             $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         } else {

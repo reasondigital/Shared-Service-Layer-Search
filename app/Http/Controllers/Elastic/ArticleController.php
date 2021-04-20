@@ -126,7 +126,7 @@ class ArticleController extends BaseArticleController
      * submitted?
      *
      * @return JsonResponse
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      * @since 1.0.0
      */
     public function update(Request $request, int $id): JsonResponse
@@ -181,18 +181,18 @@ class ArticleController extends BaseArticleController
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @param  ApiResponseBuilder  $builder
      *
      * @return JsonResponse|Response
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(int $id, ApiResponseBuilder $builder)
+    public function destroy(int $id)
     {
         /** @var Article $article */
         $article = Article::find($id);
 
         if (is_null($article)) {
+            $builder = app()->make(ApiResponseBuilder::class);
             $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         } else {
