@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Geo\Location;
+namespace App\Geo\Coding;
 
 use App\Geo\Address;
 
