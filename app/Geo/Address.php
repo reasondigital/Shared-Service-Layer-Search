@@ -8,12 +8,12 @@ use App\Exceptions\GeoAddressException;
  * todo Implement unit tests for this class.
  *
  * @property string $streetAddress
- * @property string $addressRegion
- * @property string $addressLocality
+ * @property string $addressLocality Typically the city (e.g. Salford)
+ * @property string $addressRegion   Typically the county (e.g. Greater Manchester)
  * @property string $addressCountry
  * @property string $postalCode
- * @property string $latitude
- * @property string $longitude
+ * @property float  $latitude
+ * @property float  $longitude
  *
  * @package App\Geo
  * @since 1.0.0
@@ -29,7 +29,8 @@ class Address
     /**
      * Class constructor.
      *
-     * @param  array  $addressLines
+     * @param  array  $addressLines Pass empty strings for required lines if
+     *                              an actual value isn't available.
      *
      * @throws GeoAddressException
      * @since 1.0.0
