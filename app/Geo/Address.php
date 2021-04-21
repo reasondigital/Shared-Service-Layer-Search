@@ -2,7 +2,7 @@
 
 namespace App\Geo;
 
-use App\Exceptions\LocationsAddressException;
+use App\Exceptions\GeoAddressException;
 
 /**
  * todo Implement unit tests for this class.
@@ -31,7 +31,7 @@ class Address
      *
      * @param  array  $addressLines
      *
-     * @throws LocationsAddressException
+     * @throws GeoAddressException
      * @since 1.0.0
      */
     public function __construct(array $addressLines)
@@ -54,7 +54,7 @@ class Address
         if (!empty($missing)) {
             $missingLines = implode("', '", $missing);
             $className = __CLASS__;
-            throw new LocationsAddressException("Missing required address lines ('$missingLines') while instantiating the `$className` class");
+            throw new GeoAddressException("Missing required address lines ('$missingLines') while instantiating the `$className` class");
         }
 
         $this->lines = $addressLines;
