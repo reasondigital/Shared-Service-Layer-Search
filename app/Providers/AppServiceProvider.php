@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Geo\Coding\OpenStreetMapSearch;
+use App\Geo\Coding\Search;
 use App\Http\Response\ApiResponseBuilder;
 use App\Http\Response\JsonApiResponseBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ApiResponseBuilder::class, JsonApiResponseBuilder::class);
         $this->app->bind(LengthAwarePaginator::class, \App\Pagination\LengthAwarePaginator::class);
+
+        $this->registerGeoCodingProvider();
     }
 
     /**
@@ -29,6 +33,26 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->addArrMacros();
+    }
+
+    /**
+     * @since 1.0.0
+     */
+    private function registerGeoCodingProvider()
+    {
+        switch (config('geo.coding.provider')) {
+            case 'openstreetmap':
+                $this->app->bind(Search::class, function ($app, $params) {
+                    if (isset($params['apiUrl'])) {
+                        $apiUrl = $params['apiUrl'];
+                    } else {
+                        $apiUrl = config('geo.coding.api.url');
+                    }
+
+                    return $app->make(OpenStreetMapSearch::class, ['apiUrl' => $apiUrl]);
+                });
+                break;
+        }
     }
 
     /**

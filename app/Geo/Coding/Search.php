@@ -13,12 +13,24 @@ use App\Geo\Address;
 interface Search
 {
     /**
-     * @param  string  $address
-     *
-     * @return Address
+     * @return string|null
      * @since 1.0.0
      */
-    public function find(string $address): Address;
+    public function apiKey(): ?string;
+
+    /**
+     * @return string
+     * @since 1.0.0
+     */
+    public function apiUrl(): string;
+
+    /**
+     * @param  string  $address
+     *
+     * @return Address|null
+     * @since 1.0.0
+     */
+    public function find(string $address): ?Address;
 
     /**
      * @param  string  $postalCode
@@ -26,7 +38,7 @@ interface Search
      * @return Address
      * @since 1.0.0
      */
-    public function findByPostalCode(string $postalCode): Address;
+    public function findByPostalCode(string $postalCode): ?Address;
 
     /**
      * @param  string  $postalCode
