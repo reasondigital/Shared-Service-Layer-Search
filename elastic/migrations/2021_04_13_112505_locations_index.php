@@ -64,10 +64,10 @@ final class LocationsIndex implements MigrationInterface
                     'streetAddress' => [
                         'type' => 'text',
                     ],
-                    'addressRegion' => [
+                    'addressLocality' => [
                         'type' => 'text',
                     ],
-                    'addressLocality' => [
+                    'addressRegion' => [
                         'type' => 'text',
                     ],
                     'addressCountry' => [

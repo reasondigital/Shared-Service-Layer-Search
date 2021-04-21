@@ -30,7 +30,7 @@ class LocationFactory extends Factory
         return [
             'streetAddress' => "{$this->faker->numberBetween(1, 199)} {$this->faker->streetName()}",
             'addressRegion' => $this->faker->county(),
-            //'addressLocality' => '',
+            'addressLocality' => $this->faker->city(),
             'addressCountry' => 'United Kingdom',
             'postalCode' => $this->faker->postcode(),
             'latitude' => $this->faker->latitude(),
