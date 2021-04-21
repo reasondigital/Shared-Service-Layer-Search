@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Locations;
+namespace App\Geo;
 
 use App\Exceptions\LocationsAddressException;
 
@@ -15,7 +15,7 @@ use App\Exceptions\LocationsAddressException;
  * @property string $latitude
  * @property string $longitude
  *
- * @package App\Locations
+ * @package App\Geo
  * @since 1.0.0
  */
 class Address

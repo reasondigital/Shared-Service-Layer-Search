@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Locations\Address;
+namespace App\Geo\Location;
 
-use App\Locations\Address;
+use App\Geo\Address;
 
 /**
- * Postcodes.io lookup integration class.
+ * Postcodes.io address search integration class.
  *
  * todo Implement unit tests for this class.
  *
- * @package App\Locations\Address
+ * @package App\Geo\Location
  * @since 1.0.0
  */
-class PostcodesIoLookup implements Lookup
+class PostcodesIoSearch implements Search
 {
     /**
      * @var string

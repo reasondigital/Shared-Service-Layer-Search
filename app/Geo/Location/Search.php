@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Locations\Address;
+namespace App\Geo\Location;
 
-use App\Locations\Address;
+use App\Geo\Address;
 
 /**
- * Contract for address lookup classes.
+ * Contract for address search implementation classes.
  *
- * @package App\Locations\Address
+ * @package App\Geo\Location
  * @since 1.0.0
  */
-interface Lookup
+interface Search
 {
     /**
      * @param  string  $address
