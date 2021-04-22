@@ -11,7 +11,7 @@ use Illuminate\Http\Response;
  * work with a search-indexed entity.
  *
  * @package App\Http\Controllers
- * @since 1.0.0
+ * @since   1.0.0
  */
 abstract class SearchController extends Controller
 {
@@ -29,12 +29,12 @@ abstract class SearchController extends Controller
      * Retrieve the specified resource.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  int      $id
      *
      * @return JsonResponse
      * @since 1.0.0
      */
-    //abstract public function get(Request $request, int $id): JsonResponse;
+    abstract public function get(Request $request, int $id): JsonResponse;
 
     /**
      * Perform a search against the resource.
@@ -50,7 +50,7 @@ abstract class SearchController extends Controller
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  int      $id
      *
      * @return JsonResponse
      * @since 1.0.0

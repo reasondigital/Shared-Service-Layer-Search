@@ -10,18 +10,16 @@ use App\Models\Location;
 use App\Pagination\DataNormalise;
 use ElasticScoutDriverPlus\Builders\BoolQueryBuilder;
 use ElasticScoutDriverPlus\QueryMatch;
-use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 
 /**
  * Locations API controller for Elasticsearch.
  *
  * @package App\Http\Controllers\Elastic
- * @since 1.0.0
+ * @since   1.0.0
  */
 class LocationController extends BaseLocationController
 {
@@ -66,10 +64,10 @@ class LocationController extends BaseLocationController
             $builder->setStatusCode(201);
             $builder->setData($location->toSearchableArray());
 
-            /*$builder->addLink('get_location', [
+            $builder->addLink('get_location', [
                 'type' => 'GET',
                 'href' => route('locations.get', ['id' => $location->id]),
-            ]);*/
+            ]);
             $builder->addLink('update_location', [
                 'type' => 'PUT',
                 'href' => route('locations.put', ['id' => $location->id]),
@@ -200,7 +198,7 @@ class LocationController extends BaseLocationController
      * todo Implement feature tests for this endpoint.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  int      $id
      *
      * @return JsonResponse
      * @throws BindingResolutionException
@@ -242,10 +240,10 @@ class LocationController extends BaseLocationController
             $builder->setStatusCode(200);
             $builder->setData($location->toSearchableArray());
 
-            /*$builder->addLink('get_location', [
+            $builder->addLink('get_location', [
                 'type' => 'GET',
                 'href' => route('locations.get', ['id' => $location->id]),
-            ]);*/
+            ]);
             $builder->addLink('delete_location', [
                 'type' => 'DELETE',
                 'href' => route('locations.delete', ['id' => $location->id]),
@@ -253,31 +251,5 @@ class LocationController extends BaseLocationController
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * todo Implement feature tests for this endpoint.
-     *
-     * @param  int  $id
-     *
-     * @return JsonResponse|Response
-     * @throws Exception
-     * @since 1.0.0
-     */
-    public function destroy(int $id)
-    {
-        /** @var Location|null $location */
-        $location = Location::find($id);
-
-        if (is_null($location)) {
-            $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        } else {
-            $location->delete();
-            return response()->noContent();
-        }
     }
 }

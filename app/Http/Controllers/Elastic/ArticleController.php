@@ -6,11 +6,9 @@ use App\Http\Controllers\BaseArticleController;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use App\Pagination\LengthAwarePaginator;
-use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Articles API controller for Elasticsearch.
@@ -55,10 +53,10 @@ class ArticleController extends BaseArticleController
             $builder->setStatusCode(201);
             $builder->setData($article->toSearchableArray());
 
-            /*$builder->addLink('get_article', [
+            $builder->addLink('get_article', [
                 'type' => 'GET',
                 'href' => route('articles.get', ['id' => $article->id]),
-            ]);*/
+            ]);
             $builder->addLink('update_article', [
                 'type' => 'PUT',
                 'href' => route('articles.put', ['id' => $article->id]),
@@ -164,10 +162,10 @@ class ArticleController extends BaseArticleController
             $builder->setStatusCode(200);
             $builder->setData($article->toSearchableArray());
 
-            /*$builder->addLink('get_article', [
+            $builder->addLink('get_article', [
                 'type' => 'GET',
                 'href' => route('articles.get', ['id' => $article->id]),
-            ]);*/
+            ]);
             $builder->addLink('delete_article', [
                 'type' => 'DELETE',
                 'href' => route('articles.delete', ['id' => $article->id]),
@@ -175,29 +173,5 @@ class ArticleController extends BaseArticleController
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return JsonResponse|Response
-     * @throws Exception
-     * @since 1.0.0
-     */
-    public function destroy(int $id)
-    {
-        /** @var Article $article */
-        $article = Article::find($id);
-
-        if (is_null($article)) {
-            $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        } else {
-            $article->delete();
-            return response()->noContent();
-        }
     }
 }
