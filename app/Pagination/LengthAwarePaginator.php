@@ -24,17 +24,6 @@ class LengthAwarePaginator extends IlluminateLengthAwarePaginator
      */
     public function toArray(): array
     {
-        $paginationData = parent::toArray();
-
-        return [
-            'current_page' => (int) $paginationData['current_page'],
-            'per_page' => (int) $paginationData['per_page'],
-            'total_pages' => (int) $paginationData['last_page'],
-            'total_entries' => (int) $paginationData['total'],
-            'first_page' => $paginationData['first_page_url'] ?? '',
-            'last_page' => $paginationData['last_page_url'] ?? '',
-            'next_page' => $paginationData['next_page_url'] ?? '',
-            'prev_page' => $paginationData['prev_page_url'] ?? '',
-        ];
+        return DataNormalise::fromIlluminatePaginator(parent::toArray());
     }
 }
