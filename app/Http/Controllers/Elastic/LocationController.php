@@ -6,12 +6,15 @@ use App\Constants\Data;
 use App\Http\Controllers\BaseLocationController;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
-use App\Pagination\LengthAwarePaginator;
+use App\Pagination\DataNormalise;
+use ElasticScoutDriverPlus\Builders\BoolQueryBuilder;
+use ElasticScoutDriverPlus\QueryMatch;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 /**
  * Locations API controller for Elasticsearch.
@@ -21,6 +24,15 @@ use Illuminate\Http\Response;
  */
 class LocationController extends BaseLocationController
 {
+    /**
+     * @since 1.0.0
+     */
+    const SEARCH_BY_OPTIONS = [
+        'free-query',
+        'coords',
+        'postcode',
+    ];
+
     /**
      * Store a newly created resource in storage.
      *
@@ -83,33 +95,64 @@ class LocationController extends BaseLocationController
      */
     public function search(Request $request): JsonResponse
     {
-        // Will throw an exception where validation fails
         $builder = $this->validateRequest($request, [
+            'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
             'query' => ['required'],
             'results' => ['sometimes', 'integer'],
             'page' => ['sometimes', 'integer'],
         ]);
 
-        if (!$builder->hasError()) {
-            $query = $request->get('query');
-            $perPage = $request->get('results');
+        // Exit early if we have an error
+        if ($builder->hasError()) {
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
 
-            /** @var LengthAwarePaginator $paginator */
-            $paginator = Location::search($query)->paginate($perPage);
+        $by = $request->get('by');
+        $query = $request->get('query');
+        $perPage = $request->get('results');
+        if ($perPage === null) {
+            $perPage = config('search.results_per_page.locations');
+        }
 
-            if (!is_null($perPage)) {
-                $paginator->appends('results', $perPage);
-            }
+        switch ($by) {
+            case 'coords':
+                $latLng = explode(',', $query);
 
-            $found = [];
-            foreach ($paginator as $result) {
-                $found[] = $result->toSearchableArray();
-            }
+                $locationQuery = (new BoolQueryBuilder)
+                    ->must('match_all')
+                    ->filter('geo_distance', [
+                        'distance' => '20000mi',
+                        'geo.coordinates' => [
+                            'lat' => $latLng[0],
+                            'lon' => $latLng[1],
+                        ],
+                    ])
+                ;
 
-            // Build successful response.
-            $builder->setStatusCode(200);
-            $builder->setData($found);
-            $builder->addMeta('pagination', $paginator->toArray());
+                $paginator = Location::nestedSearch()
+                    ->path('geo')
+                    ->query($locationQuery)
+                    ->paginate($perPage)
+                ;
+                break;
+        }
+
+        // Add "results per page" value to response pagination links
+        if (!is_null($request->get('results'))) {
+            $paginator->appends('results', $perPage);
+        }
+
+        $found = [];
+        foreach ($paginator as $result) {
+            /** @var QueryMatch $result */
+            $found[] = $result->model()->toSearchableArray();
+        }
+
+        // Build successful response.
+        $builder->setStatusCode(200);
+        $builder->setData($found);
+        if (!empty($found)) {
+            $builder->addMeta('pagination', DataNormalise::fromIlluminatePaginator($paginator->toArray()));
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
