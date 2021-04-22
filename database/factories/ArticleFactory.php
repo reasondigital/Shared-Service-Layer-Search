@@ -52,10 +52,10 @@ class ArticleFactory extends Factory
                 'reviewCount' => $reviewCount,
             ],
             'datePublished' => $this->faker->dateTimeBetween('-5 years', '-5 days'),
-            'thumbnailUrl' => $this->faker->url,
+            'thumbnailUrl' => $this->faker->imageUrl(),
             'keywords' => [
-                $this->faker->word,
-                $this->faker->word,
+                $this->faker->word(),
+                $this->faker->word(),
             ],
         ];
     }
