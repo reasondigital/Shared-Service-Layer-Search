@@ -86,11 +86,10 @@ class OpenStreetMapSearch implements Search
      * @param  string  $address The address query, e.g. "33 Oldham Street, Manchester".
      *                          Separate address lines with commas for better accuracy.
      *
-     * @return Address|null The closest matching address, or `null` if nothing
-     *                      found.
+     * @return Address
      * @since 1.0.0
      */
-    public function find(string $address): ?Address
+    public function find(string $address): Address
     {
         return $this->makeAddress(
             $this->request(['q' => $address])
@@ -102,14 +101,14 @@ class OpenStreetMapSearch implements Search
      *
      * @param  string  $postalCode A valid, full UK postcode.
      *
-     * @return Address|null
+     * @return Address
      * @since 1.0.0
      */
-    public function findByPostalCode(string $postalCode): ?Address
+    public function findByPostalCode(string $postalCode): Address
     {
         // Can prevent unnecessary requests to the API
         if (!$this->postalCodeIsValid($postalCode)) {
-            return null;
+            return new Address(null);
         }
 
         return $this->makeAddress(
@@ -140,7 +139,7 @@ class OpenStreetMapSearch implements Search
             return null;
         }
 
-        $streetAddress  = $response[0]['address']['house_number'] ?? '';
+        $streetAddress = $response[0]['address']['house_number'] ?? '';
         if (!empty($streetAddress)) {
             $streetAddress .= ' ';
         }
@@ -158,7 +157,7 @@ class OpenStreetMapSearch implements Search
             ]);
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return null;
+            return new Address(null);
         }
     }
 }

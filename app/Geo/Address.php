@@ -24,19 +24,24 @@ class Address
      * @var array
      * @since 1.0.0
      */
-    private array $lines;
+    private array $lines = [];
 
     /**
-     * Class constructor.
+     * Pass an array of address lines to set up the instance. It's also
+     * acceptable to pass `null`.
      *
-     * @param  array  $addressLines Pass empty strings for required lines if
-     *                              an actual value isn't available.
+     * @param  array|null  $addressLines Pass empty strings for required lines if
+     *                                   an actual value isn't available.
      *
      * @throws GeoAddressException
      * @since 1.0.0
      */
-    public function __construct(array $addressLines)
+    public function __construct(?array $addressLines)
     {
+        if (is_null($addressLines)) {
+            return;
+        }
+
         $missing = [];
         $required = [
             'streetAddress',
@@ -76,6 +81,15 @@ class Address
         }
 
         return $this->lines[$line] ?? null;
+    }
+
+    /**
+     * @return bool
+     * @since 1.0.0
+     */
+    public function empty(): bool
+    {
+        return empty($this->lines);
     }
 
     /**

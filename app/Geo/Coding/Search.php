@@ -27,10 +27,10 @@ interface Search
     /**
      * @param  string  $address
      *
-     * @return Address|null
+     * @return Address
      * @since 1.0.0
      */
-    public function find(string $address): ?Address;
+    public function find(string $address): Address;
 
     /**
      * @param  string  $postalCode
@@ -38,7 +38,7 @@ interface Search
      * @return Address
      * @since 1.0.0
      */
-    public function findByPostalCode(string $postalCode): ?Address;
+    public function findByPostalCode(string $postalCode): Address;
 
     /**
      * @param  string  $postalCode
