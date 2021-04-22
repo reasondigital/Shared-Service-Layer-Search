@@ -34,4 +34,16 @@ return [
         'locations' => (int) env('RESULTS_COUNT_LOCATIONS', 10),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Search Radius
+    |--------------------------------------------------------------------------
+    |
+    | The distance radius, in miles, that location searches will be restricted
+    | to by default.
+    |
+    */
+
+    'radius' => (int) env('ADDRESS_SEARCH_RADIUS', 20),
+
 ];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Elastic;
 
 use App\Constants\Data;
+use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
@@ -97,7 +98,8 @@ class LocationController extends BaseLocationController
     {
         $builder = $this->validateRequest($request, [
             'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
-            'query' => ['required'],
+            'query' => ['required', 'string'],
+            'distance' => ['sometimes', 'integer'],
             'results' => ['sometimes', 'integer'],
             'page' => ['sometimes', 'integer'],
         ]);
@@ -109,38 +111,73 @@ class LocationController extends BaseLocationController
 
         $by = $request->get('by');
         $query = $request->get('query');
+
+        $distance = $request->get('distance');
+        if (is_null($distance)) {
+            $distance = config('search.radius');
+        }
+
         $perPage = $request->get('results');
         if ($perPage === null) {
             $perPage = config('search.results_per_page.locations');
         }
 
+        $coords = [];
         switch ($by) {
+            case 'free-query':
+                $geoSearch = app()->make(Search::class);
+                $address = $geoSearch->find($query);
+                $coords = $this->getCoords($address);
+                break;
+
+            case 'postcode':
+                $geoSearch = app()->make(Search::class);
+                $address = $geoSearch->findByPostalCode($query);
+                $coords = $this->getCoords($address);
+                break;
+
             case 'coords':
                 $latLng = explode(',', $query);
-
-                $locationQuery = (new BoolQueryBuilder)
-                    ->must('match_all')
-                    ->filter('geo_distance', [
-                        'distance' => '20000mi',
-                        'geo.coordinates' => [
-                            'lat' => $latLng[0],
-                            'lon' => $latLng[1],
-                        ],
-                    ])
-                ;
-
-                $paginator = Location::nestedSearch()
-                    ->path('geo')
-                    ->query($locationQuery)
-                    ->paginate($perPage)
-                ;
+                if (count($latLng) === 2) {
+                    $coords = [
+                        'lat' => $latLng[0],
+                        'lon' => $latLng[1],
+                    ];
+                } else {
+                    $builder->setError(
+                        400,
+                        self::ERROR_CODE_VALIDATION,
+                        'The data provided was invalid. The request has not been fulfilled.'
+                    );
+                    $builder->addMeta('field_errors', [
+                        'query' => "Coordinates provided are invalid. Format should be '{lat},{lon}'",
+                    ]);
+                    return response()->json($builder->getResponseData(), $builder->getStatusCode());
+                }
                 break;
         }
 
-        // Add "results per page" value to response pagination links
-        if (!is_null($request->get('results'))) {
-            $paginator->appends('results', $perPage);
+        $builder->setStatusCode(200);
+        if (empty($coords)) {
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
+
+        // Coordinates item is nested so build the deepest query first
+        $locationQuery = (new BoolQueryBuilder)
+            ->must('match_all')
+            ->filter('geo_distance', [
+                'distance' => "{$distance}mi",
+                'geo.coordinates' => $coords,
+            ])
+        ;
+
+        // Pass the deeper query to the top level query and run
+        $paginator = Location::nestedSearch()
+            ->path('geo')
+            ->query($locationQuery)
+            ->paginate($perPage)
+            ->withQueryString()
+        ;
 
         $found = [];
         foreach ($paginator as $result) {
@@ -148,8 +185,7 @@ class LocationController extends BaseLocationController
             $found[] = $result->model()->toSearchableArray();
         }
 
-        // Build successful response.
-        $builder->setStatusCode(200);
+        // Build response data
         $builder->setData($found);
         if (!empty($found)) {
             $builder->addMeta('pagination', DataNormalise::fromIlluminatePaginator($paginator->toArray()));
