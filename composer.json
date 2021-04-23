@@ -1,7 +1,7 @@
 {
-    "name": "catalyst/ssls",
+    "name": "catalyst-ssl/search",
     "type": "project",
-    "description": "Catalyst Shared Service Layer Search.",
+    "description": "Catalyst Shared Service Layer - Search.",
     "keywords": ["search", "fulltext", "postcode"],
     "license": "MIT",
     "readme": "README.md",
