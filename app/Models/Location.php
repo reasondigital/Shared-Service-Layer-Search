@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Constants\Data;
+use App\Constants\DataConstants;
 use ElasticScoutDriverPlus\QueryDsl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,14 +78,14 @@ class Location extends Model
             'postalCode',
         ]);
         $array['address'] = Arr::prepend($array['address'], 'PostalAddress', '@type');
-        $array['address'] = Arr::prepend($array['address'], Data::SCHEMA_CONTEXT, '@context');
+        $array['address'] = Arr::prepend($array['address'], DataConstants::SCHEMA_CONTEXT, '@context');
 
         /*
          * Wrap lng/lat in the 'geo' item
          * @link https://www.elastic.co/guide/en/elasticsearch/reference/7.11/geo-point.html
          */
         $array['geo'] = [
-            '@context' => Data::SCHEMA_CONTEXT,
+            '@context' => DataConstants::SCHEMA_CONTEXT,
             '@type' => 'GeoCoordinates',
             'coordinates' => [
                 'lat' => $array['latitude'],
@@ -96,7 +96,7 @@ class Location extends Model
 
         // Wrap photo fields up in 'photo' item
         $array['photo'] = [
-            '@context' => Data::SCHEMA_CONTEXT,
+            '@context' => DataConstants::SCHEMA_CONTEXT,
             '@type' => 'ImageObject',
             'contentUrl' => $array['photoUrl'],
             'description' => $array['photoDescription'],
@@ -106,7 +106,7 @@ class Location extends Model
 
         // Add top level schema data
         $array = Arr::prepend($array, 'Place', '@type');
-        $array = Arr::prepend($array, Data::SCHEMA_CONTEXT, '@context');
+        $array = Arr::prepend($array, DataConstants::SCHEMA_CONTEXT, '@context');
 
         return $array;
     }

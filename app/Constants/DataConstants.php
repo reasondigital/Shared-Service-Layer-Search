@@ -9,7 +9,7 @@ namespace App\Constants;
  * @package App\Constants
  * @since 1.0.0
  */
-class Data
+class DataConstants
 {
     /**
      * @since 1.0.0

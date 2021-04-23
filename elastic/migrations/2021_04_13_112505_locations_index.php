@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\Constants\Data;
+use App\Constants\DataConstants;
 use App\Elasticsearch\Analyzers;
 use ElasticAdapter\Indices\Mapping;
 use ElasticAdapter\Indices\Settings;
@@ -37,7 +37,7 @@ final class LocationsIndex implements MigrationInterface
              */
 
             // Schema
-            $mapping->constantKeyword('@context', ['value' => Data::SCHEMA_CONTEXT]);
+            $mapping->constantKeyword('@context', ['value' => DataConstants::SCHEMA_CONTEXT]);
             $mapping->constantKeyword('@type', ['value' => 'Place']);
             $mapping->nested('@meta', [
                 'properties' => [
@@ -55,7 +55,7 @@ final class LocationsIndex implements MigrationInterface
                 'properties' => [
                     '@context' => [
                         'type' => 'constant_keyword',
-                        'value' => Data::SCHEMA_CONTEXT,
+                        'value' => DataConstants::SCHEMA_CONTEXT,
                     ],
                     '@type' => [
                         'type' => 'constant_keyword',
@@ -84,7 +84,7 @@ final class LocationsIndex implements MigrationInterface
                 'properties' => [
                     '@context' => [
                         'type' => 'constant_keyword',
-                        'value' => Data::SCHEMA_CONTEXT,
+                        'value' => DataConstants::SCHEMA_CONTEXT,
                     ],
                     '@type' => [
                         'type' => 'constant_keyword',
@@ -103,7 +103,7 @@ final class LocationsIndex implements MigrationInterface
                 'properties' => [
                     '@context' => [
                         'type' => 'constant_keyword',
-                        'value' => Data::SCHEMA_CONTEXT,
+                        'value' => DataConstants::SCHEMA_CONTEXT,
                     ],
                     '@type' => [
                         'type' => 'constant_keyword',
@@ -129,7 +129,7 @@ final class LocationsIndex implements MigrationInterface
                 'properties' => [
                     '@context' => [
                         'type' => 'constant_keyword',
-                        'value' => Data::SCHEMA_CONTEXT,
+                        'value' => DataConstants::SCHEMA_CONTEXT,
                     ],
                     '@type' => [
                         'type' => 'constant_keyword',
@@ -148,7 +148,7 @@ final class LocationsIndex implements MigrationInterface
                 'properties' => [
                     '@context' => [
                         'type' => 'constant_keyword',
-                        'value' => Data::SCHEMA_CONTEXT,
+                        'value' => DataConstants::SCHEMA_CONTEXT,
                     ],
                     '@type' => [
                         'type' => 'constant_keyword',

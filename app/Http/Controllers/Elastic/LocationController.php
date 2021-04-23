@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Elastic;
 
-use App\Constants\Data;
+use App\Constants\DataConstants;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Models\Location;
@@ -48,7 +48,7 @@ class LocationController extends BaseLocationController
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
             'addressCountry' => ['required', 'string'],
-            'postalCode' => ['required', 'string', 'regex:'.Data::POSTAL_CODE_REGEX_UK],
+            'postalCode' => ['required', 'string', 'regex:'.DataConstants::POSTAL_CODE_REGEX_UK],
             'latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
             'longitude' => ['required', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
@@ -210,7 +210,7 @@ class LocationController extends BaseLocationController
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
             'addressCountry' => ['sometimes', 'string'],
-            'postalCode' => ['sometimes', 'string', 'regex:'.Data::POSTAL_CODE_REGEX_UK],
+            'postalCode' => ['sometimes', 'string', 'regex:'.DataConstants::POSTAL_CODE_REGEX_UK],
             'latitude' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
             'longitude' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
