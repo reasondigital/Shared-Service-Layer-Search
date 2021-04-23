@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Search\Elastic\Article;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Elastic\ArticleController;
 use App\Models\Article;
 use Sti3bas\ScoutArray\Facades\Search;
 use Tests\TestCase;
