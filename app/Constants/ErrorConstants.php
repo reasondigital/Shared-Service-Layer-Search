@@ -3,8 +3,7 @@
 namespace App\Constants;
 
 /**
- * A place to hardcode application values related to API data and data
- * processing.
+ * Constant error codes and messages commonly used throughout the application.
  *
  * @package App\Constants
  * @since 1.0.0
