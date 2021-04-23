@@ -24,7 +24,7 @@ class AbilityConstants
     /**
      * @since 1.0.0
      */
-    const WRITE = 'write_public';
+    const WRITE = 'write';
 
     /**
      * @since 1.0.0
