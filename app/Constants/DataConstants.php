@@ -20,4 +20,9 @@ class DataConstants
      * @since 1.0.0
      */
     const POSTAL_CODE_REGEX_UK = '/^(([A-Z][0-9]{1,2})|(([A-Z][A-HJ-Y][0-9]{1,2})|(([A-Z][0-9][A-Z])|([A-Z][A-HJ-Y][0-9]?[A-Z])))) [0-9][A-Z]{2}$/';
+
+    /**
+     * @since 1.0.0
+     */
+    const ELASTIC_DATETIME_FORMAT = 'Y-m-d\TH:i:s\Z';
 }

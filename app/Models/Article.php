@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\DataConstants;
 use DateTime;
 use ElasticScoutDriverPlus\QueryDsl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,13 +21,11 @@ class Article extends Model
     use Searchable;
     use QueryDsl;
 
-    const PUBLISHED_DATE_FORMAT = 'Y-m-d\TH:i:s\Z';
-
     /**
      * @var string[]
      * @since 1.0.0
+     * todo See if we can cast the date published
      */
-    // @todo - See if we can cast the date published
     protected $casts = [
         'aggregateRating' => 'array',
         'keywords' => 'array',
@@ -66,7 +65,7 @@ class Article extends Model
 
         if ($this->datePublished instanceof DateTime) {
             $data['datePublished'] = $this->datePublished->format(
-                self::PUBLISHED_DATE_FORMAT
+                DataConstants::ELASTIC_DATETIME_FORMAT
             );
         } else {
             $data['datePublished'] = null;

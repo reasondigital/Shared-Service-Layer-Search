@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Entity;
 
+use App\Constants\DataConstants;
 use App\Http\Controllers\Elastic\ArticleController;
 use App\Models\Article;
 use Tests\TestCase;
@@ -22,7 +23,7 @@ class ArticleTest extends TestCase
         $article = Article::factory()->make();
 
         // Null if not a datetime
-        $date = date(ArticleController::PUBLISHED_DATE_FORMAT);
+        $date = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
         $article->datePublished = $date;
         $this->assertNull($article->toSearchableArray()['datePublished']);
 
@@ -30,7 +31,7 @@ class ArticleTest extends TestCase
         $now = new \DateTime('now');
         $article->datePublished = $now;
         $this->assertSame(
-            $now->format(Article::PUBLISHED_DATE_FORMAT),
+            $now->format(DataConstants::ELASTIC_DATETIME_FORMAT),
             $article->toSearchableArray()['datePublished']
         );
     }

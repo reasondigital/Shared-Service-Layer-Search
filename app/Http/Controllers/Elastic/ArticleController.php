@@ -18,11 +18,6 @@ use Illuminate\Http\Request;
 class ArticleController extends BaseArticleController
 {
     /**
-     * @since 1.0.0
-     */
-    const PUBLISHED_DATE_FORMAT = 'Y-m-d';
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
@@ -39,7 +34,7 @@ class ArticleController extends BaseArticleController
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
             'publisher' => ['required', 'string'],
-            'datePublished' => ['required', 'date_format:Y-m-d'],
+            'datePublished' => ['required', 'date_format:'.self::API_DATE_PUBLISHED_FORMAT],
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],
@@ -135,7 +130,7 @@ class ArticleController extends BaseArticleController
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
             'publisher' => ['required', 'string'],
-            'datePublished' => ['required', 'date_format:Y-m-d'],
+            'datePublished' => ['required', 'date_format:'.self::API_DATE_PUBLISHED_FORMAT],
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],

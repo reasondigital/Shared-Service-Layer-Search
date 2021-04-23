@@ -247,7 +247,7 @@ class ArticleStoreTest extends TestCase
 
         $article = Article::factory()->make();
         $input = $article->toArray();
-        $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
+        $input['datePublished'] = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
         unset($input['updated_at']);
 
         $response = $this->post($this->route(), $input);
@@ -361,7 +361,7 @@ class ArticleStoreTest extends TestCase
         $input = $article->toArray();
 
         // Convert the date into 'Y-m-d' to match the API spec
-        $input['datePublished'] = date(ArticleController::PUBLISHED_DATE_FORMAT);
+        $input['datePublished'] = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
 
         // We can also bin off all the stuff users wouldn't submit
         unset($input['updated_at'], $input['id']);
