@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\IncorrectPermissionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,7 @@ abstract class SearchController extends Controller
      */
     public function __construct()
     {
+        $this->middleware('auth:sanctum');
         $this->middleware('api.handle404')->only(['get', 'update', 'destroy']);
     }
 
@@ -43,4 +45,23 @@ abstract class SearchController extends Controller
      * @since 1.0.0
      */
     abstract public function search(Request $request): JsonResponse;
+
+    /**
+     * @param  Request  $request A Laravel request object.
+     * @param  string   $ability The ability to check the token against.
+     * @param  string   $message The error message to provided in the response.
+     *
+     * @throws IncorrectPermissionException
+     * @since 1.0.0
+     */
+    protected function validatePermission(Request $request, string $ability, string $message = '')
+    {
+        if (!$request->user()->tokenCan($ability)) {
+            if (empty($message)) {
+                $message = 'You do not have the permission required to take this action';
+            }
+
+            throw new IncorrectPermissionException($message);
+        }
+    }
 }
