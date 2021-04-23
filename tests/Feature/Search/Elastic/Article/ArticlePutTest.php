@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Search\Elastic\Article;
 
+use App\Constants\DataConstants;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Elastic\ArticleController;
 use App\Models\Article;
 use Sti3bas\ScoutArray\Facades\Search;
 use Tests\TestCase;
@@ -264,7 +264,7 @@ class ArticlePutTest extends TestCase
         $input['publisher'] = 'New publisher';
         $input['thumbnailUrl'] = 'http://new-thumbnail.com/thumb';
         $input['keywords'] = ['key', 'word'];
-        $input['datePublished'] = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
+        $input['datePublished'] = date(DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT);
         unset($input['updated_at']);
 
         $response = $this->put($this->route($article->id), $input);
@@ -401,7 +401,7 @@ class ArticlePutTest extends TestCase
         $input = $article->toArray();
 
         // Convert the date into 'Y-m-d' to match the API spec
-        $input['datePublished'] = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
+        $input['datePublished'] = date(DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT);
 
         // We can also bin off all the stuff users wouldn't submit
         unset($input['updated_at'], $input['id']);

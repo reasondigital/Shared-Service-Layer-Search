@@ -3,8 +3,8 @@
 namespace Tests\Unit\Entity;
 
 use App\Constants\DataConstants;
-use App\Http\Controllers\Elastic\ArticleController;
 use App\Models\Article;
+use DateTime;
 use Tests\TestCase;
 
 class ArticleTest extends TestCase
@@ -23,12 +23,12 @@ class ArticleTest extends TestCase
         $article = Article::factory()->make();
 
         // Null if not a datetime
-        $date = date(ArticleController::API_DATE_PUBLISHED_FORMAT);
+        $date = date(DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT);
         $article->datePublished = $date;
         $this->assertNull($article->toSearchableArray()['datePublished']);
 
         // If a datetime object its converted to the specific format
-        $now = new \DateTime('now');
+        $now = new DateTime('now');
         $article->datePublished = $now;
         $this->assertSame(
             $now->format(DataConstants::ELASTIC_DATETIME_FORMAT),

@@ -24,11 +24,6 @@ abstract class BaseArticleController extends SearchController
     const MODEL_CLASS = Article::class;
 
     /**
-     * @since 1.0.0
-     */
-    const API_DATE_PUBLISHED_FORMAT = 'Y-m-d H:i:s';
-
-    /**
      * Retrieve a specific instance of the resource.
      *
      * todo Implement feature tests for this endpoint.

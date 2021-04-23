@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Elastic;
 
+use App\Constants\DataConstants;
 use App\Http\Controllers\BaseArticleController;
 use App\Models\Article;
 use App\Pagination\LengthAwarePaginator;
@@ -34,7 +35,7 @@ class ArticleController extends BaseArticleController
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
             'publisher' => ['required', 'string'],
-            'datePublished' => ['required', 'date_format:'.self::API_DATE_PUBLISHED_FORMAT],
+            'datePublished' => ['required', 'date_format:'.DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT],
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],
@@ -130,7 +131,7 @@ class ArticleController extends BaseArticleController
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
             'publisher' => ['required', 'string'],
-            'datePublished' => ['required', 'date_format:'.self::API_DATE_PUBLISHED_FORMAT],
+            'datePublished' => ['required', 'date_format:'.DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT],
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],

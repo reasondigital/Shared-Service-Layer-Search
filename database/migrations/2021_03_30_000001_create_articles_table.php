@@ -26,7 +26,8 @@ class CreateArticlesTable extends Migration
             $table->mediumText('articleBody')->nullable();
             $table->text('abstract')->nullable();
             $table->char('publisher')->nullable();
-            $table->json('aggregateRating')->nullable();
+            $table->double('ratingValue')->nullable();
+            $table->integer('reviewCount')->nullable();
             $table->dateTime('datePublished')->nullable();
             $table->char('thumbnailUrl')->nullable();
             $table->json('keywords')->nullable();

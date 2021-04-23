@@ -25,4 +25,9 @@ class DataConstants
      * @since 1.0.0
      */
     const ELASTIC_DATETIME_FORMAT = 'Y-m-d\TH:i:s\Z';
+
+    /**
+     * @since 1.0.0
+     */
+    const API_ARTICLE_DATE_PUBLISHED_FORMAT = 'Y-m-d H:i:s';
 }

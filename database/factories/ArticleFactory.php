@@ -47,10 +47,8 @@ class ArticleFactory extends Factory
             'articleBody' => $article,
             'abstract' => $abstract,
             'publisher' => "{$this->faker->colorName()} {$this->faker->randomElement(['Publishing', 'Books'])}",
-            'aggregateRating' => [
-                'ratingValue' => $ratingValue,
-                'reviewCount' => $reviewCount,
-            ],
+            'ratingValue' => $ratingValue,
+            'reviewCount' => $reviewCount,
             'datePublished' => $this->faker->dateTimeBetween('-5 years', '-5 days'),
             'thumbnailUrl' => $this->faker->imageUrl(),
             'keywords' => [

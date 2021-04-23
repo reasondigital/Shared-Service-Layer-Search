@@ -7,6 +7,7 @@ use DateTime;
 use ElasticScoutDriverPlus\QueryDsl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Laravel\Scout\Searchable;
 
 /**
@@ -24,20 +25,27 @@ class Article extends Model
     /**
      * @var string[]
      * @since 1.0.0
-     * todo See if we can cast the date published
      */
-    protected $casts = [
-        'aggregateRating' => 'array',
-        'keywords' => 'array',
+    protected $fillable = [
+        'author',
+        'articleBody',
+        'abstract',
+        'publisher',
+        'ratingValue',
+        'reviewCount',
+        'datePublished',
+        'thumbnailUrl',
+        'keywords',
     ];
 
     /**
-     * Allow anything to be mass assigned.
-     * @var array
+     * @var string[]
+     * @since 1.0.0
+     * todo See if we can cast the date published
      */
-    protected $guarded = [
-        '@context',
-        '@type',
+    protected $casts = [
+        'datePublished' => 'datetime:'.DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT,
+        'keywords' => 'array',
     ];
 
     /**
@@ -61,31 +69,48 @@ class Article extends Model
      */
     public function toSearchableArray(): array
     {
-        $data = $this->toArray();
+        $array = $this->toArray();
+
+        $array = Arr::wrapKeysWithin($array, 'aggregateRating', [
+            'ratingValue',
+            'reviewCount',
+        ]);
+        $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], 'AggregateRating', '@type');
+        $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], DataConstants::SCHEMA_CONTEXT, '@context');
 
         if ($this->datePublished instanceof DateTime) {
-            $data['datePublished'] = $this->datePublished->format(
-                DataConstants::ELASTIC_DATETIME_FORMAT
+            $array['datePublished'] = $this->datePublished->format(
+                $this->currentSearchProviderDatetimeFormat()
             );
         } else {
-            $data['datePublished'] = null;
+            $array['datePublished'] = null;
         }
 
-        return $data;
+        // Add top level schema data
+        $array = Arr::prepend($array, 'Article', '@type');
+        $array = Arr::prepend($array, DataConstants::SCHEMA_CONTEXT, '@context');
+
+        return $array;
     }
 
     /**
-     * @return array
+     * Get the appropriate format for datetime fields for the active search
+     * provider.
      *
+     * This helps us handle the differing and specific requirements for date
+     * formatting that different search providers have.
+     *
+     * @return string
      * @since 1.0.0
      */
-    public function toArray(): array {
-        $data = parent::toArray();
+    private function currentSearchProviderDatetimeFormat(): string
+    {
+        switch (config('search.provider.articles')) {
+            case 'elastic':
+                return DataConstants::ELASTIC_DATETIME_FORMAT;
 
-        // Add schema data
-        $data['@context'] = 'https://schema.org';
-        $data['@type'] = 'Article';
-
-        return $data;
+            default:
+                return 'Y-m-d H:i:s';
+        }
     }
 }
