@@ -24,8 +24,7 @@ class AccessLevelConstants
     const WRITE = [
         AbilityConstants::READ_PUBLIC,
         AbilityConstants::READ_SENSITIVE,
-        AbilityConstants::WRITE_PUBLIC,
-        AbilityConstants::WRITE_SENSITIVE,
+        AbilityConstants::WRITE,
     ];
 
     /**
@@ -34,8 +33,7 @@ class AccessLevelConstants
     const ADMIN = [
         AbilityConstants::READ_PUBLIC,
         AbilityConstants::READ_SENSITIVE,
-        AbilityConstants::WRITE_PUBLIC,
-        AbilityConstants::WRITE_SENSITIVE,
+        AbilityConstants::WRITE,
         AbilityConstants::ADMINISTRATE,
     ];
 }
