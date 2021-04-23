@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Elastic;
 
 use App\Http\Controllers\BaseArticleController;
-use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use App\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -118,29 +117,16 @@ class ArticleController extends BaseArticleController
      * Update the specified resource in storage.
      *
      * @param  Request  $request
-     * @param  int  $id
+     * @param  Article  $article
      *
-     * @todo - Will we allow a partial update or does the whole thing need to be
-     * submitted?
+     * todo Will we allow a partial update or does the whole thing need to be submitted?
      *
      * @return JsonResponse
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, Article $article): JsonResponse
     {
-        /** @var Article $article */
-        $article = Article::find($id);
-
-        if (is_null($article)) {
-            // Get response builder
-            $builder = app()->make(ApiResponseBuilder::class);
-
-            // Set and send error
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        }
-
         // Validate the request first.
         // @todo - Keeping the rules separate for now in case we need to split
         // @todo - between add and update

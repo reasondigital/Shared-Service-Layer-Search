@@ -22,60 +22,56 @@ abstract class BaseLocationController extends SearchController
     /**
      * @since 1.0.0
      */
-    const ERROR_MSG_NOT_FOUND = 'No location was found with the given ID';
+    const MODEL_CLASS = Location::class;
 
     /**
      * Retrieve a specific instance of the resource.
      *
      * todo Implement feature tests for this endpoint.
      *
-     * @param  Request  $request
-     * @param  int      $id
+     * @param  Request   $request
+     * @param  Location  $location
      *
      * @return JsonResponse
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function get(Request $request, int $id): JsonResponse
+    public function get(Request $request, Location $location): JsonResponse
     {
-        /** @var Location $location */
-        $location = Location::find($id);
         $builder = app()->make(ApiResponseBuilder::class);
-
-        if (is_null($location)) {
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-        } else {
-            $builder->setStatusCode(200);
-            $builder->setData($location->toSearchableArray());
-        }
+        $builder->setStatusCode(200);
+        $builder->setData($location->toSearchableArray());
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  Location $location
+     *
+     * @return JsonResponse
+     * @since 1.0.0
+     */
+    abstract public function update(Request $request, Location $location): JsonResponse;
 
     /**
      * Remove the specified resource from storage.
      *
      * todo Implement feature tests for this endpoint.
      *
-     * @param  int  $id
+     * @param  Location $location
      *
-     * @return JsonResponse|Response
+     * @return Response JSON response is sent by middleware when the resource
+     *                  can't be found.
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(int $id)
+    public function destroy(Location $location): Response
     {
-        /** @var Location|null $location */
-        $location = Location::find($id);
-
-        if (is_null($location)) {
-            $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        } else {
-            $location->delete();
-            return response()->noContent();
-        }
+        $location->delete();
+        return response()->noContent();
     }
 
     /**

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Elastic;
 use App\Constants\Data;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
-use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
 use App\Pagination\DataNormalise;
 use ElasticScoutDriverPlus\Builders\BoolQueryBuilder;
@@ -166,16 +165,14 @@ class LocationController extends BaseLocationController
             ->filter('geo_distance', [
                 'distance' => "{$distance}mi",
                 'geo.coordinates' => $coords,
-            ])
-        ;
+            ]);
 
         // Pass the deeper query to the top level query and run
         $paginator = Location::nestedSearch()
             ->path('geo')
             ->query($locationQuery)
             ->paginate($perPage)
-            ->withQueryString()
-        ;
+            ->withQueryString();
 
         $found = [];
         foreach ($paginator as $result) {
@@ -197,27 +194,15 @@ class LocationController extends BaseLocationController
      *
      * todo Implement feature tests for this endpoint.
      *
-     * @param  Request  $request
-     * @param  int      $id
+     * @param  Request   $request
+     * @param  Location  $location
      *
      * @return JsonResponse
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, Location $location): JsonResponse
     {
-        /** @var Location|null $location */
-        $location = Location::find($id);
-
-        if (is_null($location)) {
-            // Get response builder
-            $builder = app()->make(ApiResponseBuilder::class);
-
-            // Set and send error
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        }
-
         // Validate the request first
         $builder = $this->validateRequest($request, [
             'id' => ['required', 'integer'],
@@ -233,7 +218,7 @@ class LocationController extends BaseLocationController
             'photoDescription' => ['sometimes', 'string'],
         ]);
 
-        // If we don't have an error then add the location
+        // If we don't have an error then update the location
         if (!$builder->hasError()) {
             $location->update($request->all());
             $location->save();

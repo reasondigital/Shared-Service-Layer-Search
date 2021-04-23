@@ -28,11 +28,6 @@ class Controller extends BaseController
     const ERROR_CODE_VALIDATION = 'validation_error';
 
     /**
-     * @since 1.0.0
-     */
-    const ERROR_CODE_NOT_FOUND = 'not_found';
-
-    /**
      * @param  Request  $request
      * @param  array  $rules
      *

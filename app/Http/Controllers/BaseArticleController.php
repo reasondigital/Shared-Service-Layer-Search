@@ -21,7 +21,7 @@ abstract class BaseArticleController extends SearchController
     /**
      * @since 1.0.0
      */
-    const ERROR_MSG_NOT_FOUND = 'No article was found with the given ID';
+    const MODEL_CLASS = Article::class;
 
     /**
      * Retrieve a specific instance of the resource.
@@ -29,49 +29,44 @@ abstract class BaseArticleController extends SearchController
      * todo Implement feature tests for this endpoint.
      *
      * @param  Request  $request
-     * @param  int      $id
+     * @param  Article  $article
      *
      * @return JsonResponse
      * @throws BindingResolutionException
      * @since 1.0.0
      */
-    public function get(Request $request, int $id): JsonResponse
+    public function get(Request $request, Article $article): JsonResponse
     {
-        /** @var Article $article */
-        $article = Article::find($id);
         $builder = app()->make(ApiResponseBuilder::class);
-
-        if (is_null($article)) {
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-        } else {
-            $builder->setStatusCode(200);
-            $builder->setData($article->toSearchableArray());
-        }
+        $builder->setStatusCode(200);
+        $builder->setData($article->toSearchableArray());
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  Article  $article
+     *
+     * @return JsonResponse
+     * @since 1.0.0
+     */
+    abstract public function update(Request $request, Article $article): JsonResponse;
+
+    /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Article  $article
      *
-     * @return JsonResponse|Response
+     * @return Response
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(int $id)
+    public function destroy(Article $article): Response
     {
-        /** @var Article $article */
-        $article = Article::find($id);
-
-        if (is_null($article)) {
-            $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, self::ERROR_CODE_NOT_FOUND, self::ERROR_MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        } else {
-            $article->delete();
-            return response()->noContent();
-        }
+        $article->delete();
+        return response()->noContent();
     }
 }
