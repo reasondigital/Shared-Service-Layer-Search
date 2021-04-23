@@ -61,7 +61,7 @@ class LocationController extends BaseLocationController
             $location = new Location($request->all());
             $location->save();
             $builder->setStatusCode(201);
-            $builder->setData($location->toSearchableArray());
+            $builder->setData($location->toResponseArray());
 
             $builder->addLink('get_location', [
                 'type' => 'GET',
@@ -177,7 +177,7 @@ class LocationController extends BaseLocationController
         $found = [];
         foreach ($paginator as $result) {
             /** @var QueryMatch $result */
-            $found[] = $result->model()->toSearchableArray();
+            $found[] = $result->model()->toResponseArray();
         }
 
         // Build response data
@@ -223,7 +223,7 @@ class LocationController extends BaseLocationController
             $location->update($request->all());
             $location->save();
             $builder->setStatusCode(200);
-            $builder->setData($location->toSearchableArray());
+            $builder->setData($location->toResponseArray());
 
             $builder->addLink('get_location', [
                 'type' => 'GET',

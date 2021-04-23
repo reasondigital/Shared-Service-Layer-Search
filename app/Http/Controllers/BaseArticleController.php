@@ -39,7 +39,7 @@ abstract class BaseArticleController extends SearchController
     {
         $builder = app()->make(ApiResponseBuilder::class);
         $builder->setStatusCode(200);
-        $builder->setData($article->toSearchableArray());
+        $builder->setData($article->toResponseArray());
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }

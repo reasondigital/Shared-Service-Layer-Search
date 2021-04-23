@@ -40,7 +40,7 @@ abstract class BaseLocationController extends SearchController
     {
         $builder = app()->make(ApiResponseBuilder::class);
         $builder->setStatusCode(200);
-        $builder->setData($location->toSearchableArray());
+        $builder->setData($location->toResponseArray());
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }

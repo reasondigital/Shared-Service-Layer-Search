@@ -64,7 +64,6 @@ class Article extends Model
 
     /**
      * @return array
-     *
      * @since 1.0.0
      */
     public function toSearchableArray(): array
@@ -89,6 +88,23 @@ class Article extends Model
         // Add top level schema data
         $array = Arr::prepend($array, 'Article', '@type');
         $array = Arr::prepend($array, DataConstants::SCHEMA_CONTEXT, '@context');
+
+        return $array;
+    }
+
+    /**
+     * @return array
+     * @since 1.0.0
+     */
+    public function toResponseArray(): array
+    {
+        $array = $this->toSearchableArray();
+
+        if ($this->datePublished instanceof DateTime) {
+            $array['datePublished'] = $this->datePublished->format(
+                DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT
+            );
+        }
 
         return $array;
     }

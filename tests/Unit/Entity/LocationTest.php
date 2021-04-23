@@ -19,7 +19,7 @@ class LocationTest extends TestCase
     {
         $article = Location::factory()->make();
 
-        $data = $article->toSearchableArray();
+        $data = $article->toResponseArray();
         $this->assertSame('https://schema.org', $data['@context']);
         $this->assertSame('Place', $data['@type']);
     }

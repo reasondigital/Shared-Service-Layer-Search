@@ -110,4 +110,13 @@ class Location extends Model
 
         return $array;
     }
+
+    /**
+     * @return array
+     * @since 1.0.0
+     */
+    public function toResponseArray(): array
+    {
+        return $this->toSearchableArray();
+    }
 }

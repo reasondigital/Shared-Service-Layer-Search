@@ -25,14 +25,14 @@ class ArticleTest extends TestCase
         // Null if not a datetime
         $date = date(DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT);
         $article->datePublished = $date;
-        $this->assertNull($article->toSearchableArray()['datePublished']);
+        $this->assertNull($article->toResponseArray()['datePublished']);
 
         // If a datetime object its converted to the specific format
         $now = new DateTime('now');
         $article->datePublished = $now;
         $this->assertSame(
             $now->format(DataConstants::ELASTIC_DATETIME_FORMAT),
-            $article->toSearchableArray()['datePublished']
+            $article->toResponseArray()['datePublished']
         );
     }
 

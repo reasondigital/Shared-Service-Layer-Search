@@ -46,7 +46,7 @@ class ArticleController extends BaseArticleController
             $article = new Article($request->all());
             $article->save();
             $builder->setStatusCode(201);
-            $builder->setData($article->toSearchableArray());
+            $builder->setData($article->toResponseArray());
 
             $builder->addLink('get_article', [
                 'type' => 'GET',
@@ -97,7 +97,7 @@ class ArticleController extends BaseArticleController
 
             $found = [];
             foreach ($paginator as $result) {
-                $found[] = $result->toSearchableArray();
+                $found[] = $result->toResponseArray();
             }
 
             // Build successful response.
@@ -142,7 +142,7 @@ class ArticleController extends BaseArticleController
             $article->update($request->all());
             $article->save();
             $builder->setStatusCode(200);
-            $builder->setData($article->toSearchableArray());
+            $builder->setData($article->toResponseArray());
 
             $builder->addLink('get_article', [
                 'type' => 'GET',
