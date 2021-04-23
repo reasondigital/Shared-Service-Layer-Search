@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Elastic;
 
+use App\Exceptions\DataNormaliseException;
+use App\Constants\AbilityConstants;
 use App\Constants\DataConstants;
+use App\Exceptions\IncorrectPermissionException;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Models\Location;
@@ -37,11 +40,13 @@ class LocationController extends BaseLocationController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::WRITE);
+
         // Validate the request first
         $builder = $this->validateRequest($request, [
             'streetAddress' => ['required', 'string'],
@@ -88,11 +93,13 @@ class LocationController extends BaseLocationController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException|DataNormaliseException
      * @since 1.0.0
      */
     public function search(Request $request): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+
         $builder = $this->validateRequest($request, [
             'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
             'query' => ['required', 'string'],
@@ -198,11 +205,13 @@ class LocationController extends BaseLocationController
      * @param  Location  $location
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function update(Request $request, Location $location): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::WRITE);
+
         // Validate the request first
         $builder = $this->validateRequest($request, [
             'id' => ['required', 'integer'],

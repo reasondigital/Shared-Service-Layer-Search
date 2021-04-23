@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Elastic;
 
+use App\Constants\AbilityConstants;
 use App\Constants\DataConstants;
+use App\Exceptions\IncorrectPermissionException;
 use App\Http\Controllers\BaseArticleController;
 use App\Models\Article;
 use App\Pagination\LengthAwarePaginator;
@@ -14,7 +16,7 @@ use Illuminate\Http\Request;
  * Articles API controller for Elasticsearch.
  *
  * @package App\Http\Controllers\Elastic
- * @since 1.0.0
+ * @since   1.0.0
  */
 class ArticleController extends BaseArticleController
 {
@@ -24,11 +26,13 @@ class ArticleController extends BaseArticleController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::WRITE);
+
         // Validate the request first.
         $builder = $this->validateRequest($request, [
             'articleBody' => ['required', 'string'],
@@ -71,10 +75,13 @@ class ArticleController extends BaseArticleController
      * @param  Request  $request
      *
      * @return JsonResponse
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function search(Request $request): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+
         // Validate the request first.
         $builder = $this->validateRequest($request, [
             'query' => ['required'],
@@ -118,11 +125,13 @@ class ArticleController extends BaseArticleController
      * todo Will we allow a partial update or does the whole thing need to be submitted?
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function update(Request $request, Article $article): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::WRITE);
+
         // Validate the request first.
         // @todo - Keeping the rules separate for now in case we need to split
         // @todo - between add and update

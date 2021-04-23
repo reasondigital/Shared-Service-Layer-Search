@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\AbilityConstants;
+use App\Exceptions\IncorrectPermissionException;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use Exception;
@@ -32,11 +34,13 @@ abstract class BaseArticleController extends SearchController
      * @param  Article  $article
      *
      * @return JsonResponse
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException|IncorrectPermissionException
      * @since 1.0.0
      */
     public function get(Request $request, Article $article): JsonResponse
     {
+        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+
         $builder = app()->make(ApiResponseBuilder::class);
         $builder->setStatusCode(200);
         $builder->setData($article->toResponseArray());
@@ -66,6 +70,8 @@ abstract class BaseArticleController extends SearchController
      */
     public function destroy(Article $article): Response
     {
+        $this->validatePermission(request(), AbilityConstants::WRITE);
+
         $article->delete();
         return response()->noContent();
     }
