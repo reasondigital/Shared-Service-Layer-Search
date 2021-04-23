@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Token;
 
+use App\Constants\AccessLevelConstants;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,7 @@ class Create extends Command
      */
     protected $signature = "token:create
                             {name : A name for the token, e.g 'Mobile App'. This is strictly for reference}
-                            {accessLevel : Options are 'admin', 'write' and 'read'}
+                            {accessLevel : Options are 'read', 'write' and 'admin'}
                             {emailAddress : The token will be attributed to this address. An account will be created in the application for this user if one doesn't already exist}";
 
     /**
@@ -55,6 +56,12 @@ class Create extends Command
         $level = $this->argument('accessLevel');
         $email = $this->argument('emailAddress');
 
+        $levelConstant = AccessLevelConstants::class . '::' . strtoupper($level);
+        if (!defined($levelConstant)) {
+            $this->error('Access level provided is not recognised');
+            return 1;
+        }
+
         /** @var User $user */
         $user = User::firstOrCreate(
             [
@@ -66,7 +73,7 @@ class Create extends Command
             ]
         );
 
-        $token = $user->createToken($tokenName);
+        $token = $user->createToken($tokenName, constant($levelConstant));
 
         $this->info('Copy and save this token in a secure place.');
         $this->info('The API will not display the token again after generation.');

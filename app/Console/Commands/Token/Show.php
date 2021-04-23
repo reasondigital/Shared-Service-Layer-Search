@@ -4,6 +4,7 @@ namespace App\Console\Commands\Token;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use const PHP_EOL;
 
 /**
  * Command to list API access tokens available in this application by user.
@@ -72,10 +73,11 @@ class Show extends Command
                 $lastUsed = 'Never';
             }
 
+            // Extra line break (PHP_EOL) so that each token has a bit of space in the table
             $rows[] = [
                 $token->id,
                 $token->name,
-                json_encode($token->abilities),
+                implode(PHP_EOL, $token->abilities) . PHP_EOL,
                 $lastUsed,
             ];
         }
