@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\AbilityConstants;
+use App\Constants\ApiAbilities;
 use App\Exceptions\IncorrectPermissionException;
 use App\Geo\Address;
 use App\Http\Response\ApiResponseBuilder;
@@ -40,7 +40,7 @@ abstract class BaseLocationController extends SearchController
      */
     public function get(Request $request, Location $location): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+        $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         $builder = app()->make(ApiResponseBuilder::class);
         $builder->setStatusCode(200);
@@ -74,7 +74,7 @@ abstract class BaseLocationController extends SearchController
      */
     public function destroy(Location $location): Response
     {
-        $this->validatePermission(request(), AbilityConstants::WRITE);
+        $this->validatePermission(request(), ApiAbilities::WRITE);
 
         $location->delete();
         return response()->noContent();

@@ -22,7 +22,10 @@ abstract class SearchController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        if (!app()->runningUnitTests()) {
+            $this->middleware('auth:sanctum');
+        }
+
         $this->middleware('api.handle404')->only(['get', 'update', 'destroy']);
     }
 
@@ -47,9 +50,9 @@ abstract class SearchController extends Controller
     abstract public function search(Request $request): JsonResponse;
 
     /**
-     * @param  Request  $request A Laravel request object.
-     * @param  string   $ability The ability to check the token against.
-     * @param  string   $message The error message to provided in the response.
+     * @param  Request  $request  A Laravel request object.
+     * @param  string   $ability  The ability to check the token against.
+     * @param  string   $message  The error message to provided in the response.
      *
      * @throws IncorrectPermissionException
      * @since 1.0.0

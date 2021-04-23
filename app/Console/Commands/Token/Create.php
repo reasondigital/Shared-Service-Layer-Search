@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Token;
 
-use App\Constants\AccessLevelConstants;
+use App\Constants\AccessLevels;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -56,7 +56,7 @@ class Create extends Command
         $level = $this->argument('accessLevel');
         $email = $this->argument('emailAddress');
 
-        $levelConstant = AccessLevelConstants::class . '::' . strtoupper($level);
+        $levelConstant = AccessLevels::class . '::' . strtoupper($level);
         if (!defined($levelConstant)) {
             $this->error('Access level provided is not recognised');
             return 1;

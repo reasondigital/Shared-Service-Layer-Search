@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Constants\ErrorConstants;
+use App\Constants\ErrorMessages;
 use App\Http\Response\ApiResponseBuilder;
 use Closure;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -39,7 +39,7 @@ class HandleApi404AsJson
 
         if (is_null($record)) {
             $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, ErrorConstants::CODE_NOT_FOUND, ErrorConstants::MSG_NOT_FOUND);
+            $builder->setError(404, ErrorMessages::CODE_NOT_FOUND, ErrorMessages::MSG_NOT_FOUND);
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 

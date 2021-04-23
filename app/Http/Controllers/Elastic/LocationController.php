@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Elastic;
 
 use App\Exceptions\DataNormaliseException;
-use App\Constants\AbilityConstants;
+use App\Constants\ApiAbilities;
 use App\Constants\DataConstants;
 use App\Exceptions\IncorrectPermissionException;
 use App\Geo\Coding\Search;
@@ -45,7 +45,7 @@ class LocationController extends BaseLocationController
      */
     public function store(Request $request): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::WRITE);
+        $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first
         $builder = $this->validateRequest($request, [
@@ -98,7 +98,7 @@ class LocationController extends BaseLocationController
      */
     public function search(Request $request): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+        $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         $builder = $this->validateRequest($request, [
             'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
@@ -210,7 +210,7 @@ class LocationController extends BaseLocationController
      */
     public function update(Request $request, Location $location): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::WRITE);
+        $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first
         $builder = $this->validateRequest($request, [

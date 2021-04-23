@@ -9,7 +9,7 @@ namespace App\Constants;
  * @package App\Constants
  * @since   1.0.0
  */
-class AbilityConstants
+class ApiAbilities
 {
     /**
      * @since 1.0.0

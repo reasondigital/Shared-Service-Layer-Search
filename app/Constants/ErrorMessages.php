@@ -8,7 +8,7 @@ namespace App\Constants;
  * @package App\Constants
  * @since 1.0.0
  */
-class ErrorConstants
+class ErrorMessages
 {
     /**
      * @since 1.0.0

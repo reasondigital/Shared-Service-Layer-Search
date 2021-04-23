@@ -9,31 +9,31 @@ namespace App\Constants;
  * @package App\Constants
  * @since 1.0.0
  */
-class AccessLevelConstants
+class AccessLevels
 {
     /**
      * @since 1.0.0
      */
     const READ = [
-        AbilityConstants::READ_PUBLIC,
+        ApiAbilities::READ_PUBLIC,
     ];
 
     /**
      * @since 1.0.0
      */
     const WRITE = [
-        AbilityConstants::READ_PUBLIC,
-        AbilityConstants::READ_SENSITIVE,
-        AbilityConstants::WRITE,
+        ApiAbilities::READ_PUBLIC,
+        ApiAbilities::READ_SENSITIVE,
+        ApiAbilities::WRITE,
     ];
 
     /**
      * @since 1.0.0
      */
     const ADMIN = [
-        AbilityConstants::READ_PUBLIC,
-        AbilityConstants::READ_SENSITIVE,
-        AbilityConstants::WRITE,
-        AbilityConstants::ADMINISTRATE,
+        ApiAbilities::READ_PUBLIC,
+        ApiAbilities::READ_SENSITIVE,
+        ApiAbilities::WRITE,
+        ApiAbilities::ADMINISTRATE,
     ];
 }

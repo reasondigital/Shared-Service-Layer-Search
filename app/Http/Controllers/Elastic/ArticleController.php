@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Elastic;
 
-use App\Constants\AbilityConstants;
+use App\Constants\ApiAbilities;
 use App\Constants\DataConstants;
 use App\Exceptions\IncorrectPermissionException;
 use App\Http\Controllers\BaseArticleController;
@@ -31,7 +31,7 @@ class ArticleController extends BaseArticleController
      */
     public function store(Request $request): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::WRITE);
+        $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first.
         $builder = $this->validateRequest($request, [
@@ -80,7 +80,7 @@ class ArticleController extends BaseArticleController
      */
     public function search(Request $request): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::READ_PUBLIC);
+        $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         // Validate the request first.
         $builder = $this->validateRequest($request, [
@@ -130,7 +130,7 @@ class ArticleController extends BaseArticleController
      */
     public function update(Request $request, Article $article): JsonResponse
     {
-        $this->validatePermission($request, AbilityConstants::WRITE);
+        $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first.
         // @todo - Keeping the rules separate for now in case we need to split
