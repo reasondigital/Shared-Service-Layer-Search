@@ -12,6 +12,10 @@
 /Homestead.json
 /Homestead.yaml
 
+# Local development
+/app/Http/Controllers/DevelopmentController.php
+/routes/api/development.php
+
 # Generated and local data
 node_modules
 /docker/elasticsearch/data

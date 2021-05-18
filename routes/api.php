@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +13,24 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+/*
+ * Local development
+ */
+if (app()->environment('local')) {
+    Route::get('/', function () {
+        return 'Laravel version ' . app()->version();
+    });
+
+    /*
+     * Note: The development routes file below and the associated controller
+     * file at app/Http/DevelopmentController.php are both ignored by the
+     * repository. You will need to create them if you haven't already.
+     */
+    if (File::exists(base_path('routes/api/development.php'))) {
+        require base_path('routes/api/development.php');
+    }
+}
 
 /*
  * Articles
