@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\ApiAbilities;
+use App\Constants\ErrorMessages;
 use App\Exceptions\IncorrectPermissionException;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Base controller for any Article endpoint controllers.
@@ -34,11 +36,20 @@ abstract class BaseArticleController extends SearchController
      * @param  Article  $article
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionException|NotFoundHttpException
      * @since 1.0.0
      */
     public function get(Request $request, Article $article): JsonResponse
     {
+        if ($article->sensitive) {
+            if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
+                $builder = app()->make(ApiResponseBuilder::class);
+                $builder->setError(404, ErrorMessages::CODE_NOT_FOUND, ErrorMessages::MSG_NOT_FOUND);
+
+                abort(response()->json($builder->getResponseData(), $builder->getStatusCode()));
+            }
+        }
+
         $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         $builder = app()->make(ApiResponseBuilder::class);

@@ -7,7 +7,9 @@ use App\Constants\DataConstants;
 use App\Exceptions\IncorrectPermissionException;
 use App\Http\Controllers\BaseArticleController;
 use App\Models\Article;
+use App\Pagination\DataNormalise;
 use App\Pagination\LengthAwarePaginator;
+use ElasticScoutDriverPlus\QueryMatch;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -94,23 +96,31 @@ class ArticleController extends BaseArticleController
             // Do the search via scout.
             $query = $request->get('query');
             $perPage = $request->get('results');
+            if ($perPage === null) {
+                $perPage = config('search.results_per_page.locations');
+            }
+
+            $search = Article::boolSearch()->must('match', ['articleBody' => $query]);
+            if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
+                $search->filter('term', ['sensitive' => false]);
+            }
 
             /** @var LengthAwarePaginator $paginator */
-            $paginator = Article::search($query)->paginate($perPage);
-
-            if (!is_null($perPage)) {
-                $paginator->appends('results', $perPage);
-            }
+            $paginator = $search->paginate($perPage);
+            $paginator->appends('results', $perPage);
 
             $found = [];
             foreach ($paginator as $result) {
-                $found[] = $result->toResponseArray();
+                /** @var QueryMatch $result */
+                $found[] = $result->model()->toResponseArray();
             }
 
-            // Build successful response.
+            // Build response data
             $builder->setStatusCode(200);
             $builder->setData($found);
-            $builder->addMeta('pagination', $paginator->toArray());
+            if (!empty($found)) {
+                $builder->addMeta('pagination', DataNormalise::fromIlluminatePaginator($paginator->toArray()));
+            }
         }
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
