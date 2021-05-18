@@ -55,6 +55,7 @@ class ArticleFactory extends Factory
                 $this->faker->word(),
                 $this->faker->word(),
             ],
+            'sensitive' => $this->faker->boolean,
         ];
     }
 }

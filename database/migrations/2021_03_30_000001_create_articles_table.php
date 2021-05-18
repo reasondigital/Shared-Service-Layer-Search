@@ -31,6 +31,7 @@ class CreateArticlesTable extends Migration
             $table->dateTime('datePublished')->nullable();
             $table->char('thumbnailUrl')->nullable();
             $table->json('keywords')->nullable();
+            $table->boolean('sensitive')->default(false);
             $table->timestamps();
         });
     }

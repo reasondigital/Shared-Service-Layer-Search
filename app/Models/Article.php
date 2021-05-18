@@ -46,6 +46,7 @@ class Article extends Model
     protected $casts = [
         'datePublished' => 'datetime:'.DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT,
         'keywords' => 'array',
+        'sensitive' => 'boolean',
     ];
 
     /**
