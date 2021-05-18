@@ -165,6 +165,8 @@ final class LocationsIndex implements MigrationInterface
                     ],
                 ],
             ]);
+
+            $mapping->boolean('sensitive');
         });
     }
 

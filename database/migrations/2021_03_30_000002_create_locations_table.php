@@ -4,12 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Locations table creation.
+ *
+ * @since 1.0.0
+ */
 class CreateLocationsTable extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
+     * @since 1.0.0
      */
     public function up()
     {
@@ -25,6 +31,7 @@ class CreateLocationsTable extends Migration
             $table->text('description')->nullable();
             $table->text('photoUrl')->nullable();
             $table->text('photoDescription')->nullable();
+            $table->boolean('sensitive')->default(false);
             $table->timestamps();
         });
     }
@@ -33,6 +40,7 @@ class CreateLocationsTable extends Migration
      * Reverse the migrations.
      *
      * @return void
+     * @since 1.0.0
      */
     public function down()
     {

@@ -38,6 +38,7 @@ class LocationFactory extends Factory
             'photoUrl' => $this->faker->imageUrl(),
             'description' => $this->faker->sentence(15),
             'photoDescription' => $this->faker->sentence(15),
+            'sensitive' => $this->faker->boolean,
         ];
     }
 }
