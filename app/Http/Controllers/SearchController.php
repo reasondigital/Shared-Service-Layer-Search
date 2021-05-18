@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\IncorrectPermissionException;
+use App\Exceptions\IncorrectPermissionHttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -54,7 +54,7 @@ abstract class SearchController extends Controller
      * @param  string   $ability  The ability to check the token against.
      * @param  string   $message  The error message to provided in the response.
      *
-     * @throws IncorrectPermissionException
+     * @throws IncorrectPermissionHttpException
      * @since 1.0.0
      */
     protected function validatePermission(Request $request, string $ability, string $message = '')
@@ -64,7 +64,7 @@ abstract class SearchController extends Controller
                 $message = 'You do not have the permission required to take this action';
             }
 
-            throw new IncorrectPermissionException($message);
+            throw new IncorrectPermissionHttpException(403, $message);
         }
     }
 }

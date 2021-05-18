@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Elastic;
 
 use App\Constants\ApiAbilities;
 use App\Constants\DataConstants;
-use App\Exceptions\IncorrectPermissionException;
+use App\Exceptions\IncorrectPermissionHttpException;
 use App\Http\Controllers\BaseArticleController;
 use App\Models\Article;
 use App\Pagination\DataNormalise;
@@ -28,7 +28,7 @@ class ArticleController extends BaseArticleController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
@@ -77,7 +77,7 @@ class ArticleController extends BaseArticleController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function search(Request $request): JsonResponse
@@ -135,7 +135,7 @@ class ArticleController extends BaseArticleController
      * todo Will we allow a partial update or does the whole thing need to be submitted?
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function update(Request $request, Article $article): JsonResponse

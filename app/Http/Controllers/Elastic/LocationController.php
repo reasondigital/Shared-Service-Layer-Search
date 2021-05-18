@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Elastic;
 use App\Exceptions\DataNormaliseException;
 use App\Constants\ApiAbilities;
 use App\Constants\DataConstants;
-use App\Exceptions\IncorrectPermissionException;
+use App\Exceptions\IncorrectPermissionHttpException;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Models\Location;
@@ -40,7 +40,7 @@ class LocationController extends BaseLocationController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
@@ -93,7 +93,7 @@ class LocationController extends BaseLocationController
      * @param  Request  $request
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException|DataNormaliseException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException|DataNormaliseException
      * @since 1.0.0
      */
     public function search(Request $request): JsonResponse
@@ -205,7 +205,7 @@ class LocationController extends BaseLocationController
      * @param  Location  $location
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function update(Request $request, Location $location): JsonResponse

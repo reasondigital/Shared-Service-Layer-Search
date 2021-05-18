@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\ApiAbilities;
 use App\Constants\ErrorMessages;
-use App\Exceptions\IncorrectPermissionException;
+use App\Exceptions\IncorrectPermissionHttpException;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Article;
 use Exception;
@@ -36,7 +36,7 @@ abstract class BaseArticleController extends SearchController
      * @param  Article  $article
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException|NotFoundHttpException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException|NotFoundHttpException
      * @since 1.0.0
      */
     public function get(Request $request, Article $article): JsonResponse

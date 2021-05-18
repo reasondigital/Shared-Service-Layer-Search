@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\ApiAbilities;
-use App\Exceptions\IncorrectPermissionException;
+use App\Exceptions\IncorrectPermissionHttpException;
 use App\Geo\Address;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Location;
@@ -35,7 +35,7 @@ abstract class BaseLocationController extends SearchController
      * @param  Location  $location
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException
      * @since 1.0.0
      */
     public function get(Request $request, Location $location): JsonResponse
