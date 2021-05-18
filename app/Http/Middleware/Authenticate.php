@@ -6,6 +6,10 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 
+/**
+ * @package App\Http\Middleware
+ * @since   1.0.0
+ */
 class Authenticate extends Middleware
 {
     /**
@@ -20,23 +24,7 @@ class Authenticate extends Middleware
     protected function unauthenticated($request, array $guards)
     {
         throw new AuthenticationException(
-            'You are not authorised to consume this API',
-            $guards,
-            $this->redirectTo($request)
+            'You are not authorised to consume this API'
         );
-    }
-
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  Request  $request
-     *
-     * @return string|null
-     */
-    protected function redirectTo($request)
-    {
-        if (!$request->expectsJson()) {
-            return route('login');
-        }
     }
 }
