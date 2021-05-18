@@ -43,10 +43,7 @@ abstract class BaseArticleController extends SearchController
     {
         if ($article->sensitive) {
             if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
-                $builder = app()->make(ApiResponseBuilder::class);
-                $builder->setError(404, ErrorMessages::CODE_NOT_FOUND, ErrorMessages::MSG_NOT_FOUND);
-
-                abort(response()->json($builder->getResponseData(), $builder->getStatusCode()));
+                abort(404, ErrorMessages::MSG_NOT_FOUND);
             }
         }
 
