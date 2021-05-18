@@ -9,8 +9,11 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 
 /**
- * Passes correctly formatted data back to the client when an ID'd resource
- * can't be found. Otherwise, Laravel would return an HTML document.
+ * Passes correctly formatted data and message content back to the client when
+ * an ID'd resource can't be found.
+ *
+ * todo This can be removed, but routes will need updating (e.g. '/{id}' to '/{article}')
+ *  and feature tests will need to be checked and amended.
  *
  * @package App\Http\Middleware
  * @since 1.0.0
@@ -38,9 +41,7 @@ class HandleApi404AsJson
         $record = $modelClass::find($id);
 
         if (is_null($record)) {
-            $builder = app()->make(ApiResponseBuilder::class);
-            $builder->setError(404, ErrorMessages::CODE_NOT_FOUND, ErrorMessages::MSG_NOT_FOUND);
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+            abort(404, ErrorMessages::MSG_NOT_FOUND);
         }
 
         // Controller methods are expecting a resolved resource

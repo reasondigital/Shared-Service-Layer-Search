@@ -2,14 +2,17 @@
 
 namespace App\Exceptions;
 
+use App\Constants\ErrorMessages;
 use App\Http\Response\ApiResponseBuilder;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -41,8 +44,12 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->map(ModelNotFoundException::class, function () {
+            try {
+                abort(404, ErrorMessages::MSG_NOT_FOUND);
+            } catch (Throwable $overridingException) {
+                return $overridingException;
+            }
         });
     }
 
