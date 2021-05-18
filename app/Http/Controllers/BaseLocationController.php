@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\ApiAbilities;
+use App\Constants\ErrorMessages;
 use App\Exceptions\IncorrectPermissionHttpException;
 use App\Geo\Address;
 use App\Http\Response\ApiResponseBuilder;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Base controller for any Location endpoint controllers.
@@ -35,11 +37,17 @@ abstract class BaseLocationController extends SearchController
      * @param  Location  $location
      *
      * @return JsonResponse
-     * @throws BindingResolutionException|IncorrectPermissionHttpException
+     * @throws BindingResolutionException|IncorrectPermissionHttpException|NotFoundHttpException
      * @since 1.0.0
      */
     public function get(Request $request, Location $location): JsonResponse
     {
+        if ($location->sensitive) {
+            if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
+                abort(404, ErrorMessages::MSG_NOT_FOUND);
+            }
+        }
+
         $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         $builder = app()->make(ApiResponseBuilder::class);
