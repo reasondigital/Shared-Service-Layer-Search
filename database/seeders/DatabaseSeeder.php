@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ArticleSeeder::class,
             LocationSeeder::class,
+            ShapeSeeder::class,
         ]);
     }
 }
