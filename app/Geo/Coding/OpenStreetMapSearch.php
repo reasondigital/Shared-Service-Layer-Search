@@ -130,13 +130,13 @@ class OpenStreetMapSearch implements Search
     /**
      * @param  Response  $response
      *
-     * @return Address|null
+     * @return Address
      * @since 1.0.0
      */
-    protected function makeAddress(Response $response): ?Address
+    protected function makeAddress(Response $response): Address
     {
         if (empty($response->json())) {
-            return null;
+            return new Address(null);
         }
 
         $streetAddress = $response[0]['address']['house_number'] ?? '';
