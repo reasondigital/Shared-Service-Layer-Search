@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Elastic;
 
-use App\Exceptions\DataNormaliseException;
 use App\Constants\ApiAbilities;
 use App\Constants\DataConstants;
+use App\Exceptions\DataNormaliseException;
 use App\Exceptions\IncorrectPermissionHttpException;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Models\Location;
 use App\Pagination\DataNormalise;
 use ElasticScoutDriverPlus\Builders\BoolQueryBuilder;
+use ElasticScoutDriverPlus\Builders\NestedQueryBuilder;
 use ElasticScoutDriverPlus\QueryMatch;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
@@ -166,20 +167,28 @@ class LocationController extends BaseLocationController
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
-        // Coordinates item is nested so build the deepest query first
-        $locationQuery = (new BoolQueryBuilder)
-            ->must('match_all')
-            ->filter('geo_distance', [
-                'distance' => "{$distance}mi",
-                'geo.coordinates' => $coords,
-            ]);
+        // Full search query
+        $search = Location::boolSearch()
+            ->must(
+                (new NestedQueryBuilder)
+                    ->path('geo')
+                    ->query(
+                        (new BoolQueryBuilder)
+                            ->must('match_all')
+                            ->filter('geo_distance', [
+                                'distance' => "{$distance}mi",
+                                'geo.coordinates' => $coords,
+                            ])
+                    )
+            );
 
-        // Pass the deeper query to the top level query and run
-        $paginator = Location::nestedSearch()
-            ->path('geo')
-            ->query($locationQuery)
-            ->paginate($perPage)
-            ->withQueryString();
+        // Filter out sensitive content if appropriate
+        if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
+            $search->filter('term', ['sensitive' => false]);
+        }
+
+        // Execute query and paginate results
+        $paginator = $search->paginate($perPage)->withQueryString();
 
         $found = [];
         foreach ($paginator as $result) {
