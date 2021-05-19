@@ -33,12 +33,12 @@ class LocationFactory extends Factory
             'addressLocality' => $this->faker->city(),
             'addressCountry' => 'United Kingdom',
             'postalCode' => $this->faker->postcode(),
-            'latitude' => $this->faker->latitude(),
-            'longitude' => $this->faker->longitude(),
+            'latitude' => $this->faker->latitude(49.981, 57.756), // "Height" of the UK
+            'longitude' => $this->faker->longitude(-10.521, 1.682), // "Length" of the UK
             'photoUrl' => $this->faker->imageUrl(),
             'description' => $this->faker->sentence(15),
             'photoDescription' => $this->faker->sentence(15),
-            'sensitive' => $this->faker->boolean,
+            'sensitive' => $this->faker->boolean(35),
         ];
     }
 }
