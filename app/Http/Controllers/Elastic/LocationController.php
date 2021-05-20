@@ -238,8 +238,12 @@ class LocationController extends BaseLocationController
 
         // If we don't have an error then update the location
         if (!$builder->hasError()) {
-            $location->update($request->all());
-            $location->save();
+            $location->fill($request->all());
+
+            if ($location->isDirty()) {
+                $location->save();
+            }
+
             $builder->setStatusCode(200);
             $builder->setData($location->toResponseArray());
 

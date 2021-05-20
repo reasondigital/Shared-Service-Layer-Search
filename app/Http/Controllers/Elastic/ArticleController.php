@@ -132,7 +132,7 @@ class ArticleController extends BaseArticleController
      * @param  Request  $request
      * @param  Article  $article
      *
-     * todo Will we allow a partial update or does the whole thing need to be submitted?
+     * todo Amend to allow partial updates
      *
      * @return JsonResponse
      * @throws BindingResolutionException|IncorrectPermissionHttpException
@@ -143,8 +143,6 @@ class ArticleController extends BaseArticleController
         $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first.
-        // @todo - Keeping the rules separate for now in case we need to split
-        // @todo - between add and update
         $builder = $this->validateRequest($request, [
             'articleBody' => ['required', 'string'],
             'abstract' => ['required', 'string'],
@@ -158,8 +156,12 @@ class ArticleController extends BaseArticleController
 
         // If we don't have an error then add the article.
         if (!$builder->hasError()) {
-            $article->update($request->all());
-            $article->save();
+            $article->fill($request->all());
+
+            if ($article->isDirty()) {
+                $article->save();
+            }
+
             $builder->setStatusCode(200);
             $builder->setData($article->toResponseArray());
 
