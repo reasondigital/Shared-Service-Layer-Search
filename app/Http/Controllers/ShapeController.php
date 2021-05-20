@@ -6,6 +6,7 @@ use App\Constants\ApiAbilities;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Shape;
 use App\Rules\GeoShapeClosed;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -96,16 +97,24 @@ class ShapeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Retrieve a specific instance of the resource.
      *
      * @param  Request  $request
      * @param  Shape    $shape
      *
-     * @return Response
+     * @return JsonResponse
+     * @throws BindingResolutionException
+     * @since 1.0.0
      */
-    public function get(Request $request, Shape $shape)
+    public function get(Request $request, Shape $shape): JsonResponse
     {
-        //
+        $this->validatePermission($request, ApiAbilities::WRITE);
+
+        $builder = app()->make(ApiResponseBuilder::class);
+        $builder->setStatusCode(200);
+        $builder->setData($shape->toResponseArray());
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
