@@ -22,10 +22,11 @@ class DatabaseSeeder extends Seeder
         // Users
         // \App\Models\User::factory(10)->create();
 
+        // Order is important
         $this->call([
             ArticleSeeder::class,
-            LocationSeeder::class,
             ShapeSeeder::class,
+            LocationSeeder::class,
         ]);
     }
 }

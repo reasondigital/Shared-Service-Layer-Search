@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Location;
+use App\Models\Shape;
+use Faker\Factory;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
 
 /**
@@ -18,8 +21,22 @@ class LocationSeeder extends Seeder
      *
      * @since 1.0.0
      */
-    public function run()
+    public function run(Generator $faker)
     {
-        Location::factory()->count(10)->create();
+        $shapes = Shape::all();
+
+        if ($shapes->count() === 0) {
+            Location::factory()->count(15)->create();
+            return;
+        }
+
+        foreach ($shapes as $shape) {
+            for ($count = 0; $count < 5; $count++) {
+                Location::factory()->create([
+                    'latitude' => $faker->latitude($shape->coordinates[2]['lat'], $shape->coordinates[0]['lat']),
+                    'longitude' => $faker->longitude($shape->coordinates[0]['lon'], $shape->coordinates[1]['lon']),
+                ]);
+            }
+        }
     }
 }
