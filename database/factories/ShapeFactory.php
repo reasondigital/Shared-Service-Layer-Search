@@ -33,16 +33,16 @@ class ShapeFactory extends Factory
             $this->faker->latitude(51.275597, 54.737247),
         ];
         $two = [
-            $start[0],
-            $start[1] - 0.1,
+            $start[0] + 1,
+            $start[1],
         ];
         $three = [
-            $two[0] - 0.1,
-            $two[1],
+            $two[0],
+            $two[1] - 0.4,
         ];
         $four = [
-            $three[0],
-            $three[1] + 0.1,
+            $three[0] - 1,
+            $three[1],
         ];
 
         return [
