@@ -22,7 +22,7 @@ class CreateShapesTable extends Migration
         Schema::create('shapes', function (Blueprint $table) {
             $table->id();
             $table->char('name');
-            $table->text('description');
+            $table->text('description')->default('');
             $table->json('coordinates');
             $table->timestamps();
         });
