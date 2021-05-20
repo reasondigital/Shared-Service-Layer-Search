@@ -29,20 +29,20 @@ class ShapeFactory extends Factory
     {
         // Draw a box starting from a random point
         $start = [
-            $this->faker->longitude(-3.131662, -0.329032),
-            $this->faker->latitude(51.275597, 54.737247),
+            'lat' => $this->faker->latitude(51.275597, 54.737247),
+            'lon' => $this->faker->longitude(-3.131662, -0.329032),
         ];
         $two = [
-            $start[0] + 1,
-            $start[1],
+            'lat' => $start['lat'],
+            'lon' => $start['lon'] + 1,
         ];
         $three = [
-            $two[0],
-            $two[1] - 0.4,
+            'lat' => $two['lat'] - 0.4,
+            'lon' => $two['lon'],
         ];
         $four = [
-            $three[0] - 1,
-            $three[1],
+            'lat' => $three['lat'],
+            'lon' => $three['lon'] - 1,
         ];
 
         return [

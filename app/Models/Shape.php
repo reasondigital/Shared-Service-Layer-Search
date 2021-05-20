@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constants\DataConstants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
@@ -43,11 +44,19 @@ class Shape extends Model
     {
         $array = $this->toArray();
 
-        $array['shape'] = [
-            'type' => 'polygon',
-            'coordinates' => [$array['coordinates']],
-        ];
-        unset($array['coordinates']);
+        if (config('search.provider.locations') === 'elastic') {
+            $coordinates = array_map(function ($point) {
+                return [$point['lon'], $point['lat']];
+            }, $array['coordinates']);
+
+            $array['shape'] = [
+                '@context' => DataConstants::SCHEMA_CONTEXT,
+                '@type' => 'GeoShape',
+                'type' => 'polygon',
+                'coordinates' => [$coordinates],
+            ];
+            unset($array['coordinates']);
+        }
 
         return $array;
     }
