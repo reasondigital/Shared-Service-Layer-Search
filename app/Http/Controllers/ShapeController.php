@@ -6,6 +6,7 @@ use App\Constants\ApiAbilities;
 use App\Http\Response\ApiResponseBuilder;
 use App\Models\Shape;
 use App\Rules\GeoShapeClosed;
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -56,15 +57,15 @@ class ShapeController extends Controller
 
             $builder->addLink('get_shape', [
                 'type' => 'GET',
-                'href' => route('shapes.get', ['id' => $shape->id]),
+                'href' => route('shapes.get', ['shape' => $shape]),
             ]);
             $builder->addLink('update_shape', [
                 'type' => 'PUT',
-                'href' => route('shapes.put', ['id' => $shape->id]),
+                'href' => route('shapes.put', ['shape' => $shape]),
             ]);
             $builder->addLink('delete_shape', [
                 'type' => 'DELETE',
-                'href' => route('shapes.delete', ['id' => $shape->id]),
+                'href' => route('shapes.delete', ['shape' => $shape]),
             ]);
         }
 
@@ -136,9 +137,14 @@ class ShapeController extends Controller
      * @param  Shape  $shape
      *
      * @return Response
+     * @throws Exception
+     * @since 1.0.0
      */
     public function destroy(Shape $shape)
     {
-        //
+        $this->validatePermission(request(), ApiAbilities::WRITE);
+
+        $shape->delete();
+        return response()->noContent();
     }
 }
