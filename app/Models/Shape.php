@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Constants\DataConstants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Laravel\Scout\Searchable;
 
 /**
@@ -50,11 +51,10 @@ class Shape extends Model
             }, $array['coordinates']);
 
             $array['shape'] = [
-                '@context' => DataConstants::SCHEMA_CONTEXT,
-                '@type' => 'GeoShape',
                 'type' => 'polygon',
                 'coordinates' => [$coordinates],
             ];
+
             unset($array['coordinates']);
         }
 
@@ -67,6 +67,17 @@ class Shape extends Model
      */
     public function toResponseArray(): array
     {
-        return $this->toArray();
+        $array = $this->toArray();
+
+        $array['polygon'] = '';
+        foreach ($array['coordinates'] as $point) {
+            $array['polygon'] .= "{$point['lat']},{$point['lon']} ";
+        }
+
+        // Add top level schema data
+        $array = Arr::prepend($array, 'GeoShape', '@type');
+        $array = Arr::prepend($array, DataConstants::SCHEMA_CONTEXT, '@context');
+
+        return $array;
     }
 }
