@@ -27,14 +27,14 @@ class GeoShapeClosed implements Rule
      * Determine if the validation rule passes.
      *
      * @param  string  $attribute
-     * @param  mixed   $value
+     * @param  mixed   $coordinates
      *
      * @return bool
      * @since 1.0.0
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $coordinates)
     {
-        return $value[0] === $value[array_key_last($value)];
+        return $coordinates[array_key_first($coordinates)] === $coordinates[array_key_last($coordinates)];
     }
 
     /**
