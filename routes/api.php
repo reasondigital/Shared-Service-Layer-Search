@@ -77,3 +77,21 @@ Route::group(
         Route::delete('/{id}', [$providerControllerClass, 'destroy'])->name('locations.delete');
     }
 );
+
+/*
+ * Shapes
+ */
+Route::group(
+    [
+        'prefix' => '/shapes',
+    ],
+    function () {
+        $controllerClass = App\Http\Controllers\ShapeController::class;
+
+        Route::post('/', [$controllerClass, 'store'])->name('shapes.post');
+        Route::get('/{id}', [$controllerClass, 'get'])->name('shapes.get');
+        Route::get('/list{id}', [$controllerClass, 'list'])->name('shapes.list');
+        Route::put('/{id}', [$controllerClass, 'update'])->name('shapes.put');
+        Route::delete('/{id}', [$controllerClass, 'destroy'])->name('shapes.delete');
+    }
+);
