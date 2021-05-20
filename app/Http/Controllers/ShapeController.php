@@ -35,7 +35,7 @@ class ShapeController extends Controller
         $builder = $this->validateRequest($request, [
             'name' => ['required', 'string'],
             'description' => ['sometimes', 'string'],
-            'coordinates' => ['required', 'array', new GeoShapeClosed],
+            'coordinates' => ['required', 'array', 'min:4', new GeoShapeClosed],
             'coordinates.*.lat' => ['required', 'numeric', 'min:-90', 'max:90'],
             'coordinates.*.lon' => ['required', 'numeric', 'min:-180', 'max:180'],
         ]);
@@ -44,12 +44,7 @@ class ShapeController extends Controller
             $shape = new Shape($request->all());
 
             // Ensure values are floats
-            $shape->coordinates = array_map(function ($point) {
-                return [
-                    'lat' => (float) $point['lat'],
-                    'lon' => (float) $point['lon'],
-                ];
-            }, $shape->coordinates);
+            $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
 
             $shape->save();
             $builder->setStatusCode(201);
@@ -124,11 +119,48 @@ class ShapeController extends Controller
      * @param  Request  $request
      * @param  Shape    $shape
      *
-     * @return Response
+     * @return JsonResponse
+     * @throws BindingResolutionException
+     * @since 1.0.0
      */
-    public function update(Request $request, Shape $shape)
+    public function update(Request $request, Shape $shape): JsonResponse
     {
-        //
+        $this->validatePermission($request, ApiAbilities::WRITE);
+
+        $builder = $this->validateRequest($request, [
+            'name' => ['sometimes', 'string'],
+            'description' => ['sometimes', 'string'],
+            'coordinates' => ['sometimes', 'array', 'min:4', new GeoShapeClosed],
+            'coordinates.*.lat' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
+            'coordinates.*.lon' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
+        ]);
+
+        if (!$builder->hasError()) {
+            $shape->fill($request->all());
+
+            if ($shape->isDirty()) {
+                if ($shape->isDirty('coordinates')) {
+                    // Ensure values are floats
+                    $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
+                }
+
+                $shape->save();
+            }
+
+            $builder->setStatusCode(200);
+            $builder->setData($shape->toResponseArray());
+
+            $builder->addLink('get_shape', [
+                'type' => 'GET',
+                'href' => route('shapes.get', ['shape' => $shape]),
+            ]);
+            $builder->addLink('delete_shape', [
+                'type' => 'DELETE',
+                'href' => route('shapes.delete', ['shape' => $shape]),
+            ]);
+        }
+
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
@@ -146,5 +178,21 @@ class ShapeController extends Controller
 
         $shape->delete();
         return response()->noContent();
+    }
+
+    /**
+     * Ensure that a coordination point array's values are float values.
+     *
+     * @param  array  $point
+     *
+     * @return float[]
+     * @since 1.0.0
+     */
+    private function normalisePointCoordsAsFloats(array $point)
+    {
+        return [
+            'lat' => (float) $point['lat'] ?? 0.0,
+            'lon' => (float) $point['lon'] ?? 0.0,
+        ];
     }
 }
