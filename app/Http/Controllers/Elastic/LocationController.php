@@ -9,6 +9,7 @@ use App\Exceptions\IncorrectPermissionHttpException;
 use App\Geo\Coding\Search;
 use App\Http\Controllers\BaseLocationController;
 use App\Models\Location;
+use App\Models\Shape;
 use App\Pagination\DataNormalise;
 use ElasticScoutDriverPlus\Builders\BoolQueryBuilder;
 use ElasticScoutDriverPlus\Builders\NestedQueryBuilder;
@@ -103,6 +104,7 @@ class LocationController extends BaseLocationController
 
         $builder = $this->validateRequest($request, [
             'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
+            'boundByShapeId' => ['sometimes', 'integer'],
             'query' => ['required', 'string'],
             'distance' => ['sometimes', 'integer'],
             'results' => ['sometimes', 'integer'],
@@ -116,15 +118,26 @@ class LocationController extends BaseLocationController
 
         $by = $request->get('by');
         $query = $request->get('query');
+        $shapeId = $request->get('boundByShapeId');
 
         $distance = $request->get('distance');
         if (is_null($distance)) {
-            $distance = config('search.radius');
+            if (is_null($shapeId)) {
+                $distance = config('search.radius');
+            } else {;
+                $distance = 25000;
+            }
         }
 
         $perPage = $request->get('results');
         if ($perPage === null) {
             $perPage = config('search.results_per_page.locations');
+        }
+
+        // Check Shape ID
+        if (!is_null($shapeId) && Shape::find($shapeId) === null) {
+            $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
         $coords = [];
@@ -136,6 +149,7 @@ class LocationController extends BaseLocationController
                 break;
 
             case 'postcode':
+                // todo Maybe add this as custom validation rule
                 $geoSearch = app()->make(Search::class);
                 $address = $geoSearch->findByPostalCode($query);
                 $coords = $this->getCoords($address);
@@ -167,19 +181,31 @@ class LocationController extends BaseLocationController
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
+        // Location filter query
+        $locQuery = (new BoolQueryBuilder);
+        if (!is_null($distance)) {
+            $locQuery->filter('geo_distance', [
+                'distance' => "{$distance}mi",
+                'geo.coordinates' => $coords,
+            ]);
+        }
+        if (!is_null($shapeId)) {
+            $locQuery->filter('geo_shape', [
+                'geo.coordinates' => [
+                    'indexed_shape' => [
+                        'index' => config('elastic.migrations.index_name_prefix') . 'shapes',
+                        'id' => (int) $shapeId,
+                    ],
+                ],
+            ]);
+        }
+
         // Full search query
         $search = Location::boolSearch()
             ->must(
                 (new NestedQueryBuilder)
                     ->path('geo')
-                    ->query(
-                        (new BoolQueryBuilder)
-                            ->must('match_all')
-                            ->filter('geo_distance', [
-                                'distance' => "{$distance}mi",
-                                'geo.coordinates' => $coords,
-                            ])
-                    )
+                    ->query($locQuery)
             );
 
         // Filter out sensitive content if appropriate
