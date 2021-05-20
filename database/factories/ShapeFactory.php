@@ -34,15 +34,15 @@ class ShapeFactory extends Factory
         ];
         $two = [
             'lat' => $start['lat'],
-            'lon' => $start['lon'] + 1,
+            'lon' => round($start['lon'] + 1, 6),
         ];
         $three = [
-            'lat' => $two['lat'] - 0.4,
+            'lat' => round($two['lat'] - 0.4, 6),
             'lon' => $two['lon'],
         ];
         $four = [
             'lat' => $three['lat'],
-            'lon' => $three['lon'] - 1,
+            'lon' => round($three['lon'] - 1, 6),
         ];
 
         return [
