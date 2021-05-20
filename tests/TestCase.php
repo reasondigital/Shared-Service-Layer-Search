@@ -31,6 +31,6 @@ abstract class TestCase extends BaseTestCase
     protected function resourceRoute(string $resource, string $path = '', array $abilities = ['*']): string
     {
         Sanctum::actingAs(User::factory()->create(), $abilities);
-        return '/api/search/'.config('app.api_version').'/'.$resource.$path;
+        return url('/'.config('app.api_version').'/'.$resource.$path);
     }
 }

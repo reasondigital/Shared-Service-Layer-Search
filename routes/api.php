@@ -37,7 +37,7 @@ if (app()->environment('local')) {
  */
 Route::group(
     [
-        'prefix' => '/search/' . config('app.api_version'),
+        'prefix' => '/articles',
     ],
     function () {
         switch (config('search.provider.articles')) {
@@ -47,11 +47,11 @@ Route::group(
                 break;
         }
 
-        Route::post('/articles', [$providerControllerClass, 'store'])->name('articles.post');
-        Route::get('/articles/{id}', [$providerControllerClass, 'get'])->name('articles.get');
-        Route::get('/articles', [$providerControllerClass, 'search'])->name('articles.search');
-        Route::put('/articles/{id}', [$providerControllerClass, 'update'])->name('articles.put');
-        Route::delete('/articles/{id}', [$providerControllerClass, 'destroy'])->name('articles.delete');
+        Route::post('/', [$providerControllerClass, 'store'])->name('articles.post');
+        Route::get('/search', [$providerControllerClass, 'search'])->name('articles.search');
+        Route::get('/{id}', [$providerControllerClass, 'get'])->name('articles.get');
+        Route::put('/{id}', [$providerControllerClass, 'update'])->name('articles.put');
+        Route::delete('/{id}', [$providerControllerClass, 'destroy'])->name('articles.delete');
     }
 );
 
@@ -60,7 +60,7 @@ Route::group(
  */
 Route::group(
     [
-        'prefix' => '/search/' . config('app.api_version'),
+        'prefix' => '/locations',
     ],
     function () {
         switch (config('search.provider.locations')) {
@@ -70,10 +70,10 @@ Route::group(
                 break;
         }
 
-        Route::post('/locations', [$providerControllerClass, 'store'])->name('locations.post');
-        Route::get('/locations/{id}', [$providerControllerClass, 'get'])->name('locations.get');
-        Route::get('/locations', [$providerControllerClass, 'search'])->name('locations.search');
-        Route::put('/locations/{id}', [$providerControllerClass, 'update'])->name('locations.put');
-        Route::delete('/locations/{id}', [$providerControllerClass, 'destroy'])->name('locations.delete');
+        Route::post('/', [$providerControllerClass, 'store'])->name('locations.post');
+        Route::get('/search', [$providerControllerClass, 'search'])->name('locations.search');
+        Route::get('/{id}', [$providerControllerClass, 'get'])->name('locations.get');
+        Route::put('/{id}', [$providerControllerClass, 'update'])->name('locations.put');
+        Route::delete('/{id}', [$providerControllerClass, 'destroy'])->name('locations.delete');
     }
 );
