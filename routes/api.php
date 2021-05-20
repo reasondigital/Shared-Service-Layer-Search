@@ -90,8 +90,8 @@ Route::group(
 
         Route::post('/', [$controllerClass, 'store'])->name('shapes.post');
         Route::get('/list', [$controllerClass, 'list'])->name('shapes.list');
-        Route::get('/{id}', [$controllerClass, 'get'])->name('shapes.get');
-        Route::put('/{id}', [$controllerClass, 'update'])->name('shapes.put');
-        Route::delete('/{id}', [$controllerClass, 'destroy'])->name('shapes.delete');
+        Route::get('/{shape}', [$controllerClass, 'get'])->name('shapes.get');
+        Route::put('/{shape}', [$controllerClass, 'update'])->name('shapes.put');
+        Route::delete('/{shape}', [$controllerClass, 'destroy'])->name('shapes.delete');
     }
 );
