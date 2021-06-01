@@ -23,7 +23,7 @@ class Create extends Command
      */
     protected $signature = "token:create
                             {name : A name for the token, e.g 'Mobile App'. This is strictly for reference}
-                            {accessLevel : Options are 'read', 'write' and 'admin'}
+                            {accessLevel : Options are 'read_public', 'read_all', 'write' and 'admin'}
                             {emailAddress : The token will be attributed to this address. An account will be created in the application for this user if one doesn't already exist}";
 
     /**

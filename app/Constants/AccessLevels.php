@@ -14,8 +14,16 @@ class AccessLevels
     /**
      * @since 1.0.0
      */
-    const READ = [
+    const READ_PUBLIC = [
         ApiAbilities::READ_PUBLIC,
+    ];
+
+    /**
+     * @since 1.0.0
+     */
+    const READ_ALL = [
+        ApiAbilities::READ_PUBLIC,
+        ApiAbilities::READ_SENSITIVE,
     ];
 
     /**
