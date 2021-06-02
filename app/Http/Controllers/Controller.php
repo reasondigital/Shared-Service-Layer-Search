@@ -29,6 +29,11 @@ class Controller extends BaseController
     const ERROR_CODE_VALIDATION = 'validation_error';
 
     /**
+     * @since 1.0.0
+     */
+    const ERROR_MSG_VALIDATION = 'The data provided was invalid. The request has not been fulfilled.';
+
+    /**
      * Confirm that the given request user has the given ability.
      *
      * @param  Request  $request  A Laravel request object.
@@ -74,7 +79,7 @@ class Controller extends BaseController
             $builder->setError(
                 400,
                 self::ERROR_CODE_VALIDATION,
-                'The data provided was invalid. The request has not been fulfilled.'
+                self::ERROR_MSG_VALIDATION
             );
 
             $fieldErrors = [];
