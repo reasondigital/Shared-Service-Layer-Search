@@ -53,7 +53,7 @@ class CheckForAnonymousApiToken
                 return $next($request);
             } else {
                 $this->getAnonymousUser()->tokens()->create([
-                    'name' => now()->format('Y-m-d H:i:s'),
+                    'name' => $apiTokens[$requestToken]['name'],
                     'token' => hash('sha256', $requestToken),
                     'abilities' => $apiTokens[$requestToken]['abilities'],
                 ]);
