@@ -18,6 +18,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Polyline;
 
 /**
  * Locations API controller for Elasticsearch.
@@ -132,20 +133,7 @@ class LocationController extends BaseLocationController
 
         if (count($constraintsProvided) === 1) {
             $constraint = $constraintsProvided[0];
-
-            // Check that the given shape ID is valid (if appropriate)
-            if ($constraint['key'] === 'boundingShapeId' && Shape::find($constraint['value']) === null) {
-                $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
-            }
         } elseif (count($constraintsProvided) > 1) {
-            if (!$builder->hasError()) {
-                $builder->setError(
-                    400,
-                    self::ERROR_CODE_VALIDATION,
-                    self::ERROR_MSG_VALIDATION
-                );
-            }
-
             // Add "too many constraints" error to field errors list
             $fieldErrors = $builder->getMeta('field_errors', []);
             foreach ($constraintsProvided as $constraintProvided) {
@@ -153,6 +141,33 @@ class LocationController extends BaseLocationController
             }
 
             $builder->updateMeta('field_errors', $fieldErrors);
+        }
+
+        // Check that the given shape ID is valid (if appropriate)
+        if ($constraint['key'] === 'boundingShapeId' && Shape::find($constraint['value']) === null) {
+            $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
+        }
+
+        if ($constraint['key'] === 'boundingShape') {
+            $shapeCoords = Polyline::pair(Polyline::decode($constraint['value']));
+            $geoShapeClosed = $shapeCoords[array_key_first($shapeCoords)] === $shapeCoords[array_key_last($shapeCoords)];
+
+            if (!$geoShapeClosed) {
+                $fieldErrors = $builder->getMeta('field_errors', []);
+                $fieldErrors[$constraint['key']] = "The first and last points of the 'boundingShape' parameter must be the same.";
+                $builder->updateMeta('field_errors', $fieldErrors);
+            } else {
+                $constraint['value'] = $shapeCoords;
+            }
+        }
+
+        // Set error on the response if field errors have been detected
+        if (!$builder->hasError() && $builder->hasMeta('field_errors')) {
+            $builder->setError(
+                400,
+                self::ERROR_CODE_VALIDATION,
+                self::ERROR_MSG_VALIDATION
+            );
         }
 
         // Exit early if we have an error
@@ -222,6 +237,19 @@ class LocationController extends BaseLocationController
         // Apply constraint
         switch ($constraint['key']) {
             case 'boundingShape':
+                // Switch lat/lon to lon/lat, as required by Elastic
+                $constraint['value'] = array_map(function ($point) {
+                    return [$point[1], $point[0]];
+                }, $constraint['value']);
+
+                $locQuery->filter('geo_shape', [
+                    'geo.coordinates' => [
+                        'shape' => [
+                            'type' => 'polygon',
+                            'coordinates' => [$constraint['value']],
+                        ],
+                    ],
+                ]);
                 break;
 
             case 'boundingShapeId':
