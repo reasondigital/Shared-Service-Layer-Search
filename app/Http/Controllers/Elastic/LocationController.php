@@ -170,18 +170,6 @@ class LocationController extends BaseLocationController
         $by = $request->get('by');
         $query = $request->get('query');
 
-        /*$shape = $request->get('boundingShape');
-        $shapeId = $request->get('boundingShapeId');
-
-        $distance = $request->get('distance');
-        if (is_null($distance)) {
-            if (is_null($shapeId)) {
-                $distance = config('search.radius');
-            } else {
-                $distance = 25000;
-            }
-        }*/
-
         $perPage = $request->get('results');
         if ($perPage === null) {
             $perPage = config('search.results_per_page.locations');
@@ -262,6 +250,16 @@ class LocationController extends BaseLocationController
 
         // Full search query
         $search = Location::boolSearch()
+            ->sortRaw([
+                [
+                    '_geo_distance' => [
+                        'geo.coordinates' => $coords,
+                        'order' => 'asc',
+                        'unit' => 'mi',
+                        'nested' => ['path' => 'geo'],
+                    ],
+                ],
+            ])
             ->must(
                 (new NestedQueryBuilder)
                     ->path('geo')
@@ -279,7 +277,10 @@ class LocationController extends BaseLocationController
         $found = [];
         foreach ($paginator as $result) {
             /** @var QueryMatch $result */
-            $found[] = $result->model()->toResponseArray();
+            $resultData = $result->model()->toResponseArray();
+            $resultData['distance'] = round($result->raw()['sort'][0], 2);
+
+            $found[] = $resultData;
         }
 
         // Build response data
