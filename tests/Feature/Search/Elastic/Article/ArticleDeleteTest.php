@@ -32,7 +32,7 @@ class ArticleDeleteTest extends TestCase
         Search::assertSynced($article);
 
         $response = $this->delete($this->route($article->id));
-        $response->assertStatus(204);
+        $response->assertStatus(200);
 
         Search::assertNotContains($article);
     }

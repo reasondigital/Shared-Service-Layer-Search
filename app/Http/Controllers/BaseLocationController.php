@@ -12,7 +12,6 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -73,19 +72,21 @@ abstract class BaseLocationController extends SearchController
      *
      * todo Implement feature tests for this endpoint.
      *
-     * @param  Location $location
+     * @param  Location            $location
+     * @param  ApiResponseBuilder  $builder
      *
-     * @return Response JSON response is sent by middleware when the resource
-     *                  can't be found.
+     * @return JsonResponse
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(Location $location): Response
+    public function destroy(Location $location, ApiResponseBuilder $builder): JsonResponse
     {
         $this->validatePermission(request(), ApiAbilities::WRITE);
 
         $location->delete();
-        return response()->noContent();
+
+        $builder->setStatusCode(200);
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**

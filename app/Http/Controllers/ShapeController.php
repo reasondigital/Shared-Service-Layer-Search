@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 /**
  * Shapes API controller for the application.
@@ -26,6 +25,7 @@ class ShapeController extends Controller
      * @param  Request  $request
      *
      * @return JsonResponse
+     * @throws BindingResolutionException
      * @since 1.0.0
      */
     public function store(Request $request): JsonResponse
@@ -166,18 +166,21 @@ class ShapeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Shape  $shape
+     * @param  Shape               $shape
+     * @param  ApiResponseBuilder  $builder
      *
-     * @return Response
+     * @return JsonResponse
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(Shape $shape)
+    public function destroy(Shape $shape, ApiResponseBuilder $builder): JsonResponse
     {
         $this->validatePermission(request(), ApiAbilities::WRITE);
 
         $shape->delete();
-        return response()->noContent();
+
+        $builder->setStatusCode(200);
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 
     /**
@@ -188,7 +191,7 @@ class ShapeController extends Controller
      * @return float[]
      * @since 1.0.0
      */
-    private function normalisePointCoordsAsFloats(array $point)
+    private function normalisePointCoordsAsFloats(array $point): array
     {
         return [
             'lat' => (float) $point['lat'] ?? 0.0,

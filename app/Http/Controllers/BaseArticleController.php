@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -70,17 +69,20 @@ abstract class BaseArticleController extends SearchController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Article  $article
+     * @param  Article             $article
+     * @param  ApiResponseBuilder  $builder
      *
-     * @return Response
+     * @return JsonResponse
      * @throws Exception
      * @since 1.0.0
      */
-    public function destroy(Article $article): Response
+    public function destroy(Article $article, ApiResponseBuilder $builder): JsonResponse
     {
         $this->validatePermission(request(), ApiAbilities::WRITE);
 
         $article->delete();
-        return response()->noContent();
+
+        $builder->setStatusCode(200);
+        return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
 }
