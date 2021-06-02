@@ -103,41 +103,88 @@ class LocationController extends BaseLocationController
         $this->validatePermission($request, ApiAbilities::READ_PUBLIC);
 
         $builder = $this->validateRequest($request, [
+            // Search by; required
             'by' => ['required', 'string', Rule::in(self::SEARCH_BY_OPTIONS)],
-            'boundByShapeId' => ['sometimes', 'integer'],
             'query' => ['required', 'string'],
+
+            // Constrain search by; optional, only one allowed
+            'boundingShapeId' => ['sometimes', 'integer'],
+            'boundingShape' => ['sometimes', 'string'],
             'distance' => ['sometimes', 'integer'],
+
+            // Manipulate response by; optional
             'results' => ['sometimes', 'integer'],
             'page' => ['sometimes', 'integer'],
         ]);
+
+        // Collect any constraints provided by the request
+        $constraintsProvided = [];
+        foreach (['boundingShape', 'boundingShapeId', 'distance'] as $constraintKey) {
+            $constraintValue = $request->get($constraintKey);
+
+            if (!is_null($constraintValue)) {
+                $constraintsProvided[] = [
+                    'key' => $constraintKey,
+                    'value' => $constraintValue,
+                ];
+            }
+        }
+
+        if (count($constraintsProvided) === 1) {
+            $constraint = $constraintsProvided[0];
+
+            // Check that the given shape ID is valid (if appropriate)
+            if ($constraint['key'] === 'boundingShapeId' && Shape::find($constraint['value']) === null) {
+                $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
+            }
+        } elseif (count($constraintsProvided) > 1) {
+            if (!$builder->hasError()) {
+                $builder->setError(
+                    400,
+                    self::ERROR_CODE_VALIDATION,
+                    self::ERROR_MSG_VALIDATION
+                );
+            }
+
+            // Add "too many constraints" error to field errors list
+            $fieldErrors = $builder->getMeta('field_errors', []);
+            foreach ($constraintsProvided as $constraintProvided) {
+                $fieldErrors[$constraintProvided['key']] = "Conflicting parameters provided. Of 'boundingShape', 'boundingShapeId' and 'distance', only one of these can be accepted by this endpoint in a single request.";
+            }
+
+            $builder->updateMeta('field_errors', $fieldErrors);
+        }
 
         // Exit early if we have an error
         if ($builder->hasError()) {
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
+        if (empty($constraint)) {
+            $constraint = [
+                'key' => null,
+                'value' => null,
+            ];
+        }
+
         $by = $request->get('by');
         $query = $request->get('query');
-        $shapeId = $request->get('boundByShapeId');
+
+        /*$shape = $request->get('boundingShape');
+        $shapeId = $request->get('boundingShapeId');
 
         $distance = $request->get('distance');
         if (is_null($distance)) {
             if (is_null($shapeId)) {
                 $distance = config('search.radius');
-            } else {;
+            } else {
                 $distance = 25000;
             }
-        }
+        }*/
 
         $perPage = $request->get('results');
         if ($perPage === null) {
             $perPage = config('search.results_per_page.locations');
-        }
-
-        // Check Shape ID
-        if (!is_null($shapeId) && Shape::find($shapeId) === null) {
-            $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
-            return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
         $coords = [];
@@ -149,7 +196,7 @@ class LocationController extends BaseLocationController
                 break;
 
             case 'postcode':
-                // todo Maybe add this as custom validation rule
+                // todo Maybe add this as a custom validation rule
                 $geoSearch = app()->make(Search::class);
                 $address = $geoSearch->findByPostalCode($query);
                 $coords = $this->getCoords($address);
@@ -166,7 +213,7 @@ class LocationController extends BaseLocationController
                     $builder->setError(
                         400,
                         self::ERROR_CODE_VALIDATION,
-                        'The data provided was invalid. The request has not been fulfilled.'
+                        self::ERROR_MSG_VALIDATION
                     );
                     $builder->addMeta('field_errors', [
                         'query' => "Coordinates provided are invalid. Format should be '{lat},{lon}'",
@@ -181,23 +228,36 @@ class LocationController extends BaseLocationController
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
         }
 
-        // Location filter query
-        $locQuery = (new BoolQueryBuilder);
-        if (!is_null($distance)) {
-            $locQuery->filter('geo_distance', [
-                'distance' => "{$distance}mi",
-                'geo.coordinates' => $coords,
-            ]);
-        }
-        if (!is_null($shapeId)) {
-            $locQuery->filter('geo_shape', [
-                'geo.coordinates' => [
-                    'indexed_shape' => [
-                        'index' => config('elastic.migrations.index_name_prefix') . 'shapes',
-                        'id' => (int) $shapeId,
+        // Location filter (constraint) query
+        $locQuery = new BoolQueryBuilder;
+
+        // Apply constraint
+        switch ($constraint['key']) {
+            case 'boundingShape':
+                break;
+
+            case 'boundingShapeId':
+                $locQuery->filter('geo_shape', [
+                    'geo.coordinates' => [
+                        'indexed_shape' => [
+                            'index' => config('elastic.migrations.index_name_prefix') . 'shapes',
+                            'id' => (int) $constraint['value'],
+                        ],
                     ],
-                ],
-            ]);
+                ]);
+                break;
+
+            default:
+            case 'distance':
+                if (is_null($constraint['value'])) {
+                    $constraint['value'] = config('search.radius');
+                }
+
+                $locQuery->filter('geo_distance', [
+                    'distance' => "{$constraint['value']}mi",
+                    'geo.coordinates' => $coords,
+                ]);
+                break;
         }
 
         // Full search query
