@@ -43,9 +43,9 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     public function build()
     {
         $this->responseData = [
-            'data' => $this->data,
-            'meta' => $this->meta,
-            'links' => $this->links,
+            'data' => $this->getData(),
+            'meta' => $this->getMeta(),
+            'links' => $this->getLinks(),
         ];
     }
 
@@ -102,10 +102,10 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     /**
      * Establish an error for this response.
      *
-     * @param  int  $statusCode  A valid HTTP header response code.
-     * @param  string  $errorCode  A code for the error. Use underscores to
-     *                             separate words.
-     * @param  string  $errorMsg  A human-readable description of the error.
+     * @param  int     $statusCode  A valid HTTP header response code.
+     * @param  string  $errorCode   A code for the error. Use underscores to
+     *                              separate words.
+     * @param  string  $errorMsg    A human-readable description of the error.
      *
      * @since 1.0.0
      */
@@ -116,8 +116,10 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     ) {
         $this->setStatusCode($statusCode);
 
-        // @todo - This will only allow one error at a time. If we want multiple
-        // we'll need to key by the property with the error?
+        /*
+         * todo This will only allow one error at a time. If we want multiple,
+         *  we'll need to key by the property with the error?
+         */
         $this->meta['error'] = [
             'error_type' => $errorCode,
             'error_message' => $errorMsg,
@@ -134,6 +136,27 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     public function hasError(): bool
     {
         return isset($this->meta['error']) && !empty($this->meta['error']);
+    }
+
+    /**
+     * Get meta data set on the instance.
+     *
+     * @param  string|null  $key      The specific key to retrieve from the meta
+     *                                array.
+     * @param  mixed|null   $default  Only used if $key is provided.
+     *
+     * @return array|mixed The value for the key given or $default if it's not
+     *                     in the array. The full meta data if no $key provided.
+     *
+     * @since 1.0.0
+     */
+    public function getMeta(string $key = null, $default = null)
+    {
+        if (!empty($key)) {
+            return $this->meta[$key] ?? $default;
+        } else {
+            return $this->meta;
+        }
     }
 
     /**
@@ -163,8 +186,8 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * This method will not update an item if it already exists. If you
      * want to update an item, use `updateMeta` instead.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -199,8 +222,8 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * Update an item in the meta collection. If the item doesn't exist, it
      * is added.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @since 1.0.0
      */
@@ -224,6 +247,27 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     }
 
     /**
+     * Get values from the data that has been set on the instance.
+     *
+     * @param  string|null  $key      The specific key to retrieve from the data
+     *                                array.
+     * @param  mixed|null   $default  Only used if $key is provided.
+     *
+     * @return array|mixed The value for the key given or $default if it's not
+     *                     in the array. The full dataset if no $key provided.
+     *
+     * @since 1.0.0
+     */
+    public function getData(string $key = null, $default = null)
+    {
+        if (!empty($key)) {
+            return $this->data[$key] ?? $default;
+        } else {
+            return $this->data;
+        }
+    }
+
+    /**
      * Set the data on the instance as the provided $data param.
      *
      * This will overwrite any existing data that has already been added.
@@ -243,8 +287,8 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * This method will not update an item if it already exists. If you
      * want to update an item, use `updateData` instead.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -279,8 +323,8 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * Update an item in the data collection. If the item doesn't exist, it
      * is added.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @since 1.0.0
      */
@@ -304,12 +348,33 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
     }
 
     /**
+     * Get link data set on the instance.
+     *
+     * @param  string|null  $name     The specific key to retrieve from the data
+     *                                array.
+     * @param  mixed|null   $default  Only used if $name is provided.
+     *
+     * @return array|mixed The value for the name given or $default if it's not
+     *                     in the array. The full dataset if no $name provided.
+     *
+     * @since 1.0.0
+     */
+    public function getLinks(string $name = null, $default = null)
+    {
+        if (!empty($name)) {
+            return $this->links[$name] ?? $default;
+        } else {
+            return $this->links;
+        }
+    }
+
+    /**
      * Set the link data on the instance as the provided $data param.
      *
      * This will overwrite any existing data that has already been added.
      *
      * @param  array  $data  Each of these items will be passed directly to the
-     *                    `addLink()` method.
+     *                       `addLink()` method.
      *
      * @uses  addLink
      *
@@ -331,7 +396,7 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * want to update an item, use `updateLink` instead.
      *
      * @param  string  $name  The name for this link.
-     * @param  array  $data  The link data.
+     * @param  array   $data  The link data.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -367,7 +432,7 @@ class JsonApiResponseBuilder implements ApiResponseBuilder
      * is added.
      *
      * @param  string  $name  The name for this link.
-     * @param  array  $data  The link data.
+     * @param  array   $data  The link data.
      *
      * @since 1.0.0
      */

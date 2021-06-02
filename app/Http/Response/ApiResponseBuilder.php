@@ -50,10 +50,10 @@ interface ApiResponseBuilder
     /**
      * Establish an error for this response.
      *
-     * @param  int  $statusCode  A valid HTTP header response code.
-     * @param  string  $errorCode  A code for the error. Use underscores to
-     *                             separate words.
-     * @param  string  $errorMsg  A human-readable description of the error.
+     * @param  int     $statusCode  A valid HTTP header response code.
+     * @param  string  $errorCode   A code for the error. Use underscores to
+     *                              separate words.
+     * @param  string  $errorMsg    A human-readable description of the error.
      *
      * @since 1.0.0
      */
@@ -73,6 +73,20 @@ interface ApiResponseBuilder
     public function hasError(): bool;
 
     /**
+     * Get meta data set on the instance.
+     *
+     * @param  string|null  $key      The specific key to retrieve from the meta
+     *                                array.
+     * @param  mixed|null   $default  Only used if $key is provided.
+     *
+     * @return array|mixed The value for the key given or $default if it's not
+     *                     in the array. The full meta data if no $key provided.
+     *
+     * @since 1.0.0
+     */
+    public function getMeta(string $key = null, $default = null);
+
+    /**
      * Set the meta collection en masse. Use this when you already have the
      * full meta data and want to quickly set it on the instance.
      *
@@ -88,8 +102,8 @@ interface ApiResponseBuilder
      * This method will not update an item if it already exists. If you
      * want to update an item, use `updateMeta` instead.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -112,8 +126,8 @@ interface ApiResponseBuilder
      * Update an item in the meta collection. If the item doesn't exist, it
      * is added.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @since 1.0.0
      */
@@ -127,6 +141,20 @@ interface ApiResponseBuilder
      * @since 1.0.0
      */
     public function removeMeta(string $key);
+
+    /**
+     * Get values from the data that has been set on the instance.
+     *
+     * @param  string|null  $key      The specific key to retrieve from the data
+     *                                array.
+     * @param  mixed|null   $default  Only used if $key is provided.
+     *
+     * @return array|mixed The value for the key given or $default if it's not
+     *                     in the array. The full dataset if no $key provided.
+     *
+     * @since 1.0.0
+     */
+    public function getData(string $key = null, $default = null);
 
     /**
      * Set the data on the instance as the provided $data param.
@@ -143,8 +171,8 @@ interface ApiResponseBuilder
      * This method will not update an item if it already exists. If you
      * want to update an item, use `updateData` instead.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -167,8 +195,8 @@ interface ApiResponseBuilder
      * Update an item in the data collection. If the item doesn't exist, it
      * is added.
      *
-     * @param  string  $key  The key for the item.
-     * @param  mixed  $value  The value of the item.
+     * @param  string  $key    The key for the item.
+     * @param  mixed   $value  The value of the item.
      *
      * @since 1.0.0
      */
@@ -184,12 +212,26 @@ interface ApiResponseBuilder
     public function removeData(string $key);
 
     /**
+     * Get link data set on the instance.
+     *
+     * @param  string|null  $name     The specific key to retrieve from the data
+     *                                array.
+     * @param  mixed|null   $default  Only used if $name is provided.
+     *
+     * @return array|mixed The value for the name given or $default if it's not
+     *                     in the array. The full dataset if no $name provided.
+     *
+     * @since 1.0.0
+     */
+    public function getLinks(string $name = null, $default = null);
+
+    /**
      * Set the link data on the instance as the provided $data param.
      *
      * This will overwrite any existing data that has already been added.
      *
      * @param  array  $data  Each of the items should be compatible with the
-     *                    `addLink()` method.
+     *                       `addLink()` method.
      *
      * @uses  addLink
      */
@@ -202,7 +244,7 @@ interface ApiResponseBuilder
      * want to update an item, use `updateLink` instead.
      *
      * @param  string  $name  The name for this link.
-     * @param  array  $data  The link data.
+     * @param  array   $data  The link data.
      *
      * @return bool `true` on success, `false` if the key already exists.
      *
@@ -226,7 +268,7 @@ interface ApiResponseBuilder
      * is added.
      *
      * @param  string  $name  The name for this link.
-     * @param  array  $data  The link data.
+     * @param  array   $data  The link data.
      *
      * @since 1.0.0
      */
