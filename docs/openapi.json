@@ -1,0 +1,538 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Shared Service Layer - Search",
+        "description": "The API for the Search Project",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "{protocol}://{host}/v1",
+            "variables": {
+                "protocol": {
+                    "default": "https"
+                },
+                "host": {
+                    "default": "catalyst-search.herokuapp.com"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/locations": {
+            "post": {
+                "operationId": "addLocationToSearchIndex",
+                "summary": "Add a new location to the search index.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "sensitive",
+                        "description": "Defaults to 0 (false). Flag the entity as sensitive.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "in": "query",
+                        "name": "streetAddress",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "example": "8-10 Oldham Street"
+                    },
+                    {
+                        "in": "query",
+                        "name": "addressRegion",
+                        "description": "Typically a city, e.g. Salford.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Manchester"
+                    },
+                    {
+                        "in": "query",
+                        "name": "addressLocality",
+                        "description": "Typically a county, e.g. Greater Manchester.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Greater Manchester"
+                    },
+                    {
+                        "in": "query",
+                        "name": "addressCountry",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required":  true,
+                        "example": "United Kingdom"
+                    },
+                    {
+                        "in": "query",
+                        "name": "postalCode",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required":  true,
+                        "example": "M1 1JQ"
+                    },
+                    {
+                        "in": "query",
+                        "name": "latitude",
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "required":  true,
+                        "example": 53.481940
+                    },
+                    {
+                        "in": "query",
+                        "name": "longitude",
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "required":  true,
+                        "example": -2.235999
+                    },
+                    {
+                        "in": "query",
+                        "name": "description",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "An Oxfam charity shop"
+                    },
+                    {
+                        "in": "query",
+                        "name": "photoUrl",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "https://via.placeholder.com/300x400.png"
+                    },
+                    {
+                        "in": "query",
+                        "name": "photoDescription",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "A placeholder image."
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created. Location added to search index.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LocationData"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaCreated"
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "description": "Links to other operations that can be performed with the created entity.",
+                                            "example": {
+                                                "get_location": {
+                                                    "type": "GET",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/locations/17"
+                                                },
+                                                "update_location": {
+                                                    "type": "PUT",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/locations/17"
+                                                },
+                                                "delete_location": {
+                                                    "type": "DELETE",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/locations/17"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/locations/search": {
+            "get": {
+                "operationId": "searchLocations",
+                "summary": "Run a search against the locations index.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "by",
+                        "description": "Options are `free-query`, `postcode` and `coords`. See the `query` parameter for details on each option.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required":  true,
+                        "example": "postcode"
+                    },
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "If `by=free-query`, this expects an address string such as `query=32 Oldham Street, Manchester`. Using commas to split address lines is encouraged.\n\nIf `by=postcode`, this expects any valid UK postcode.\n\nIf `by=coords`, this expects a latitude/longitude string. For example, `query=53.482813,-2.235183`.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required":  true,
+                        "example": "M1 1JN"
+                    },
+                    {
+                        "in": "query",
+                        "name": "boundingShapeId",
+                        "description": "Cannot be included if `boundingShape` or `distance` have also been sent with the request.\n\nIt's possible to store geo-shapes in the service for easy reference when searching locations. Provide the ID of the shape with a location search query to constrain your search to within the shape's coordinates.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "2"
+                    },
+                    {
+                        "in": "query",
+                        "name": "boundingShape",
+                        "description": "Cannot be included if `boundingShapeId` or `distance` have also been sent with the request.\n\nConstrain the search to the given bounding shape. Expects a string generated with the [Polyline algorithm](https://developers.google.com/maps/documentation/utilities/polylinealgorithm) that represents a geo-shape. The geo-shape must be a polygon with at least 4 sides, and its first and last points must be identical (so a 4-sided shape will have 5 points).",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "_b{~HnjoJ?_ibE~bmA??~hbE_cmA?"
+                    },
+                    {
+                        "in": "query",
+                        "name": "distance",
+                        "description": "Cannot be included if `boundingShape` or `boundingShapeId` have also been sent with the request.\n\nConstrain the search to the given distance in miles. This will be the default constraint if no constraints have been provided with the request, the value of which is set in the service's configuration.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "20"
+                    },
+                    {
+                        "in": "query",
+                        "name": "results",
+                        "description": "The number of results to return per page. The default is set in the service's configuration.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "10"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of results to send in the response. The default is set in the service's configuration.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "2"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LocationData"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/locations/{id}": {
+            "get": {
+                "operationId": "getLocationById",
+                "summary": "Retrieve a location from the data store.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "required":  true,
+                        "example": 17
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LocationData"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "400": {
+                "description": "Bad Request. Typically a validation error with the parameters provided.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "Information about the response itself. This will always include a 'status_code' item. Error information will be provided in either/both the 'error' and 'field_errors' objects.",
+                                    "example": {
+                                        "status_code": 400,
+                                        "error": {
+                                            "error_type": "validation_error",
+                                            "error_message": "The data provided was invalid. The request has not been fulfilled."
+                                        },
+                                        "field_errors": {
+                                            "field_name": "Error description"
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "Unauthorised. You are not authorised to consume this API. Either you didn't provide an API token or the one you provided is invalid.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "",
+                                    "example": {
+                                        "status_code": 401,
+                                        "error": {
+                                            "error_type": "unauthorised",
+                                            "error_message": "You are not authorised to consume this API"
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "403": {
+                "description": "Forbidden. You are not allowed to perform this operation, your API token does not possess the correct permission.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "Information about the response itself. This will always include a 'status_code' item.",
+                                    "example": {
+                                        "status_code": 403,
+                                        "error": {
+                                            "error_type": "incorrect_permission",
+                                            "error_message": "You do not have the permission required to take this action"
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "Not Found. The resource you requested was not found by the service.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "Information about the response itself. This will always include a 'status_code' item.",
+                                    "example": {
+                                        "status_code": 404,
+                                        "error": {
+                                            "error_type": "not_found",
+                                            "error_message": "No record was found with the given ID"
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Unexpected error.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "Information about the response itself. This will always include a 'status_code' item.",
+                                    "example": {
+                                        "status_code": 500,
+                                        "error": {
+                                            "error_type": "internal_error",
+                                            "error_message": "An unknown error has occurred on the service."
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "responseMetaOk": {
+                "type": "object",
+                "description": "Information about the response itself. This will always include a 'status_code' item.",
+                "example": {
+                    "status_code": 200
+                }
+            },
+            "responseMetaCreated": {
+                "type": "object",
+                "description": "Information about the response itself. This will always include a 'status_code' item.",
+                "example": {
+                    "status_code": 201
+                }
+            },
+            "responseEmptyObject": {
+                "type": "object",
+                "description": "Empty object"
+            },
+            "LocationData": {
+                "type": "object",
+                "description": "Populated with the processed location data.",
+                "example": {
+                    "@context": "https://schema.org",
+                    "@type": "Place",
+                    "description": "An Oxfam charity shop",
+                    "sensitive": true,
+                    "updated_at": "2021-06-04T11:25:43.000000Z",
+                    "created_at": "2021-06-04T11:25:43.000000Z",
+                    "id": 17,
+                    "address": {
+                        "@context": "https://schema.org",
+                        "@type": "PostalAddress",
+                        "streetAddress": "8-10 Oldham Street",
+                        "addressRegion": "Manchester",
+                        "addressLocality": "Greater Manchester",
+                        "addressCountry": "United Kingdom",
+                        "postalCode": "M1 1JQ"
+                    },
+                    "geo": {
+                        "@context": "https://schema.org",
+                        "@type": "GeoCoordinates",
+                        "coordinates": {
+                            "lat": 53.481940,
+                            "lon": -2.235999
+                        }
+                    },
+                    "photo": {
+                        "@context": "https://schema.org",
+                        "@type": "ImageObject",
+                        "contentUrl": "https://via.placeholder.com/300x400.png",
+                        "description": "A placeholder image."
+                    }
+                }
+            }
+        }
+    }
+}
