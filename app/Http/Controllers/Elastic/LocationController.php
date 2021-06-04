@@ -143,6 +143,13 @@ class LocationController extends BaseLocationController
             $builder->updateMeta('field_errors', $fieldErrors);
         }
 
+        if (empty($constraint)) {
+            $constraint = [
+                'key' => null,
+                'value' => null,
+            ];
+        }
+
         // Check that the given shape ID is valid (if appropriate)
         if ($constraint['key'] === 'boundingShapeId' && Shape::find($constraint['value']) === null) {
             $builder->setError(400, 'invalid_shape_id', 'The given Shape ID is not known by the service');
@@ -173,13 +180,6 @@ class LocationController extends BaseLocationController
         // Exit early if we have an error
         if ($builder->hasError()) {
             return response()->json($builder->getResponseData(), $builder->getStatusCode());
-        }
-
-        if (empty($constraint)) {
-            $constraint = [
-                'key' => null,
-                'value' => null,
-            ];
         }
 
         $by = $request->get('by');
