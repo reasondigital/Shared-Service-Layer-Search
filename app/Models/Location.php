@@ -36,6 +36,7 @@ class Location extends Model
         'description',
         'photoUrl',
         'photoDescription',
+        'sensitive',
     ];
 
     /**

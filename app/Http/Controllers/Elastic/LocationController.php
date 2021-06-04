@@ -62,6 +62,7 @@ class LocationController extends BaseLocationController
             'description' => ['sometimes', 'string'],
             'photoUrl' => ['sometimes', 'url'],
             'photoDescription' => ['sometimes', 'string'],
+            'sensitive' => ['sometimes', 'boolean'],
         ]);
 
         // If we don't have an error then add the location
@@ -349,6 +350,7 @@ class LocationController extends BaseLocationController
             'description' => ['sometimes', 'string'],
             'photoUrl' => ['sometimes', 'url'],
             'photoDescription' => ['sometimes', 'string'],
+            'sensitive' => ['sometimes', 'boolean'],
         ]);
 
         // If we don't have an error then update the location
