@@ -214,6 +214,9 @@
                                         "data": {
                                             "type": "array",
                                             "description": "An array of location objects, in order of nearest to furthest to the query location. An empty array if the search returns no results.",
+                                            "items": {
+                                                "type": "object"
+                                            },
                                             "example": [
                                                 {
                                                     "@context": "https://schema.org",
@@ -536,6 +539,174 @@
                     },
                     "405": {
                         "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/articles/{id}": {
+            "get": {
+                "operationId": "getArticleById",
+                "summary": "Retrieve an article from the data store.",
+                "tags": ["articles"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAsPath"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ArticleObject"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "updateArticleById",
+                "summary": "Update the details of an article in the data store.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["articles"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAsPath"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sensitive"
+                    },
+                    {
+                        "$ref": "#/components/parameters/articleBody"
+                    },
+                    {
+                        "$ref":"#/components/parameters/abstract"
+                    },
+                    {
+                        "$ref": "#/components/parameters/author"
+                    },
+                    {
+                        "$ref": "#/components/parameters/publisher"
+                    },
+                    {
+                        "$ref": "#/components/parameters/datePublished"
+                    },
+                    {
+                        "$ref": "#/components/parameters/thumbnailUrl"
+                    },
+                    {
+                        "$ref": "#/components/parameters/keywords"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok. The data of the article with the given ID has been updated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ArticleObject"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "description": "Links to other operations that can be performed with the created entity.",
+                                            "example": {
+                                                "get_location": {
+                                                    "type": "GET",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/articles/17"
+                                                },
+                                                "delete_location": {
+                                                    "type": "DELETE",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/articles/17"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteArticleById",
+                "summary": "Delete an article from the data store and the search index.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["articles"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAsPath"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok. The article with the given ID has been deleted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -1078,42 +1249,6 @@
                     },
                     "updated_at": {
                         "$ref": "#/components/schemas/objectUpdatedAt"
-                    }
-                }
-            }
-        },
-        "examples": {
-            "Location": {
-                "value": {
-                    "@context": "https://schema.org",
-                    "@type": "Place",
-                    "description": "An Oxfam charity shop",
-                    "sensitive": true,
-                    "updated_at": "2021-06-04T11:25:43.000000Z",
-                    "created_at": "2021-06-04T11:25:43.000000Z",
-                    "id": 17,
-                    "address": {
-                        "@context": "https://schema.org",
-                        "@type": "PostalAddress",
-                        "streetAddress": "8-10 Oldham Street",
-                        "addressRegion": "Manchester",
-                        "addressLocality": "Greater Manchester",
-                        "addressCountry": "United Kingdom",
-                        "postalCode": "M1 1JQ"
-                    },
-                    "geo": {
-                        "@context": "https://schema.org",
-                        "@type": "GeoCoordinates",
-                        "coordinates": {
-                            "lat": 53.481940,
-                            "lon": -2.235999
-                        }
-                    },
-                    "photo": {
-                        "@context": "https://schema.org",
-                        "@type": "ImageObject",
-                        "contentUrl": "https://via.placeholder.com/300x400.png",
-                        "description": "A placeholder image."
                     }
                 }
             }
