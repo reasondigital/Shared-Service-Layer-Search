@@ -338,15 +338,15 @@ class LocationController extends BaseLocationController
         $this->validatePermission($request, ApiAbilities::WRITE);
 
         // Validate the request first
+        // todo Move rules to somewhere central as they will be the same regardless of search provider
         $builder = $this->validateRequest($request, [
-            'id' => ['required', 'integer'],
-            'streetAddress' => ['sometimes', 'string'],
+            'streetAddress' => ['required', 'string'],
             'addressRegion' => ['sometimes', 'string'],
             'addressLocality' => ['sometimes', 'string'],
-            'addressCountry' => ['sometimes', 'string'],
-            'postalCode' => ['sometimes', 'string', 'regex:'.DataConstants::POSTAL_CODE_REGEX_UK],
-            'latitude' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
-            'longitude' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
+            'addressCountry' => ['required', 'string'],
+            'postalCode' => ['required', 'string', 'regex:'.DataConstants::POSTAL_CODE_REGEX_UK],
+            'latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
+            'longitude' => ['required', 'numeric', 'min:-180', 'max:180'],
             'description' => ['sometimes', 'string'],
             'photoUrl' => ['sometimes', 'url'],
             'photoDescription' => ['sometimes', 'string'],
