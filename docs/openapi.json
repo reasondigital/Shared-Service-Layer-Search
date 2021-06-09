@@ -18,6 +18,11 @@
             }
         }
     ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
     "paths": {
         "/locations": {
             "post": {
@@ -438,6 +443,13 @@
         }
     },
     "components": {
+        "securitySchemes" : {
+            "bearerAuth" : {
+                "type" : "http",
+                "scheme" : "bearer",
+                "description" : "Authorization: Bearer <token>"
+            }
+        },
         "parameters": {
             "idAsPath": {
                 "in": "path",
