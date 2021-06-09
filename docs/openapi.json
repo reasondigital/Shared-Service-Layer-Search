@@ -23,12 +23,23 @@
             "bearerAuth": []
         }
     ],
+    "tags": [
+        {
+            "name": "locations",
+            "description": "Routes for working with locations stored in the service."
+        },
+        {
+            "name": "articles",
+            "description": "Routes for working with articles stored in the service."
+        }
+    ],
     "paths": {
         "/locations": {
             "post": {
                 "operationId": "addLocationToSearchIndex",
                 "summary": "Add a new location to the data store and search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/sensitive"
@@ -122,8 +133,9 @@
         "/locations/search": {
             "get": {
                 "operationId": "searchLocations",
-                "summary": "Run a search against the locations index.",
+                "summary": "Run a search against the locations search index.",
                 "description": "All results are ordered by distance from the location given in the `query` parameter, going from nearest to furthest.",
+                "tags": ["locations"],
                 "parameters": [
                     {
                         "in": "query",
@@ -271,6 +283,7 @@
             "get": {
                 "operationId": "getLocationById",
                 "summary": "Retrieve a location from the data store.",
+                "tags": ["locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -310,6 +323,7 @@
                 "operationId": "updateLocationById",
                 "summary": "Update the details of a location in the data store.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -402,6 +416,7 @@
                 "operationId": "deleteLocationById",
                 "summary": "Delete a location from the data store and the search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -446,6 +461,7 @@
                 "operationId": "addArticleToSearchIndex",
                 "summary": "Add a new article to the data store and search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "tags": ["articles"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/sensitive"
