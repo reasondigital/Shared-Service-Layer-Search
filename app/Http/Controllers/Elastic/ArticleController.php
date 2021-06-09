@@ -45,6 +45,7 @@ class ArticleController extends BaseArticleController
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],
+            'sensitive' => ['sometimes', 'boolean'],
         ]);
 
         // If we don't have an error then add the article.
@@ -152,6 +153,7 @@ class ArticleController extends BaseArticleController
             'thumbnailUrl' => ['sometimes', 'url'],
             'keywords' => ['sometimes', 'array'],
             'keywords.*' => ['string'],
+            'sensitive' => ['sometimes', 'boolean'],
         ]);
 
         // If we don't have an error then add the article.

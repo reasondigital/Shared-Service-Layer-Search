@@ -36,6 +36,7 @@ class Article extends Model
         'datePublished',
         'thumbnailUrl',
         'keywords',
+        'sensitive',
     ];
 
     /**
