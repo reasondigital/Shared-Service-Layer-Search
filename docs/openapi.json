@@ -27,7 +27,7 @@
         "/locations": {
             "post": {
                 "operationId": "addLocationToSearchIndex",
-                "summary": "Add a new location to the search index.",
+                "summary": "Add a new location to the data store and search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
                 "parameters": [
                     {
@@ -66,15 +66,14 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created. Location added to search index.",
+                        "description": "Created. Location added to data store and search index.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "description": "The processed location object.",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/LocationData"
+                                            "$ref": "#/components/schemas/LocationObject"
                                         },
                                         "meta": {
                                             "$ref": "#/components/schemas/responseMetaCreated"
@@ -110,6 +109,9 @@
                     },
                     "403": {
                         "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -283,7 +285,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/LocationData"
+                                            "$ref": "#/components/schemas/LocationObject"
                                         },
                                         "meta": {
                                             "$ref": "#/components/schemas/responseMetaOk"
@@ -353,10 +355,9 @@
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "description": "The processed location object.",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/LocationData"
+                                            "$ref": "#/components/schemas/LocationObject"
                                         },
                                         "meta": {
                                             "$ref": "#/components/schemas/responseMetaOk"
@@ -413,7 +414,6 @@
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "description": "The processed location object.",
                                     "properties": {
                                         "data": {
                                             "$ref": "#/components/schemas/responseEmptyObject"
@@ -434,6 +434,92 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/articles": {
+            "post": {
+                "operationId": "addArticleToSearchIndex",
+                "summary": "Add a new article to the data store and search index.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/sensitive"
+                    },
+                    {
+                        "$ref": "#/components/parameters/articleBody"
+                    },
+                    {
+                        "$ref":"#/components/parameters/abstract"
+                    },
+                    {
+                        "$ref": "#/components/parameters/author"
+                    },
+                    {
+                        "$ref": "#/components/parameters/publisher"
+                    },
+                    {
+                        "$ref": "#/components/parameters/datePublished"
+                    },
+                    {
+                        "$ref": "#/components/parameters/thumbnailUrl"
+                    },
+                    {
+                        "$ref": "#/components/parameters/keywords"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created. Article added to data store and search index.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ArticleObject"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaCreated"
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "description": "Links to other operations that can be performed with the created entity.",
+                                            "example": {
+                                                "get_location": {
+                                                    "type": "GET",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/articles/17"
+                                                },
+                                                "update_location": {
+                                                    "type": "PUT",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/articles/17"
+                                                },
+                                                "delete_location": {
+                                                    "type": "DELETE",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/articles/17"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
                     },
                     "500": {
                         "$ref": "#/components/responses/500"
@@ -464,12 +550,11 @@
             "sensitive": {
                 "in": "query",
                 "name": "sensitive",
-                "description": "Defaults to 0 (false). Flag the entity as sensitive.",
+                "description": "Flag the object as sensitive.",
                 "schema": {
-                    "type": "integer"
+                    "$ref": "#/components/schemas/objectSensitive"
                 },
-                "required": false,
-                "example": 1
+                "required": false
             },
             "streetAddress": {
                 "in": "query",
@@ -559,6 +644,63 @@
                     "type": "string"
                 },
                 "example": "A placeholder image."
+            },
+            "articleBody": {
+                "in": "query",
+                "name": "articleBody",
+                "schema": {
+                    "$ref": "#/components/schemas/objectArticleBody"
+                },
+                "required": true
+            },
+            "abstract": {
+                "in":  "query",
+                "name": "abstract",
+                "schema": {
+                    "$ref": "#/components/schemas/objectAbstract"
+                },
+                "required": true
+            },
+            "author": {
+                "in":  "query",
+                "name": "author",
+                "schema": {
+                    "$ref": "#/components/schemas/objectAuthor"
+                },
+                "required": true
+            },
+            "publisher": {
+                "in":  "query",
+                "name": "publisher",
+                "schema": {
+                    "$ref": "#/components/schemas/objectPublisher"
+                },
+                "required": true
+            },
+            "datePublished": {
+                "in":  "query",
+                "name": "datePublished",
+                "schema": {
+                    "$ref": "#/components/schemas/objectDatePublished"
+                },
+                "required": true
+            },
+            "thumbnailUrl": {
+                "in":  "query",
+                "name": "thumbnailUrl",
+                "schema": {
+                    "type": "string",
+                    "description": "A URL to a featured image for the article.",
+                    "example": "https://via.placeholder.com/300x400.png",
+                    "nullable": true
+                }
+            },
+            "keywords": {
+                "in":  "query",
+                "name": "keywords",
+                "schema": {
+                    "$ref": "#/components/schemas/objectKeywords"
+                }
             }
         },
         "responses": {
@@ -681,6 +823,35 @@
                     }
                 }
             },
+            "405": {
+                "description": "Method Not Allowed. The request method used is not allowed against this request's route.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                },
+                                "meta": {
+                                    "type": "object",
+                                    "description": "Information about the response itself.",
+                                    "example": {
+                                        "status_code": 405,
+                                        "error": {
+                                            "error_type": "method_not_allowed",
+                                            "error_message": "The [request method] method is not supported for this route. Supported methods: [list of allowed methods]."
+                                        }
+                                    }
+                                },
+                                "links": {
+                                    "$ref": "#/components/schemas/responseEmptyObject"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "500": {
                 "description": "Unexpected error.",
                 "content": {
@@ -747,7 +918,60 @@
                     }
                 }
             },
-            "LocationData": {
+            "objectSensitive": {
+                "type": "integer",
+                "default": 0,
+                "example": 1
+            },
+            "objectCreatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date that the object was introduced into the data store.",
+                "example": "2021-04-27T11:15:00.062Z"
+            },
+            "objectAuthor": {
+                "type": "string",
+                "description": "The name of the content's author(s).",
+                "example": "Alex Tani"
+            },
+            "objectArticleBody": {
+                "type": "string",
+                "description": "The full content of the article.",
+                "example": "[The full content of the article]"
+            },
+            "objectAbstract": {
+                "type": "string",
+                "description": "An excerpt from or short summary of the content.",
+                "example": "[An excerpt from or short summary of the content]"
+            },
+            "objectPublisher": {
+                "type": "string",
+                "description": "The publishing body or the organisation/individual that owns the content.",
+                "example": "Charity Org"
+            },
+            "objectDatePublished": {
+                "type": "string",
+                "description": "Must be in the format 'Y-m-d H:i:s'.",
+                "example": "2021-04-27 11:08:00"
+            },
+            "objectKeywords": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "example": [
+                    "volunteering",
+                    "trustees",
+                    "board"
+                ]
+            },
+            "objectUpdatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date that the object was last updated in the data store.",
+                "example": "2021-04-27T16:31:00.062Z"
+            },
+            "LocationObject": {
                 "type": "object",
                 "description": "Populated with the processed location data.",
                 "example": {
@@ -780,6 +1004,64 @@
                         "@type": "ImageObject",
                         "contentUrl": "https://via.placeholder.com/300x400.png",
                         "description": "A placeholder image."
+                    }
+                }
+            },
+            "ArticleObject": {
+                "type": "object",
+                "description": "Populated with the processed article data.",
+                "properties": {
+                    "@context": {
+                        "type": "string",
+                        "description": "Schema context; always the same value.",
+                        "default": "https://schema.org",
+                        "example": "https://schema.org"
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "Schema type that represents this object; always the same value.",
+                        "default": "Article",
+                        "example": "Article"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "description": "The ID of the article in the data store.",
+                        "example": 17
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/objectAuthor"
+                    },
+                    "articleBody": {
+                        "$ref": "#/components/schemas/objectArticleBody"
+                    },
+                    "abstract": {
+                        "$ref": "#/components/schemas/objectAbstract"
+                    },
+                    "publisher": {
+                        "$ref": "#/components/schemas/objectPublisher"
+                    },
+                    "datePublished": {
+                        "$ref": "#/components/schemas/objectDatePublished"
+                    },
+                    "thumbnailUrl": {
+                        "type": "string",
+                        "description": "A URL to a featured image for the article.",
+                        "example": "https://via.placeholder.com/300x400.png",
+                        "nullable": true
+                    },
+                    "keywords": {
+                        "$ref": "#/components/schemas/objectKeywords"
+                    },
+                    "sensitive": {
+                        "type": "boolean",
+                        "description": "Whether or not this article has been flagged as sensitive.",
+                        "example": false
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/objectCreatedAt"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/objectUpdatedAt"
                     }
                 }
             }
