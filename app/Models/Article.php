@@ -71,12 +71,16 @@ class Article extends Model
     {
         $array = $this->toArray();
 
-        $array = Arr::wrapKeysWithin($array, 'aggregateRating', [
-            'ratingValue',
-            'reviewCount',
-        ]);
-        $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], 'AggregateRating', '@type');
-        $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], DataConstants::SCHEMA_CONTEXT, '@context');
+        if (!is_null($array['ratingValue']) || !is_null($array['reviewCount'])) {
+            $array = Arr::wrapKeysWithin($array, 'aggregateRating', [
+                'ratingValue',
+                'reviewCount',
+            ]);
+            $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], 'AggregateRating', '@type');
+            $array['aggregateRating'] = Arr::prepend($array['aggregateRating'], DataConstants::SCHEMA_CONTEXT, '@context');
+        } else {
+            unset($array['ratingValue'], $array['reviewCount']);
+        }
 
         if ($this->datePublished instanceof DateTime) {
             $array['datePublished'] = $this->datePublished->format(
