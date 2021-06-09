@@ -23,105 +23,40 @@
             "post": {
                 "operationId": "addLocationToSearchIndex",
                 "summary": "Add a new location to the search index.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
                 "parameters": [
                     {
-                        "in": "query",
-                        "name": "sensitive",
-                        "description": "Defaults to 0 (false). Flag the entity as sensitive.",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "required": false,
-                        "example": 1
+                        "$ref": "#/components/parameters/sensitive"
                     },
                     {
-                        "in": "query",
-                        "name": "streetAddress",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true,
-                        "example": "8-10 Oldham Street"
+                        "$ref":"#/components/parameters/streetAddress"
                     },
                     {
-                        "in": "query",
-                        "name": "addressRegion",
-                        "description": "Typically a city, e.g. Salford.",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "Manchester"
+                        "$ref": "#/components/parameters/addressRegion"
                     },
                     {
-                        "in": "query",
-                        "name": "addressLocality",
-                        "description": "Typically a county, e.g. Greater Manchester.",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "Greater Manchester"
+                        "$ref": "#/components/parameters/addressLocality"
                     },
                     {
-                        "in": "query",
-                        "name": "addressCountry",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required":  true,
-                        "example": "United Kingdom"
+                        "$ref": "#/components/parameters/addressCountry"
                     },
                     {
-                        "in": "query",
-                        "name": "postalCode",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required":  true,
-                        "example": "M1 1JQ"
+                        "$ref": "#/components/parameters/postalCode"
                     },
                     {
-                        "in": "query",
-                        "name": "latitude",
-                        "schema": {
-                            "type": "number",
-                            "format": "float"
-                        },
-                        "required":  true,
-                        "example": 53.481940
+                        "$ref": "#/components/parameters/latitude"
                     },
                     {
-                        "in": "query",
-                        "name": "longitude",
-                        "schema": {
-                            "type": "number",
-                            "format": "float"
-                        },
-                        "required":  true,
-                        "example": -2.235999
+                        "$ref": "#/components/parameters/longitude"
                     },
                     {
-                        "in": "query",
-                        "name": "description",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "An Oxfam charity shop"
+                        "$ref": "#/components/parameters/locationDescription"
                     },
                     {
-                        "in": "query",
-                        "name": "photoUrl",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "https://via.placeholder.com/300x400.png"
+                        "$ref": "#/components/parameters/photoUrl"
                     },
                     {
-                        "in": "query",
-                        "name": "photoDescription",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "A placeholder image."
+                        "$ref": "#/components/parameters/photoDescription"
                     }
                 ],
                 "responses": {
@@ -181,6 +116,7 @@
             "get": {
                 "operationId": "searchLocations",
                 "summary": "Run a search against the locations index.",
+                "description": "All results are ordered by distance from the location given in the `query` parameter, going from nearest to furthest.",
                 "parameters": [
                     {
                         "in": "query",
@@ -315,6 +251,9 @@
                             }
                         }
                     },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
                     "500": {
                         "$ref": "#/components/responses/500"
                     }
@@ -327,15 +266,7 @@
                 "summary": "Retrieve a location from the data store.",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "id",
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        },
-                        "required":  true,
-                        "example": 17
-
+                        "$ref": "#/components/parameters/idAsPath"
                     }
                 ],
                 "responses": {
@@ -367,10 +298,257 @@
                         "$ref": "#/components/responses/500"
                     }
                 }
+            },
+            "put": {
+                "operationId": "updateLocationById",
+                "summary": "Update the details of a location in the data store.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAsPath"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sensitive"
+                    },
+                    {
+                        "$ref":"#/components/parameters/streetAddress"
+                    },
+                    {
+                        "$ref": "#/components/parameters/addressRegion"
+                    },
+                    {
+                        "$ref": "#/components/parameters/addressLocality"
+                    },
+                    {
+                        "$ref": "#/components/parameters/addressCountry"
+                    },
+                    {
+                        "$ref": "#/components/parameters/postalCode"
+                    },
+                    {
+                        "$ref": "#/components/parameters/latitude"
+                    },
+                    {
+                        "$ref": "#/components/parameters/longitude"
+                    },
+                    {
+                        "$ref": "#/components/parameters/locationDescription"
+                    },
+                    {
+                        "$ref": "#/components/parameters/photoUrl"
+                    },
+                    {
+                        "$ref": "#/components/parameters/photoDescription"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok. The data of the location with the given ID has been updated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "The processed location object.",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/LocationData"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "type": "object",
+                                            "description": "Links to other operations that can be performed with the created entity.",
+                                            "example": {
+                                                "get_location": {
+                                                    "type": "GET",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/locations/17"
+                                                },
+                                                "delete_location": {
+                                                    "type": "DELETE",
+                                                    "href": "https://catalyst-search.herokuapp.com/v1/locations/17"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "deleteLocationById",
+                "summary": "Delete a location from the data store and the search index.",
+                "description": "An API token must have the `write` permission to be able to perform actions against this route.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAsPath"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok. The location with the given ID has been deleted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "The processed location object.",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaOk"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
             }
         }
     },
     "components": {
+        "parameters": {
+            "idAsPath": {
+                "in": "path",
+                "name": "id",
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "required":  true,
+                "example": 17
+            },
+            "sensitive": {
+                "in": "query",
+                "name": "sensitive",
+                "description": "Defaults to 0 (false). Flag the entity as sensitive.",
+                "schema": {
+                    "type": "integer"
+                },
+                "required": false,
+                "example": 1
+            },
+            "streetAddress": {
+                "in": "query",
+                "name": "streetAddress",
+                "schema": {
+                    "type": "string"
+                },
+                "required": true,
+                "example": "8-10 Oldham Street"
+            },
+            "addressRegion": {
+                "in": "query",
+                "name": "addressRegion",
+                "description": "Typically a city, e.g. Salford.",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "Manchester"
+            },
+            "addressLocality": {
+                "in": "query",
+                "name": "addressLocality",
+                "description": "Typically a county, e.g. Greater Manchester.",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "Greater Manchester"
+            },
+            "addressCountry": {
+                "in": "query",
+                "name": "addressCountry",
+                "schema": {
+                    "type": "string"
+                },
+                "required":  true,
+                "example": "United Kingdom"
+            },
+            "postalCode": {
+                "in": "query",
+                "name": "postalCode",
+                "schema": {
+                    "type": "string"
+                },
+                "required":  true,
+                "example": "M1 1JQ"
+            },
+            "latitude": {
+                "in": "query",
+                "name": "latitude",
+                "schema": {
+                    "type": "number",
+                    "format": "float"
+                },
+                "required":  true,
+                "example": 53.481940
+            },
+            "longitude": {
+                "in": "query",
+                "name": "longitude",
+                "schema": {
+                    "type": "number",
+                    "format": "float"
+                },
+                "required":  true,
+                "example": -2.235999
+            },
+            "locationDescription": {
+                "in": "query",
+                "name": "description",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "An Oxfam charity shop"
+            },
+            "photoUrl": {
+                "in": "query",
+                "name": "photoUrl",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "https://via.placeholder.com/300x400.png"
+            },
+            "photoDescription": {
+                "in": "query",
+                "name": "photoDescription",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "A placeholder image."
+            }
+        },
         "responses": {
             "400": {
                 "description": "Bad Request. Typically a validation error with the parameters provided.",
