@@ -32,49 +32,7 @@ class ShapeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $this->validatePermission($request, ApiAbilities::WRITE);
-
-        $builder = $this->validateRequest($request, [
-            'name' => ['required', 'string'],
-            'description' => ['sometimes', 'string'],
-            'polyline' => ['required_without:coordinates', 'string'],
-            'coordinates' => ['required_without:polyline', 'array', 'min:4', new GeoShapeClosed],
-            'coordinates.*.lat' => ['required', 'numeric', 'min:-90', 'max:90'],
-            'coordinates.*.lon' => ['required', 'numeric', 'min:-180', 'max:180'],
-        ]);
-
-        $polyline = $request->input('polyline', '');
-        $coordinates = $request->input('coordinates', []);
-
-        if (!empty($polyline) && !empty($coordinates)) {
-            $fieldErrors = $builder->getMeta('field_errors', []);
-
-            $conflictErrorMsg = "Conflicting parameters provided. Of 'polyline' and 'coordinates', only one of these can be accepted by this endpoint in a single request.";
-            $fieldErrors['polyline'] = $conflictErrorMsg;
-            $fieldErrors['coordinates'] = $conflictErrorMsg;
-
-            $builder->updateMeta('field_errors', $fieldErrors);
-        }
-
-
-        if (!empty($polyline)) {
-            $pCoordinates = Polyline::pair(Polyline::decode($polyline));
-            $geoShapeClosed = $pCoordinates[array_key_first($pCoordinates)] === $pCoordinates[array_key_last($pCoordinates)];
-
-            if (!$geoShapeClosed) {
-                $fieldErrors = $builder->getMeta('field_errors', []);
-                $fieldErrors['polyline'] = "The first and last points of the 'polyline' parameter coordinates must be the same.";
-                $builder->updateMeta('field_errors', $fieldErrors);
-            }
-        }
-
-        // Set error on the response if field errors have been detected
-        if (!$builder->hasError() && $builder->hasMeta('field_errors')) {
-            $builder->setError(
-                400,
-                self::ERROR_CODE_VALIDATION,
-                self::ERROR_MSG_VALIDATION
-            );
-        }
+        $builder = $this->validateShapeInsert($request);
 
         // Exit here if an error has been detected
         if ($builder->hasError()) {
@@ -85,20 +43,9 @@ class ShapeController extends Controller
         $shape = new Shape($request->all());
 
         // Update coords attribute if shape was provided as polyline
+        $polyline = $request->input('polyline', '');
         if (!empty($polyline)) {
-            $coordinates = [];
-            foreach ($pCoordinates as $point) {
-                $coordinates[] = [
-                    'lat' => $point[0],
-                    'lon' => $point[1],
-                ];
-            }
-
-            /*
-             * Array has to be passed whole, as opposed to filled within the
-             * foreach, because of attribute casting on coordinates attribute
-             */
-            $shape->coordinates = $coordinates;
+            $shape->coordinates = $this->polylineToCoordinates($polyline);
         }
 
         // Ensure values are floats
@@ -183,39 +130,41 @@ class ShapeController extends Controller
     public function update(Request $request, Shape $shape): JsonResponse
     {
         $this->validatePermission($request, ApiAbilities::WRITE);
+        $builder = $this->validateShapeInsert($request);
 
-        $builder = $this->validateRequest($request, [
-            'name' => ['sometimes', 'string'],
-            'description' => ['sometimes', 'string'],
-            'coordinates' => ['sometimes', 'array', 'min:4', new GeoShapeClosed],
-            'coordinates.*.lat' => ['sometimes', 'numeric', 'min:-90', 'max:90'],
-            'coordinates.*.lon' => ['sometimes', 'numeric', 'min:-180', 'max:180'],
-        ]);
+        // Exit here if an error has been detected
+        if ($builder->hasError()) {
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
 
-        if (!$builder->hasError()) {
-            $shape->fill($request->all());
+        $shape->fill($request->all());
 
-            if ($shape->isDirty()) {
-                if ($shape->isDirty('coordinates')) {
-                    // Ensure values are floats
-                    $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
-                }
+        // Update coords attribute if shape was provided as polyline
+        $polyline = $request->input('polyline', '');
+        if (!empty($polyline)) {
+            $shape->coordinates = $this->polylineToCoordinates($polyline);
+        }
 
-                $shape->save();
+        if ($shape->isDirty()) {
+            if ($shape->isDirty('coordinates')) {
+                // Ensure values are floats
+                $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
             }
 
-            $builder->setStatusCode(200);
-            $builder->setData($shape->toResponseArray());
-
-            $builder->addLink('get_shape', [
-                'type' => 'GET',
-                'href' => route('shapes.get', ['shape' => $shape]),
-            ]);
-            $builder->addLink('delete_shape', [
-                'type' => 'DELETE',
-                'href' => route('shapes.delete', ['shape' => $shape]),
-            ]);
+            $shape->save();
         }
+
+        $builder->setStatusCode(200);
+        $builder->setData($shape->toResponseArray());
+
+        $builder->addLink('get_shape', [
+            'type' => 'GET',
+            'href' => route('shapes.get', ['shape' => $shape]),
+        ]);
+        $builder->addLink('delete_shape', [
+            'type' => 'DELETE',
+            'href' => route('shapes.delete', ['shape' => $shape]),
+        ]);
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
@@ -238,6 +187,99 @@ class ShapeController extends Controller
 
         $builder->setStatusCode(200);
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return ApiResponseBuilder
+     * @throws BindingResolutionException
+     * @since 1.0.0
+     */
+    private function validateShapeInsert(Request $request): ApiResponseBuilder
+    {
+        $builder = $this->validateRequest($request, [
+            'name' => ['required', 'string'],
+            'description' => ['sometimes', 'string'],
+            'polyline' => ['required_without:coordinates', 'string'],
+            'coordinates' => ['required_without:polyline', 'array', 'min:4', new GeoShapeClosed],
+            'coordinates.*.lat' => ['required', 'numeric', 'min:-90', 'max:90'],
+            'coordinates.*.lon' => ['required', 'numeric', 'min:-180', 'max:180'],
+        ]);
+
+        if ($builder->hasError()) {
+            return $builder;
+        }
+
+        $polyline = $request->input('polyline', '');
+        $coordinates = $request->input('coordinates', []);
+
+        if (!empty($polyline) && !empty($coordinates)) {
+            $fieldErrors = $builder->getMeta('field_errors', []);
+
+            $conflictErrorMsg = "Conflicting parameters provided. Of 'polyline' and 'coordinates', only one of these can be accepted by this endpoint in a single request.";
+            $fieldErrors['polyline'] = $conflictErrorMsg;
+            $fieldErrors['coordinates'] = $conflictErrorMsg;
+
+            $builder->updateMeta('field_errors', $fieldErrors);
+        }
+
+        if (!empty($polyline)) {
+            $pCoordinates = Polyline::pair(Polyline::decode($polyline));
+
+            if (!$this->validatePolylineCoords($pCoordinates)) {
+                $fieldErrors = $builder->getMeta('field_errors', []);
+                $fieldErrors['polyline'] = "The first and last points of the 'polyline' parameter coordinates must be the same.";
+                $builder->updateMeta('field_errors', $fieldErrors);
+            }
+        }
+
+        // Set error on the response if field errors have been detected
+        if (!$builder->hasError() && $builder->hasMeta('field_errors')) {
+            $builder->setError(
+                400,
+                self::ERROR_CODE_VALIDATION,
+                self::ERROR_MSG_VALIDATION
+            );
+        }
+
+        return $builder;
+    }
+
+    /**
+     * @param  array  $pCoordinates
+     *
+     * @return bool
+     * @since 1.0.0
+     */
+    private function validatePolylineCoords(array $pCoordinates): bool
+    {
+        return $pCoordinates[array_key_first($pCoordinates)] === $pCoordinates[array_key_last($pCoordinates)];
+    }
+
+    /**
+     * @param  string  $polyline
+     *
+     * @return array
+     * @since 1.0.0
+     */
+    private function polylineToCoordinates(string $polyline): array
+    {
+        $coordinates = [];
+
+        if (empty($polyline)) {
+            return $coordinates;
+        }
+
+        $pCoordinates = Polyline::pair(Polyline::decode($polyline));
+        foreach ($pCoordinates as $point) {
+            $coordinates[] = [
+                'lat' => $point[0],
+                'lon' => $point[1],
+            ];
+        }
+
+        return $coordinates;
     }
 
     /**
