@@ -25,15 +25,15 @@
     ],
     "tags": [
         {
-            "name": "locations",
+            "name": "Locations",
             "description": "Routes for working with locations stored in the service."
         },
         {
-            "name": "articles",
+            "name": "Articles",
             "description": "Routes for working with articles stored in the service."
         },
         {
-            "name": "shapes",
+            "name": "Shapes",
             "description": "Routes for working with geo-shapes stored in the service."
         }
     ],
@@ -43,7 +43,7 @@
                 "operationId": "addLocationToSearchIndex",
                 "summary": "Add a new location to the data store and search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["locations"],
+                "tags": ["Locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/sensitive"
@@ -139,7 +139,7 @@
                 "operationId": "searchLocations",
                 "summary": "Run a search against the locations search index.",
                 "description": "All results are ordered by distance from the location given in the `query` parameter, going from nearest to furthest.",
-                "tags": ["locations"],
+                "tags": ["Locations"],
                 "parameters": [
                     {
                         "in": "query",
@@ -278,7 +278,7 @@
             "get": {
                 "operationId": "getLocationById",
                 "summary": "Retrieve a location from the data store.",
-                "tags": ["locations"],
+                "tags": ["Locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -318,7 +318,7 @@
                 "operationId": "updateLocationById",
                 "summary": "Update the details of a location in the data store.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["locations"],
+                "tags": ["Locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -411,7 +411,7 @@
                 "operationId": "deleteLocationById",
                 "summary": "Delete a location from the data store and the search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["locations"],
+                "tags": ["Locations"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -459,7 +459,7 @@
                 "operationId": "addArticleToSearchIndex",
                 "summary": "Add a new article to the data store and search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["articles"],
+                "tags": ["Articles"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/sensitive"
@@ -546,7 +546,7 @@
                 "operationId": "searchArticles",
                 "summary": "Run a search against the articles search index.",
                 "description": "Searches use OR logic. This means that the query \"inquisitive rabbit\" will return any results that contain _either_ \"inquisitive\" OR \"rabbit\".",
-                "tags": ["articles"],
+                "tags": ["Articles"],
                 "parameters": [
                     {
                         "in": "query",
@@ -634,7 +634,7 @@
             "get": {
                 "operationId": "getArticleById",
                 "summary": "Retrieve an article from the data store.",
-                "tags": ["articles"],
+                "tags": ["Articles"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -674,7 +674,7 @@
                 "operationId": "updateArticleById",
                 "summary": "Update the details of an article in the data store.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["articles"],
+                "tags": ["Articles"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -758,7 +758,7 @@
                 "operationId": "deleteArticleById",
                 "summary": "Delete an article from the data store and the search index.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["articles"],
+                "tags": ["Articles"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -806,45 +806,19 @@
                "operationId": "addShapeToDataStore",
                "summary": "Add a new geo-shape to the data store.",
                "description": "An API token must have the `write` permission to be able to perform actions against this route.\n\nThis route accepts either a JSON body or a query string on the request URL.",
-               "tags": ["shapes"],
+               "tags": ["Shapes"],
                "parameters": [
                    {
-                       "in": "query",
-                       "name": "name",
-                       "description": "The name of the geo-shape",
-                       "schema": {
-                            "$ref": "#/components/schemas/shapeName"
-                       },
-                       "required":  true
+                       "$ref": "#/components/parameters/shapeName"
                    },
                    {
-                       "in": "query",
-                       "name": "description",
-                       "description": "A description of the geo-shape",
-                       "schema": {
-                            "$ref": "#/components/schemas/shapeDescription"
-                       },
-                       "required":  false
+                       "$ref": "#/components/parameters/shapeDescription"
                    },
                    {
-                       "in": "query",
-                       "name": "polyline",
-                       "description": "Cannot be included if `coordinates` has also been sent with the request, otherwise it is required.\n\nEncode the actual coordinates using the [Polyline algorithm](https://developers.google.com/maps/documentation/utilities/polylinealgorithm) and send the encoded string as this parameter's value.",
-                       "schema": {
-                           "type": "string"
-                       },
-                       "required":  false,
-                       "example": "_b{~HnjoJ?_ibE~bmA??~hbE_cmA?"
+                       "$ref": "#/components/parameters/shapePolyline"
                    },
                    {
-                       "in": "query",
-                       "name": "coordinates",
-                       "description": "Cannot be included if `polyline` has also been sent with the request, otherwise it is required.\n\nExpects an array of arrays. Each inner array must have both the \"lat\" and \"lon\" keys.\n\nNOTE: URLs have length limits so it's recommended that the request is instead sent with JSON body if this parameter will be a part of it.",
-                       "schema": {
-                           "type": "string"
-                       },
-                       "required":  false,
-                       "example": "coordinates[0][lat]=52.54761&coordinates[0][lon]=-0.73428&coordinates[1][lat]=52.54761&coordinates[1][lon]=0.26571"
+                       "$ref": "#/components/parameters/shapeCoordinates"
                    }
                ],
                "requestBody": {
@@ -927,7 +901,7 @@
             "get": {
                 "operationId": "listShapes",
                 "summary": "Retrieve a list of shapes from the data store.",
-                "tags": ["shapes"],
+                "tags": ["Shapes"],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1014,7 +988,7 @@
             "get": {
                 "operationId": "getShapeById",
                 "summary": "Retrieve a shape from the data store.",
-                "tags": ["shapes"],
+                "tags": ["Shapes"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -1052,49 +1026,47 @@
             },
             "put": {
                 "operationId": "updateShapeById",
-                "summary": "Update the details of an article in the data store.",
+                "summary": "Update the details of a shape in the data store.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["articles"],
+                "tags": ["Shapes"],
                 "parameters": [
                     {
-                        "in": "query",
-                        "name": "name",
-                        "description": "The name of the geo-shape",
-                        "schema": {
-                            "$ref": "#/components/schemas/shapeName"
-                        },
-                        "required":  true
+                        "$ref": "#/components/parameters/idAsPath"
                     },
                     {
-                        "in": "query",
-                        "name": "description",
-                        "description": "A description of the geo-shape",
-                        "schema": {
-                            "$ref": "#/components/schemas/shapeDescription"
-                        },
-                        "required":  false
+                        "$ref": "#/components/parameters/shapeName"
                     },
                     {
-                        "in": "query",
-                        "name": "polyline",
-                        "description": "Cannot be included if `coordinates` has also been sent with the request, otherwise it is required.\n\nEncode the actual coordinates using the [Polyline algorithm](https://developers.google.com/maps/documentation/utilities/polylinealgorithm) and send the encoded string as this parameter's value.",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required":  false,
-                        "example": "_b{~HnjoJ?_ibE~bmA??~hbE_cmA?"
+                        "$ref": "#/components/parameters/shapeDescription"
                     },
                     {
-                        "in": "query",
-                        "name": "coordinates",
-                        "description": "Cannot be included if `polyline` has also been sent with the request, otherwise it is required.\n\nExpects an array of arrays. Each inner array must have both the \"lat\" and \"lon\" keys.\n\nNOTE: URLs have length limits so it's recommended that the request is instead sent with JSON body if this parameter will be a part of it.",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required":  false,
-                        "example": "coordinates[0][lat]=52.54761&coordinates[0][lon]=-0.73428&coordinates[1][lat]=52.54761&coordinates[1][lon]=0.26571"
+                        "$ref": "#/components/parameters/shapePolyline"
+                    },
+                    {
+                        "$ref": "#/components/parameters/shapeCoordinates"
                     }
                 ],
+                "requestBody": {
+                    "description": "Choose this over URL query parameters if you're sending the `coordinates` param along with the request.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "$ref": "#/components/schemas/shapeName"
+                                    },
+                                    "description": {
+                                        "$ref": "#/components/schemas/shapeDescription"
+                                    },
+                                    "coordinates": {
+                                        "$ref": "#/components/schemas/objectCoordinates"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Ok. The data of the shape with the given ID has been updated.",
@@ -1149,7 +1121,7 @@
                 "operationId": "deleteShapeById",
                 "summary": "Delete a shape from the data store.",
                 "description": "An API token must have the `write` permission to be able to perform actions against this route.",
-                "tags": ["shapes"],
+                "tags": ["Shapes"],
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/idAsPath"
@@ -1384,6 +1356,44 @@
                 "schema": {
                     "$ref": "#/components/schemas/objectKeywords"
                 }
+            },
+            "shapeName": {
+                "in": "query",
+                "name": "name",
+                "description": "The name of the geo-shape",
+                "schema": {
+                    "$ref": "#/components/schemas/shapeName"
+                },
+                "required":  true
+            },
+            "shapeDescription": {
+                "in": "query",
+                "name": "description",
+                "description": "A description of the geo-shape",
+                "schema": {
+                    "$ref": "#/components/schemas/shapeDescription"
+                },
+                "required":  false
+            },
+            "shapePolyline": {
+                "in": "query",
+                "name": "polyline",
+                "description": "Cannot be included if `coordinates` has also been sent with the request, otherwise it is required.\n\nEncode the actual coordinates using the [Polyline algorithm](https://developers.google.com/maps/documentation/utilities/polylinealgorithm) and send the encoded string as this parameter's value.",
+                "schema": {
+                    "type": "string"
+                },
+                "required":  false,
+                "example": "_b{~HnjoJ?_ibE~bmA??~hbE_cmA?"
+            },
+            "shapeCoordinates": {
+                "in": "query",
+                "name": "coordinates",
+                "description": "Cannot be included if `polyline` has also been sent with the request, otherwise it is required.\n\nExpects an array of arrays. Each inner array must have both the \"lat\" and \"lon\" keys.\n\nNOTE: URLs have length limits so it's recommended that the request is instead sent with JSON body if this parameter will be a part of it.",
+                "schema": {
+                    "type": "string"
+                },
+                "required":  false,
+                "example": "coordinates[0][lat]=52.54761&coordinates[0][lon]=-0.73428&coordinates[1][lat]=52.54761&coordinates[1][lon]=0.26571"
             }
         },
         "responses": {
@@ -1581,7 +1591,8 @@
                 }
             },
             "responseEmptyObject": {
-                "type": "object",
+                "type": "array",
+                "items": {},
                 "description": "Empty object"
             },
             "responseMetaWithPagination": {
