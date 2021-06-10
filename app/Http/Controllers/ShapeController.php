@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Polyline;
 
 /**
  * Shapes API controller for the application.
@@ -35,34 +36,90 @@ class ShapeController extends Controller
         $builder = $this->validateRequest($request, [
             'name' => ['required', 'string'],
             'description' => ['sometimes', 'string'],
-            'coordinates' => ['required', 'array', 'min:4', new GeoShapeClosed],
+            'polyline' => ['required_without:coordinates', 'string'],
+            'coordinates' => ['required_without:polyline', 'array', 'min:4', new GeoShapeClosed],
             'coordinates.*.lat' => ['required', 'numeric', 'min:-90', 'max:90'],
             'coordinates.*.lon' => ['required', 'numeric', 'min:-180', 'max:180'],
         ]);
 
-        if (!$builder->hasError()) {
-            $shape = new Shape($request->all());
+        $polyline = $request->input('polyline', '');
+        $coordinates = $request->input('coordinates', []);
 
-            // Ensure values are floats
-            $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
+        if (!empty($polyline) && !empty($coordinates)) {
+            $fieldErrors = $builder->getMeta('field_errors', []);
 
-            $shape->save();
-            $builder->setStatusCode(201);
-            $builder->setData($shape->toResponseArray());
+            $conflictErrorMsg = "Conflicting parameters provided. Of 'polyline' and 'coordinates', only one of these can be accepted by this endpoint in a single request.";
+            $fieldErrors['polyline'] = $conflictErrorMsg;
+            $fieldErrors['coordinates'] = $conflictErrorMsg;
 
-            $builder->addLink('get_shape', [
-                'type' => 'GET',
-                'href' => route('shapes.get', ['shape' => $shape]),
-            ]);
-            $builder->addLink('update_shape', [
-                'type' => 'PUT',
-                'href' => route('shapes.put', ['shape' => $shape]),
-            ]);
-            $builder->addLink('delete_shape', [
-                'type' => 'DELETE',
-                'href' => route('shapes.delete', ['shape' => $shape]),
-            ]);
+            $builder->updateMeta('field_errors', $fieldErrors);
         }
+
+
+        if (!empty($polyline)) {
+            $pCoordinates = Polyline::pair(Polyline::decode($polyline));
+            $geoShapeClosed = $pCoordinates[array_key_first($pCoordinates)] === $pCoordinates[array_key_last($pCoordinates)];
+
+            if (!$geoShapeClosed) {
+                $fieldErrors = $builder->getMeta('field_errors', []);
+                $fieldErrors['polyline'] = "The first and last points of the 'polyline' parameter coordinates must be the same.";
+                $builder->updateMeta('field_errors', $fieldErrors);
+            }
+        }
+
+        // Set error on the response if field errors have been detected
+        if (!$builder->hasError() && $builder->hasMeta('field_errors')) {
+            $builder->setError(
+                400,
+                self::ERROR_CODE_VALIDATION,
+                self::ERROR_MSG_VALIDATION
+            );
+        }
+
+        // Exit here if an error has been detected
+        if ($builder->hasError()) {
+            return response()->json($builder->getResponseData(), $builder->getStatusCode());
+        }
+
+        // 'polyline' param will be ignored as it's not in the $fillable property
+        $shape = new Shape($request->all());
+
+        // Update coords attribute if shape was provided as polyline
+        if (!empty($polyline)) {
+            $coordinates = [];
+            foreach ($pCoordinates as $point) {
+                $coordinates[] = [
+                    'lat' => $point[0],
+                    'lon' => $point[1],
+                ];
+            }
+
+            /*
+             * Array has to be passed whole, as opposed to filled within the
+             * foreach, because of attribute casting on coordinates attribute
+             */
+            $shape->coordinates = $coordinates;
+        }
+
+        // Ensure values are floats
+        $shape->coordinates = array_map([$this, 'normalisePointCoordsAsFloats'], $shape->coordinates);
+
+        $shape->save();
+        $builder->setStatusCode(201);
+        $builder->setData($shape->toResponseArray());
+
+        $builder->addLink('get_shape', [
+            'type' => 'GET',
+            'href' => route('shapes.get', ['shape' => $shape]),
+        ]);
+        $builder->addLink('update_shape', [
+            'type' => 'PUT',
+            'href' => route('shapes.put', ['shape' => $shape]),
+        ]);
+        $builder->addLink('delete_shape', [
+            'type' => 'DELETE',
+            'href' => route('shapes.delete', ['shape' => $shape]),
+        ]);
 
         return response()->json($builder->getResponseData(), $builder->getStatusCode());
     }
