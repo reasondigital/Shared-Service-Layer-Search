@@ -185,22 +185,10 @@
                         "example": "20"
                     },
                     {
-                        "in": "query",
-                        "name": "results",
-                        "description": "The number of results to return per page. The default is set in the service's configuration.",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "10"
+                        "$ref": "#/components/parameters/results"
                     },
                     {
-                        "in": "query",
-                        "name": "page",
-                        "description": "The page of results to send in the response.",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "2"
+                        "$ref": "#/components/parameters/page"
                     }
                 ],
                 "responses": {
@@ -546,6 +534,95 @@
                 }
             }
         },
+        "/articles/search": {
+            "get": {
+                "operationId": "searchArticles",
+                "summary": "Run a search against the articles search index.",
+                "description": "Searches use OR logic. This means that the query \"inquisitive rabbit\" will return any results that contain _either_ \"inquisitive\" OR \"rabbit\".",
+                "tags": ["articles"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "A term or phrase to query the search index with.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required":  true
+                    },
+                    {
+                        "$ref": "#/components/parameters/results"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "description": "An array of article objects, or an empty array if the search returns no results.",
+                                            "items": {
+                                                "type": "object"
+                                            },
+                                            "example": [
+                                                {
+                                                    "@context": "https://schema.org",
+                                                    "@type": "Article",
+                                                    "id": 17,
+                                                    "author": "Alex Tani",
+                                                    "articleBody": "[The full content of the article]",
+                                                    "abstract": "[An excerpt from or short summary of the content]",
+                                                    "publisher": "Charity Org",
+                                                    "datePublished": "2021-04-27 11:08:00",
+                                                    "thumbnailUrl": "https://via.placeholder.com/300x400.png",
+                                                    "keywords": [
+                                                        "volunteering",
+                                                        "trustees",
+                                                        "board"
+                                                    ],
+                                                    "sensitive": true,
+                                                    "created_at": "2021-04-27T11:15:00.000000Z",
+                                                    "updated_at": "2021-04-27T16:31:00.000000Z"
+                                                },
+                                                {
+                                                    "@context": "https://schema.org",
+                                                    "@type": "Article",
+                                                    "...": "..."
+                                                },
+                                                {
+                                                    "@context": "https://schema.org",
+                                                    "@type": "Article",
+                                                    "...": "..."
+                                                }
+                                            ]
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/responseMetaWithPagination"
+                                        },
+                                        "links": {
+                                            "$ref": "#/components/schemas/responseEmptyObject"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
         "/articles/{id}": {
             "get": {
                 "operationId": "getArticleById",
@@ -742,6 +819,24 @@
                     "$ref": "#/components/schemas/objectSensitive"
                 },
                 "required": false
+            },
+            "results": {
+                "in": "query",
+                "name": "results",
+                "description": "The number of results to return per page. The default is set in the service's configuration.",
+                "schema": {
+                    "type": "integer"
+                },
+                "example": "10"
+            },
+            "page": {
+                "in": "query",
+                "name": "page",
+                "description": "The page of results to send in the response.",
+                "schema": {
+                    "type": "integer"
+                },
+                "example": "2"
             },
             "streetAddress": {
                 "in": "query",
@@ -1110,12 +1205,6 @@
                 "default": 0,
                 "example": 1
             },
-            "objectCreatedAt": {
-                "type": "string",
-                "format": "date-time",
-                "description": "The date that the object was introduced into the data store.",
-                "example": "2021-04-27T11:15:00.062Z"
-            },
             "objectAuthor": {
                 "type": "string",
                 "description": "The name of the content's author(s).",
@@ -1152,11 +1241,17 @@
                     "board"
                 ]
             },
+            "objectCreatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The date that the object was introduced into the data store.",
+                "example": "2021-04-27T11:15:00.000000Z"
+            },
             "objectUpdatedAt": {
                 "type": "string",
                 "format": "date-time",
                 "description": "The date that the object was last updated in the data store.",
-                "example": "2021-04-27T16:31:00.062Z"
+                "example": "2021-04-27T16:31:00.000000Z"
             },
             "LocationObject": {
                 "type": "object",
