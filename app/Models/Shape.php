@@ -69,10 +69,11 @@ class Shape extends Model
     {
         $array = $this->toArray();
 
-        $array['polygon'] = '';
+        $array['polygon'] = [];
         foreach ($array['coordinates'] as $point) {
-            $array['polygon'] .= "{$point['lat']},{$point['lon']} ";
+            $array['polygon'][] = "{$point['lat']},{$point['lon']}";
         }
+        $array['polygon'] = implode(' ', $array['polygon']);
 
         // Add top level schema data
         $array = Arr::prepend($array, 'GeoShape', '@type');
