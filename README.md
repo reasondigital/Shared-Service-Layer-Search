@@ -1,16 +1,17 @@
 # Shared Service Layer - Search
 This is an open source project to create a service layer to enable charities to share a common search interface whilst being agnostic to the backend search provider. You can find out more about the reasoning behind this project on the [Catalyst website](https://www.thecatalyst.org.uk/blog/some-of-the-most-common-digital-problems-faced-by-charities-and-what-were-doing-about-them).
 
-You can get an overview of the project's intent by reading the [repository specification](docs/specification.MD).
+You can get an overview of the project's intent by reading the [repository specification](docs/project/specification.md).
 
 ## Contents
 * [Requirements](#requirements)
 * [Quick start](#quick-start)
-* Developers
-  * [Configuration](docs/developers/configuration/index.md)
-* [API documentation](#api-documentation)
-* [Contributing](#contributing)
+* Development
+  * [Configuration](docs/development/configuration/index.md)
+  * [API documentation](docs/api/index.md)
+* [Contributing](docs/project/contributing.md)
 * [License](#license)
+* [Further Reading](#further-reading)
 
 ## Requirements
 Developing with this project requires that __Docker__ is installed on your system. You can download and install the appropriate version of the software for your operating system on [Docker's website](https://www.docker.com/get-started).
@@ -28,7 +29,7 @@ Clone the project onto your system:
 $ git clone https://github.com/reasondigital/Shared-Service-Layer-Search.git
 ```
 
-Unless you intend on [contributing to the project](docs/CONTRIBUTING.MD), you will want to remove this repository's version control history and start afresh. You can do so by moving into the cloned project's directory and removing the `.git` folder from the root:
+Unless you intend on [contributing to the project](docs/project/contributing.md), you will want to remove this repository's version control history and start afresh. You can do so by moving into the cloned project's directory and removing the `.git` folder from the root:
 ```
 $ cd Shared-Service-Layer-Search && rm -rf .git
 ```
@@ -75,28 +76,28 @@ Once the output of server activity stops, you can move on to the next step.
 ### Set up the application
 Once Docker has finishing building the containers, you can install the PHP packages/dependencies required by the application via Composer.
 
-First, log in to the webserver container from the project root (you may need to open a new command line window):
+First, log into the webserver container from the project root (you may need to open a new command line window):
 ```
 $ docker exec -it -u www-data ssls-webserver bash
 ```
-
+\
 Once in, run Composer's `install` command:
 ```
 $ composer install
 ```
-
+\
 Laravel, the framework that the application is based on, will require you to then generate an application key:
 ```
 $ php artisan key:generate
 ```
-
+\
 Generate the IDE helper file for Laravel macros:
 ```
 $ php artisan ide-helper:macros
 ```
 
 ### Confirm your set-up
-Visit [http://localhost](http://localhost) in your browser. You should see the default Laravel welcome page.
+Visit [http://localhost](http://localhost) in your browser. You should see the OpenAPI JSON schema. (Your browser may not "beautify" the JSON, but everything is fine if the JSON data is displaying on the page at all.)
 
 Visit [http://localhost:5601](http://localhost:5601) in your browser to see if the Elasticsearch service is ready. If you see the "Kibana server is not ready yet" message, you may need to wait a few more minutes before checking again.
 
@@ -130,29 +131,19 @@ $ php artisan elastic:migrate
 ### Connect to the database
 You can connect to the database from your local machine with the following details:
 
-Host: 127.0.0.1
-Username: root
-Password: password
-Database: ssl_search
-
-*Note:* There is a `ssl_search_test` database created for automated testing.
-
-To get the database structure setup for tests run:
-```
-$ php artisan migrate --database=test 
-```
+| Credential | Value                          |
+|------------|--------------------------------|
+| Host       | host.docker.internal           |
+| Port       | The value of `FORWARD_DB_PORT` |
+| Database   | ssl_search                     |
+| Username   | root                           |
+| Password   | password                       |
 
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:
 ```
 $ docker-compose down
 ```
-
-## API documentation
-[Click here to view the API documentation](docs/API.MD)
-
-## Contributing
-Please read through our [contributing guidelines](docs/CONTRIBUTING.MD).
 
 ## License
 This project is licensed under the MIT License. View the [LICENSE](LICENSE) file for details.

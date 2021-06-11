@@ -6,6 +6,7 @@ For this project we will be using schemas from [schema.org](https://schema.org):
 
 * [Place](https://schema.org/Place)
 * [Article](https://schema.org/Article)
+* [GeoShape](https://schema.org/GeoShape)
 
 ## API Documentation
 
