@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $apiSchema = json_decode(File::get(base_path('docs/openapi.json')), true);
-    return response()->json($apiSchema);
+    if (app()->environment('production')) {
+        return '';
+    } else {
+        $apiSchema = json_decode(File::get(base_path('docs/openapi.json')), true);
+        return response()->json($apiSchema);
+    }
 });
