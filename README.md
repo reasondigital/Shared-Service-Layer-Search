@@ -9,6 +9,7 @@ You can get an overview of the project's intent by reading the [repository speci
 * Development
   * [Configuration](/docs/development/configuration/index.md)
   * [API documentation](/docs/api/index.md)
+  * [Deployment](/docs/project/deployment.md)
 * [Contributing](/docs/project/contributing.md)
 * [License](#license)
 * [Further Reading](#further-reading)
