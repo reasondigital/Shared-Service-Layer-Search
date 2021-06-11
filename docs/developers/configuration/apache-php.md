@@ -39,7 +39,7 @@ The main [apache2.conf](docker/webserver/apache/apache2.conf) file auto-includes
 
 
 ## PHP
-The [php.ini](docker/webserver/php/php.ini) file is available in the project at `docker/webserver/php/php.ini`. It has been set up for a production environment. However, in [docker-compose.yml](docker-compose.yml), the [zz-php-development.ini](docker/webserver/php/conf.d/zz-php-development.ini) file is loaded in addition to that, which sets up the environment for development. (Remember, you should deploy to production environments with the [docker-compose.production.yml](docker-compose.production.yml) configuration.)
+The [php.ini](docker/webserver/php/php.ini) file is available in the project at `docker/webserver/php/php.ini`. It has been set up for a production environment. However, in [docker-compose.yml](docker-compose.yml), the [zz-php-development.ini](docker/webserver/php/conf.d/zz-php-development.ini) file is loaded in addition to that, which sets up the environment for development. (Remember, if deploying using Docker Compose, you should deploy to production environments with the [docker-compose.production.yml](docker-compose.production.yml) configuration.)
 
 ### Additional Config
 You can add additional config files to the project if needed by adding them to the `docker/webserver/php/conf.d` directory and mapping them in the relevant `docker-compose` configuration file.
