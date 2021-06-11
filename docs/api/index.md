@@ -3,14 +3,10 @@
 ## Navigation
 * [Authorisation](#authorisation)
     * [Token Abilities](#token-abilities)
-    * [Manage Tokens by Config File](#tokens-by-config-file)
-    * [Manage Tokens by Command Line](#tokens-by-command-line)
-* [API Schema](#api-schema)
+    * [Manage Tokens by Config File](#manage-tokens-by-config-file)
+    * [Manage Tokens by Command Line](#manage-tokens-by-command-line)
+* [Consuming the API](#consuming-the-api)
 * [Data Schema](#data-schema)
-* [Route Collections]()
-    * [Locations]()
-    * [Articles]()
-    * [Shapes]()
 
 ## Authorisation
 Authorisation is run on every exposed route on the API. To authorise any request against the API, you must include the `Authorization` header in your request with a `Bearer` token as its value:
@@ -36,7 +32,7 @@ The abilities supported by the application are:
   Allows the token bearer to save and update data in the API. Combine this with the `read_sensitive` and `read_public` abilities to grant the bearer full read and write access.
 
 ### Manage Tokens by Config File
-If it doesn't exist already, create a config file at [config/api-tokens.php](config/api-tokens.php). Use the following as the contents of the file:
+If it doesn't exist already, create a config file at [config/api-tokens.php](/config/api-tokens.php). Use the following as the contents of the file:
 ```php
 <?php
 
@@ -83,7 +79,7 @@ This file returns an array of API tokens and their details, with the array's key
 
 The `name` key of the token data is for your reference and not used anywhere in the application.
 
-The `abilities` key expects a simple array of abilities. You can either create the array manually using abilities from [app/Constants/ApiAbilities.php](app/Constants/ApiAbilities.php), or you can set its value to an existing role from [app/Constants/AccessLevels.php](app/Constants/AccessLevels.php).
+The `abilities` key expects a simple array of abilities. You can either create the array manually using abilities from [app/Constants/ApiAbilities.php](/app/Constants/ApiAbilities.php), or you can set its value to an existing role from [app/Constants/AccessLevels.php](/app/Constants/AccessLevels.php).
 
 API tokens added to the file are ultimately saved in the application's database against an "anonymous" user. Tokens that are removed from the file are subsequently deleted from the database. It isn't possible to update a token's details via the config file, you'll have to remove it and create a new one.
 
@@ -122,8 +118,8 @@ $ php artisan token:destroy 5 developer@charity.org
 
 Bear in mind that deleting config file tokens this way will have no effect if the token is still listed in the config file itself.
 
-## API Schema
-This project includes an OpenAPI JSON schema file ([openapi.json](docs/openapi.json)) that contains the details,  requirements, routes and parameters for consuming the API. This file should be kept as a reference point when developing against the API. Use API client software or any another schema reader to get the best of the schema file; you can copy the contents of the [openapi.json](docs/openapi.json) file into the [Swagger Editor](https://editor.swagger.io/) to generate human-readable documentation, for example.
+## Consuming the API
+This project includes an OpenAPI JSON schema file ([openapi.json](/docs/openapi.json)) that contains the details,  requirements, routes and parameters for consuming the API. This file should be used as a reference point when developing against the API. Use API client software or any another schema reader to get the best of the schema file; you can copy the contents of the [openapi.json](/docs/openapi.json) file into the [Swagger Editor](https://editor.swagger.io/) to generate human-readable documentation, for example.
 
 ## Data Schema
 Data returned from the API's routes will return in a format that's compatible with [Schema.org](https://schema.org) data formats. There may be additional data points in any given returned object but, as a minimum, the data points necessary to build a valid Schema.org object will usually be present (depending on if enough data was provided to the API in the first place).

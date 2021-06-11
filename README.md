@@ -1,22 +1,22 @@
 # Shared Service Layer - Search
 This is an open source project to create a service layer to enable charities to share a common search interface whilst being agnostic to the backend search provider. You can find out more about the reasoning behind this project on the [Catalyst website](https://www.thecatalyst.org.uk/blog/some-of-the-most-common-digital-problems-faced-by-charities-and-what-were-doing-about-them).
 
-You can get an overview of the project's intent by reading the [repository specification](docs/project/specification.md).
+You can get an overview of the project's intent by reading the [repository specification](/docs/project/specification.md).
 
 ## Navigation
 * [Requirements](#requirements)
 * [Quick start](#quick-start)
 * Development
-  * [Configuration](docs/development/configuration/index.md)
-  * [API documentation](docs/api/index.md)
-* [Contributing](docs/project/contributing.md)
+  * [Configuration](/docs/development/configuration/index.md)
+  * [API documentation](/docs/api/index.md)
+* [Contributing](/docs/project/contributing.md)
 * [License](#license)
 * [Further Reading](#further-reading)
 
 ## Requirements
 Developing with this project requires that __Docker__ is installed on your system. You can download and install the appropriate version of the software for your operating system on [Docker's website](https://www.docker.com/get-started).
 
-It's possible to run this application without using Docker, but that approach is not currently officially supported by this project. However, you can use the [docker-compose.yml](docker-compose.yml), [docker-compose.production.yml](docker-compose.production.yml) and [associated configuration](docker) files as a reference in cases where you wish to build your own environment for the application.
+It's possible to run this application without using Docker, but that approach is not currently officially supported by this project. However, you can use the [docker-compose.yml](/docker-compose.yml), [docker-compose.production.yml](/docker-compose.production.yml) and [associated configuration](/docker) files as a reference in cases where you wish to build your own environment for the application.
 
 ## Quick Start
 This will get a version of the application up and running with the least possible effort. A deep dive into adjusting the set-up and configuration can be found further into the documentation.
@@ -29,7 +29,7 @@ Clone the project onto your system:
 $ git clone https://github.com/reasondigital/Shared-Service-Layer-Search.git
 ```
 
-Unless you intend on [contributing to the project](docs/project/contributing.md), you will want to remove this repository's version control history and start afresh. You can do so by moving into the cloned project's directory and removing the `.git` folder from the root:
+Unless you intend on [contributing to the project](/docs/project/contributing.md), you will want to remove this repository's version control history and start afresh. You can do so by moving into the cloned project's directory and removing the `.git` folder from the root:
 ```
 $ cd Shared-Service-Layer-Search && rm -rf .git
 ```
@@ -146,7 +146,7 @@ $ docker-compose down
 ```
 
 ## License
-This project is licensed under the MIT License. View the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. View the [LICENSE](/LICENSE) file for details.
 
 ## Further Reading
 * [Installing and using Docker](https://www.docker.com/get-started)

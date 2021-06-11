@@ -1,7 +1,7 @@
 # Search Integrations
 This application is designed to be integrated with search providers such as Elasticsearch and Algolia.
 
-Check the project's [.env](.env) file to find out what which is currently in play.
+Check the project's [.env](/.env) file to find out what which is currently in play.
 
 ## Contents
 * [Integration](#integration)

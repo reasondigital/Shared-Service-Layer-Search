@@ -25,7 +25,7 @@ $ composer require babenkoivan/elastic-scout-driver
 After that, you will then need to follow that provider's documentation on how to configure the package for Laravel. The package will most likely add a file to the project's `config` directory where such configuration will take place.
 
 ## Routing
-API routes are declared in the [routes/api.php](routes/api.php) routes file. Each resource (e.g. Articles, Locations) is separated out into its own group. Within each group, a `switch` construct checks the configured search provider and sets the appropriate controller class based on the value.
+API routes are declared in the [routes/api.php](/routes/api.php) routes file. Each resource (e.g. Articles, Locations) is separated out into its own group. Within each group, a `switch` construct checks the configured search provider and sets the appropriate controller class based on the value.
 
 Add a new case to the `switch` constructs when a new search provider is implemented in the application.
 
