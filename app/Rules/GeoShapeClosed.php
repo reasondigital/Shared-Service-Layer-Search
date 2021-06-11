@@ -34,6 +34,10 @@ class GeoShapeClosed implements Rule
      */
     public function passes($attribute, $coordinates)
     {
+        if (!is_array($coordinates)) {
+            return false;
+        }
+
         return $coordinates[array_key_first($coordinates)] === $coordinates[array_key_last($coordinates)];
     }
 
