@@ -18,10 +18,6 @@ use Illuminate\Support\Facades\Route;
  * Local development
  */
 if (app()->environment('local')) {
-    Route::get('/', function () {
-        return 'Laravel version ' . app()->version();
-    });
-
     /*
      * Note: The development routes file below and the associated controller
      * file at app/Http/DevelopmentController.php are both ignored by the
