@@ -3,7 +3,7 @@ This is an open source project to create a service layer to enable charities to 
 
 You can get an overview of the project's intent by reading the [repository specification](docs/project/specification.md).
 
-## Contents
+## Navigation
 * [Requirements](#requirements)
 * [Quick start](#quick-start)
 * Development
@@ -16,7 +16,7 @@ You can get an overview of the project's intent by reading the [repository speci
 ## Requirements
 Developing with this project requires that __Docker__ is installed on your system. You can download and install the appropriate version of the software for your operating system on [Docker's website](https://www.docker.com/get-started).
 
-It's possible to run this application without using Docker, but that approach is not currently officially supported by this project. However, you can use the [docker-compose.yml](docker-compose.yml), [docker-compose.production.yml](docker-compose.production.yml) and [associated configuration](docker) files as a reference in cases where you wish to construct and compose your own environment for the application.
+It's possible to run this application without using Docker, but that approach is not currently officially supported by this project. However, you can use the [docker-compose.yml](docker-compose.yml), [docker-compose.production.yml](docker-compose.production.yml) and [associated configuration](docker) files as a reference in cases where you wish to build your own environment for the application.
 
 ## Quick Start
 This will get a version of the application up and running with the least possible effort. A deep dive into adjusting the set-up and configuration can be found further into the documentation.
@@ -131,13 +131,13 @@ $ php artisan elastic:migrate
 ### Connect to the database
 You can connect to the database from your local machine with the following details:
 
-| Credential | Value                          |
-|------------|--------------------------------|
-| Host       | host.docker.internal           |
-| Port       | The value of `FORWARD_DB_PORT` |
-| Database   | ssl_search                     |
-| Username   | root                           |
-| Password   | password                       |
+| Credential   |  Value                           |
+| ------------ | -------------------------------- |
+| Host         | host.docker.internal             |
+| Port         | The value of `FORWARD_DB_PORT`   |
+| Database     | ssl_search                       |
+| Username     | root                             |
+| Password     | password                         |
 
 ### Shut down the services
 You'll want to properly shut down the Docker services once you're done working with your application. You can do so by switching to the window where you executed `docker-compose up` and typing `Ctrl + C` (or the equivalent for your operating system). Then execute the following command to fully stop and remove the containers:
