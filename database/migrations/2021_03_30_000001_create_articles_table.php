@@ -23,6 +23,7 @@ class CreateArticlesTable extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->char('author')->nullable();
+            $table->char('name')->nullable();
             $table->mediumText('articleBody')->nullable();
             $table->text('abstract')->nullable();
             $table->char('publisher')->nullable();

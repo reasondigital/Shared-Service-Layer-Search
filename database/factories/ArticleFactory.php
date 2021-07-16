@@ -44,6 +44,7 @@ class ArticleFactory extends Factory
 
         return [
             'author' => $this->faker->name(),
+            'name' => str_replace('.', '', ucwords($this->faker->realText(50))),
             'articleBody' => $article,
             'abstract' => $abstract,
             'publisher' => "{$this->faker->colorName()} {$this->faker->randomElement(['Publishing', 'Books'])}",

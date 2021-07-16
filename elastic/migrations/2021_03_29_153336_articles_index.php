@@ -39,6 +39,7 @@ final class ArticlesIndex implements MigrationInterface
 
             $mapping->keyword('id');
             $mapping->text('author', ['analyzer' => 'default']);
+            $mapping->text('name', ['analyzer' => 'default']);
             $mapping->text('articleBody', ['analyzer' => 'default']);
             $mapping->text('abstract', ['analyzer' => 'default']);
             $mapping->text('publisher', ['analyzer' => 'default']);
