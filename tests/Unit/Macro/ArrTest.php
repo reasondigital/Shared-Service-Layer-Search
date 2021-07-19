@@ -32,8 +32,17 @@ class ArrTest extends TestCase
             'postcode',
         ]);
 
+        // Check that unrelated keys aren't lost
+        $this->assertArrayHasKey('role', $newArray);
+        $this->assertArrayHasKey('company', $newArray);
+
+        // Check that targeted keys are actually moved (not copied)
+        $this->assertArrayNotHasKey('street', $newArray);
         $this->assertArrayHasKey('street', $newArray['address']);
         $this->assertArrayHasKey('city', $newArray['address']);
+
+        // Check that non-existent keys remain as such
+        $this->assertArrayNotHasKey('postcode', $newArray);
         $this->assertArrayNotHasKey('postcode', $newArray['address']);
     }
 
@@ -63,5 +72,37 @@ class ArrTest extends TestCase
 
         $this->assertCount(1, $newArray['address']);
         $this->assertArrayHasKey('postcode', $newArray['address']);
+    }
+
+    /**
+     * Test that the `Arr::commaSeparatedToArray()` macro method returns the
+     * correct data when passed a string.
+     *
+     * @see \App\Providers\AppServiceProvider::addArrMacros
+     */
+    public function test_comma_separated_processes_string_as_expected()
+    {
+        $this->assertSame(Arr::commaSeparatedToArray('one,two,three'), [
+            'one',
+            'two',
+            'three',
+        ]);
+
+        // Should trim whitespace when there are spaces between values
+        $this->assertSame(Arr::commaSeparatedToArray('one, two, three'), [
+            'one',
+            'two',
+            'three',
+        ]);
+
+
+        // Missing values (or extra commas) should not result in empty items
+        $this->assertSame(Arr::commaSeparatedToArray('one,  ,three'), [
+            'one',
+            'three',
+        ]);
+
+        // An empty string should yield an empty array
+        $this->assertSame(Arr::commaSeparatedToArray(''), []);
     }
 }

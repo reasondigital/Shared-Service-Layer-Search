@@ -66,9 +66,9 @@ class AppServiceProvider extends ServiceProvider
          *
          * If the key already exists, it will be overwritten.
          *
-         * @param array  $array
-         * @param string $wrapperKey
-         * @param array  $keysToWrap
+         * @param  array   $array
+         * @param  string  $wrapperKey
+         * @param  array   $keysToWrap
          *
          * @return array
          * @since 1.0.0
@@ -86,6 +86,31 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $array[$wrapperKey] = $wrapper;
+            return $array;
+        });
+
+        /**
+         * Takes a string that is a comma-separated list and converts it into
+         * an array, removing whitespace and empty values in the process.
+         *
+         * @param  string  $array
+         *
+         * @return array
+         * @since 1.0.0
+         */
+        Arr::macro('commaSeparatedToArray', function (string $list): array {
+            $array = [];
+
+            if (!empty($list)) {
+                foreach (explode(',', $list) as $item) {
+                    $item = trim($item);
+
+                    if (!empty($item)) {
+                        $array[] = $item;
+                    }
+                }
+            }
+
             return $array;
         });
     }
