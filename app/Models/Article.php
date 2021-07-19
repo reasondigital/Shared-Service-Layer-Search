@@ -14,7 +14,7 @@ use Laravel\Scout\Searchable;
  * Article model class.
  *
  * @package App\Models
- * @since 1.0.0
+ * @since   1.0.0
  */
 class Article extends Model
 {
@@ -42,7 +42,6 @@ class Article extends Model
     /**
      * @var string[]
      * @since 1.0.0
-     * todo See if we can cast the date published
      */
     protected $casts = [
         'datePublished' => 'datetime:'.DataConstants::API_ARTICLE_DATE_PUBLISHED_FORMAT,
@@ -134,5 +133,17 @@ class Article extends Model
             default:
                 return 'Y-m-d H:i:s';
         }
+    }
+
+    /**
+     * Retrieve the default fields to be considered by the search providers
+     * when a full-text search is requested.
+     *
+     * @return string[]
+     * @since 1.0.0
+     */
+    public static function defaultQueryFields(): array
+    {
+        return Arr::commaSeparatedToArray(config()->get('search.default_query_fields.articles', ''));
     }
 }

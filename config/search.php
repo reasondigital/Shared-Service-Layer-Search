@@ -36,6 +36,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Query Fields
+    |--------------------------------------------------------------------------
+    |
+    | The default fields that should be considered by the search provider when
+    | running a full-text search.
+    |
+    */
+
+    'default_query_fields' => [
+        'articles' => env('DEFAULT_QUERY_FIELDS_ARTICLES', 'name,articleBody,abstract'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Search Radius
     |--------------------------------------------------------------------------
     |
