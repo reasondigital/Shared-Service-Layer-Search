@@ -7,6 +7,7 @@ At this time, the application supports configuration with Elasticsearch.
 * [General Configuration](#general-configuration)
 * [Targeting a Provider](#targeting-a-provider)
 * [Search Results](#search-results)
+* [Articles Search Fields](#articles-search-fields)
 * [Locations Search Radius](#locations-search-radius)
 * [Routing](#routing)
   * [Route Controllers](#route-controllers)
@@ -26,6 +27,16 @@ After that, you will then need to follow that provider's documentation on how to
 
 ## Search Results
 You can adjust the default number of results returned by your application by setting the `RESULTS_COUNT_ARTICLES` and `RESULTS_COUNT_LOCATIONS` variables in your [.env](/.env) file.
+
+## Articles Search Fields
+The Articles search endpoint has the `in` parameter, which allows API consumers to narrow their search specific fields. This parameter, however, is optional, which means a default set of fields needs to be provided to the application.
+
+The [search.php](/config/search.php) config file contains the default search fields established by the application. You can update this default by setting the `DEFAULT_QUERY_FIELDS_ARTICLES` variable in your [.env](/.env) file. For example:
+```dotenv
+DEFAULT_QUERY_FIELDS_ARTICLES=name,articleBody,abstract
+```
+
+All fields, except for the "sensitive" field, are eligible.
 
 ## Locations Search Radius
 Location search can have a constraint, such as a geo-shape or distance. If no constraints are provided with a location request, the application will default to using the distance constraint. Update the value of `ADDRESS_SEARCH_RADIUS` in your [.env](/.env) file to adjust the default distance to constrain a location search by.

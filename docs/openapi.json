@@ -465,6 +465,9 @@
                         "$ref": "#/components/parameters/sensitive"
                     },
                     {
+                        "$ref": "#/components/parameters/articleName"
+                    },
+                    {
                         "$ref": "#/components/parameters/articleBody"
                     },
                     {
@@ -558,6 +561,14 @@
                         "required":  true
                     },
                     {
+                        "in": "query",
+                        "name": "in",
+                        "description": "A comma-separated list of fields to search in. Defaults to \"name,articleBody,abstract\". All fields, except for the \"sensitive\" field, from the `ArticleObject` schema can be listed in this parameter.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "$ref": "#/components/parameters/results"
                     },
                     {
@@ -584,6 +595,7 @@
                                                     "@type": "Article",
                                                     "id": 17,
                                                     "author": "Alex Tani",
+                                                    "name": "[The title of the article]",
                                                     "articleBody": "[The full content of the article]",
                                                     "abstract": "[An excerpt from or short summary of the content]",
                                                     "publisher": "Charity Org",
@@ -681,6 +693,9 @@
                     },
                     {
                         "$ref": "#/components/parameters/sensitive"
+                    },
+                    {
+                        "$ref": "#/components/parameters/articleName"
                     },
                     {
                         "$ref": "#/components/parameters/articleBody"
@@ -1300,6 +1315,14 @@
                 },
                 "example": "A placeholder image."
             },
+            "articleName": {
+                "in": "query",
+                "name": "name",
+                "schema": {
+                    "$ref": "#/components/schemas/articleName"
+                },
+                "required": true
+            },
             "articleBody": {
                 "in": "query",
                 "name": "articleBody",
@@ -1703,9 +1726,14 @@
                 "description": "The date that the object was last updated in the data store.",
                 "example": "2021-04-27T16:31:00.000000Z"
             },
+            "articleName": {
+                "type": "string",
+                "description": "The name — or title — of the article.",
+                "example": "Changes to Tax Legislation Lead to Increase in Donations"
+            },
             "shapeName": {
                 "type": "string",
-                "description": "The name of the geo-shape",
+                "description": "The name of the geo-shape.",
                 "example": "Manchester area"
             },
             "shapeDescription": {
@@ -1777,6 +1805,9 @@
                     },
                     "author": {
                         "$ref": "#/components/schemas/objectAuthor"
+                    },
+                    "name": {
+                        "$ref": "#/components/schemas/articleName"
                     },
                     "articleBody": {
                         "$ref": "#/components/schemas/objectArticleBody"
