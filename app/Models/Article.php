@@ -28,6 +28,7 @@ class Article extends Model
      */
     protected $fillable = [
         'author',
+        'name',
         'articleBody',
         'abstract',
         'publisher',

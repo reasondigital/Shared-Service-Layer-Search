@@ -38,6 +38,7 @@ class ArticleController extends BaseArticleController
 
         // Validate the request first.
         $builder = $this->validateRequest($request, [
+            'name' => ['required', 'string'],
             'articleBody' => ['required', 'string'],
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
@@ -163,6 +164,7 @@ class ArticleController extends BaseArticleController
 
         // Validate the request first.
         $builder = $this->validateRequest($request, [
+            'name' => ['required', 'string'],
             'articleBody' => ['required', 'string'],
             'abstract' => ['required', 'string'],
             'author' => ['required', 'string'],
