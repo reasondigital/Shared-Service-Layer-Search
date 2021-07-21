@@ -13,6 +13,7 @@ use ElasticScoutDriverPlus\QueryMatch;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 /**
  * Articles API controller for Elasticsearch.
@@ -88,6 +89,7 @@ class ArticleController extends BaseArticleController
         // Validate the request first.
         $builder = $this->validateRequest($request, [
             'query' => ['required'],
+            'in' => ['sometimes', 'string'],
             'results' => ['sometimes', 'integer'],
             'page' => ['sometimes', 'integer'],
         ]);
@@ -96,12 +98,28 @@ class ArticleController extends BaseArticleController
         if (!$builder->hasError()) {
             // Do the search via scout.
             $query = $request->get('query');
+            $fields = $request->get('in');
             $perPage = $request->get('results');
-            if ($perPage === null) {
+
+            if (is_null($fields)) {
+                $fields = Article::defaultQueryFields();
+            } else {
+                $fields = Arr::commaSeparatedToArray($fields);
+
+                // Make sure consumers can't tamper with the "sensitive" field
+                if (in_array('sensitive', $fields)) {
+                    $sensitiveIndex = array_search('sensitive', $fields);
+                    if (is_int($sensitiveIndex)) {
+                        unset($fields[$sensitiveIndex]);
+                    }
+                }
+            }
+
+            if (is_null($perPage)) {
                 $perPage = config('search.results_per_page.locations');
             }
 
-            $search = Article::boolSearch()->must('match', ['articleBody' => $query]);
+            $search = Article::boolSearch()->must('simple_query_string', compact('query', 'fields'));
             if (!$request->user()->tokenCan(ApiAbilities::READ_SENSITIVE)) {
                 $search->filter('term', ['sensitive' => false]);
             }
